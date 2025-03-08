@@ -33,7 +33,7 @@ The Fuel Station Management System is a web-based application designed to effici
 
 Ensure you have the following installed:
 
-* ✅ XAMPP/LARAGON  (for PHP & MySQL)
+* ✅ XAMPP/LARAGON (for PHP & MySQL)
 * ✅ Node.js (if using React)
 * ✅ Git (for version control)
 
