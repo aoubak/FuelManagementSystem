@@ -21,6 +21,12 @@ The Fuel Station Management System is a web-based application designed to effici
 * Server: Apache.
 * Other Tools: Git.
 
+
+## 🚀 Future Enhancements
+
+* Mobile App Integration 📱
+* AI-Based Fuel Demand Prediction 🤖
+
 ## 📌 Installation Guide
 
 1️⃣ __Prerequisites__
@@ -33,16 +39,16 @@ Ensure you have the following installed:
 
 2️⃣ **Clone the Repository**
 
-git clone https://github.com/aoubak/fuel-station-management.git cd fuel-station-management
+* git clone https://github.com/aoubak/fuel-station-management.git cd fuel-station-management
 
 3️⃣ **Database Setup**
 
 Run the following SQL script to create necessary tables:
 
-CREATE DATABASE FuelStationDB;
-USE FuelStationDB;
+* __SQL:__ "CREATE DATABASE FuelStationDB;
+USE FuelStationDB";
 
-import SQL FILE in the project files into your MySql Server
+and then import SQL FILE from the project files into your MySql Server
 
 
 ## 🖥️ Usage Guide
