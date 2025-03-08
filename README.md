@@ -5,11 +5,11 @@ The Fuel Station Management System is a web-based application designed to effici
 
 ## 📂 Features
 
-🔹 Fuel Management – Track fuel types, stock levels, and deliveries.
-🔹 Sales Transactions – Process fuel purchases and maintain customer transaction history.
-🔹 Employee Management – Manage station staff and their roles.
-🔹 Customer Loyalty System – Reward frequent customers with loyalty points.
-🔹 Supplier Management – Record fuel deliveries and manage supplier details.
-🔹 Reports & Analytics – Generate sales, stock, and financial reports.
+-🔹 Fuel Management – Track fuel types, stock levels, and deliveries.
+-🔹 Sales Transactions – Process fuel purchases and maintain customer transaction history.
+-🔹 Employee Management – Manage station staff and their roles.
+-🔹 Customer Loyalty System – Reward frequent customers with loyalty points.
+-🔹 Supplier Management – Record fuel deliveries and manage supplier details.
+-🔹 Reports & Analytics – Generate sales, stock, and financial reports.
 
 ![alt text](puplic/images/projectImages/dashboard.png)
