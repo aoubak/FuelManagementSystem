@@ -23,4 +23,39 @@ The Fuel Station Management System is a web-based application designed to effici
 
 ## 📌 Installation Guide
 
+1️⃣ __Prerequisites__
+
+Ensure you have the following installed:
+
+* ✅ XAMPP (for PHP & MySQL) OR Python (for Flask)
+* ✅ Node.js (if using React)
+* ✅ Git (for version control)
+
+2️⃣ **Clone the Repository**
+
+git clone https://github.com/aoubak/fuel-station-management.git cd fuel-station-management
+
+3️⃣ **Database Setup**
+
+Run the following SQL script to create necessary tables:
+
+CREATE DATABASE FuelStationDB;
+USE FuelStationDB;
+
+import SQL FILE in the project files into your MySql Server
+
+
+## 🖥️ Usage Guide
+* 1️⃣ Login as an Admin, Employee, or Manager.
+* 2️⃣ Add Fuel Stock received from suppliers.
+* 3️⃣ Process Transactions when customers purchase fuel.
+* 4️⃣ Track Fuel Levels, Prices and generate reports.
+* 5️⃣ Manage Employees and assign roles.
+
+
+## 📌 Contributors
+* 👤 Ayub Abdi Said (AOUBAK) - Developer & Maintainer
+* 📧 Contact: aoubak01@gmail.com
+
+
 
