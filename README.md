@@ -45,8 +45,15 @@ Ensure you have the following installed:
 
 Run the following SQL script to create necessary tables:
 
-* __SQL:__ "CREATE DATABASE FuelStationDB;
-USE FuelStationDB";
+* __SQL Query :__ 
+
+```sql 
+CREATE DATABASE FuelStationDB;
+```
+
+```sql
+USE FuelStationDB;
+```
 
 and then import SQL FILE from the project files into your MySql Server
 
