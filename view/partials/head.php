@@ -44,8 +44,11 @@
 
 <?php 
 // include("includes/aouth.php");
-require_once 'includes/aouth.php';
+// require_once 'includes/aouth.php';
 // checkLogin();
+// if (isLogin()==false){
+//     header("location:login.php");
+// }
 
 
 

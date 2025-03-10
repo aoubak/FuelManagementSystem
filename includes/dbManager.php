@@ -16,6 +16,22 @@ function getConnection(
     return $conn;
 }
 
+// login aouthentication ---------------------------
+function checkLogin() {
+    if(isset($_SESSION['EmployeeID']) == False){
+        header("location:login.php");
+        exit();
+    }
+}
+
+
+function isLogin(){
+    return isset($_SESSION['EmployeeID']);
+ }
+
+
+
+ // login aouthentication end ----------------------
 
 // add station
 if (isset($_POST['addStation'])) {
