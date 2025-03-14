@@ -2,7 +2,7 @@
 include("view/partials/head.php");
 include("includes/dbManager.php");
 checkLogin();
-if (isLogin()==false){
+if (isLogin() == false) {
     header("location:login.php");
 }
 ?>
@@ -37,45 +37,51 @@ if (isLogin()==false){
                     <!-- Modal -->
                     <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-lg " role="document">
-                            <div class="modal-content">
-                                <div class="modal-header bg-success text-white">
-                                    <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Add New Pump</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body ">
-                                    <div class="row d-flex justify-content-center">
-                                        <div class="col d-flex flex-column d-block">
-                                            <label for="fuel type" class="form-select-sm  font-weight-bold">Pump Desc</label>
-                                            <input type="text" class="form-control">
-                                            <label for="" class="font-weight-bold">Pump Status</label>
-                                            <select class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                                <option selected>Choose...</option>
-                                                <option value="1">Active</option>
-                                                <option value="2">In active</option>
-                                            </select>
-                                        </div>
-                                        <div class="col d-flex flex-column d-block">
-                                            <label for="fuel type" class="form-select-sm example font-weight-bold">Fuel Type</label>
-                                            <select class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                                <option selected>Choose...</option>
-                                                <option value="1">Deisel</option>
-                                                <option value="2">Petrol</option>
-                                                <option value="3">Gas</option>
-                                            </select>
-                                            <label for="" class="font-weight-bold">Pomp Code</label>
-                                            <input type="text" class="form-control" aria-label=".cost">
-                                        </div>
+                            <form action="includes/dbManager.php" method="post">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Add New Pump</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
                                     </div>
+                                    <div class="modal-body ">
+                                        <div class="row d-flex justify-content-center">
+                                            <div class="col d-flex flex-column d-block">
+                                                <label for="fuel type" class="form-select-sm  font-weight-bold">Pump Desc</label>
+                                                <input type="text" name="pumpDesc" class="form-control">
+                                                <label for="" class="font-weight-bold">Pump Status</label>
+                                                <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                    <option selected>Choose...</option>
+                                                    <option value="1">Active</option>
+                                                    <option value="0">In active</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col d-flex flex-column d-block">
+                                                <label for="fuel type" class="form-select-sm example font-weight-bold">Fuel Type</label>
+                                                <select name="fuelType" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                    <?php
+                                                   
+                                                    $fuels = getFuels();
+                                                    foreach ($fuels as $fuel) {
+                                                    ?>
+                                                        <option value="<?php echo $fuel['FuelType'] ?>"><?php echo $fuel['FuelType'] ?></option>
+                                                    <?php   } ?>
+                                                </select>
+                                                <label for="" class="font-weight-bold">Pomp Code</label>
+                                                <input type="text" name="pumpCode" class="form-control" aria-label=".cost">
+                                            </div>
+                                        </div>
 
 
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" name="addPump" class="btn btn-primary">Submit</button>
+                                    </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Submit</button>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                     <!-- Modal -->
@@ -138,6 +144,7 @@ if (isLogin()==false){
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            
                             <h6 class="m-0 font-weight-bold text-primary">Pump List</h6>
                             <div class="actions">
                                 <div class="dropdown  bg-white ">
@@ -145,15 +152,30 @@ if (isLogin()==false){
                                         Actions
                                     </button>
                                     <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
-                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target=".bd-example-modal-lg"> Add new Pump</a>
-                                        <a href="fuel_history.php" class="dropdown-item"> Veiw order history</a>
+                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="fa-solid fa-plus bg-primary text-white p-1 rounded"></i> Add new Pump</a>
+                                        <a href="fuel_history.php" class="dropdown-item"> <i class="fa-solid fa-clock-rotate-left  bg-primary text-white p-1 rounded"></i> Veiw order history</a>
 
                                     </div>
                                 </div>
 
                             </div>
                         </div>
+
+                        
                         <div class="card-body">
+
+                        <?php
+                            if (isset($_SESSION['status'])) {
+
+                            ?>
+                                <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
+                                    <strong> <?php echo $_SESSION['status']; ?></strong>
+                                </div>
+                            <?php
+
+                                unset($_SESSION['status']);
+                            }
+                            ?>
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead class="bg-primary text-white">
@@ -253,7 +275,7 @@ if (isLogin()==false){
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are
+                <div class="modal-body">Select <span class="text-danger">"Logout"</span> below if you are
                     ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button"
@@ -281,7 +303,7 @@ if (isLogin()==false){
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
 
-  
+
 
 </body>
 

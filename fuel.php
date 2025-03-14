@@ -129,7 +129,7 @@ if (isLogin()==false){
                             </div>
                         </div>
                     </div>
-                    <!-- model update fuel -->
+                    <!-- model update fuel status -->
                     <div class="modal fade bd-updateStatus-modal-lg" id="FuelStatusModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-lg " role="document">
                             <form action="includes/dbManager.php" method="post">
@@ -151,6 +151,38 @@ if (isLogin()==false){
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                         <button type="submit" name="upFuelStatus" class="btn btn-primary">Update</button>
+                                    </div>
+                                </div>
+
+
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- MODEL UPDATE FUEL -->
+                    <div class="modal fade bd-updateStatus-modal-lg" id="FuelModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-lg " role="document">
+                            <form action="includes/dbManager.php" method="post">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Update Fuel </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body ">
+
+                                        <div class="row d-flex justify-content-center ">
+                                            <div class="col d-flex flex-column d-block ViewFuel">
+
+                                            
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" name="updateFuel" class="btn btn-primary">Update</button>
                                     </div>
                                 </div>
 
@@ -301,7 +333,7 @@ if (isLogin()==false){
                                                     <button class="btn btn-info btn-sm updateFuelStatus">
                                                         <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
                                                 </td>
-                                                <td><button class="btn btn-primary btn-sm updateStation">
+                                                <td><button class="btn btn-primary btn-sm updateFuel">
                                                         <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
                                                     <button class="btn btn-danger btn-sm deleteFuel">
                                                         <i class="fa-solid fa-trash-can fa-sm"></i></button>
@@ -348,7 +380,7 @@ if (isLogin()==false){
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are
+                <div class="modal-body">Select <span class="text-danger">"Logout"</span> below if you are
                     ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button"
@@ -393,6 +425,34 @@ if (isLogin()==false){
             });
         });
 
+
+        // update 
+        
+        $(document).ready(function() {
+            $('.updateFuel').click(function(e) {
+                e.preventDefault();
+
+                var FuelID = $(this).closest('tr').find('.FuelID').text();
+
+                // console.log(FuelID);
+                $.ajax({
+                    method: "POST",
+                    url: "includes/dbManager.php",
+                    data: {
+                        'updateFuelPro': true,
+                        'FuelID': FuelID,
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('.ViewFuel').html(response);
+                        $('#FuelModel').modal('show');
+
+                    }
+                });
+
+            });
+        });
+
         // update status function
         $(document).ready(function() {
             $('.updateFuelStatus').click(function(e) {
@@ -418,6 +478,8 @@ if (isLogin()==false){
 
             });
         });
+
+        
     </script>
 
 </body>

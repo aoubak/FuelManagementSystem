@@ -17,21 +17,23 @@ function getConnection(
 }
 
 // login aouthentication ---------------------------
-function checkLogin() {
-    if(isset($_SESSION['EmployeeID']) == False){
+function checkLogin()
+{
+    if (isset($_SESSION['EmployeeID']) == False) {
         header("location:login.php");
         exit();
     }
 }
 
 
-function isLogin(){
+function isLogin()
+{
     return isset($_SESSION['EmployeeID']);
- }
+}
 
 
 
- // login aouthentication end ----------------------
+// login aouthentication end ----------------------
 
 // add station
 if (isset($_POST['addStation'])) {
@@ -206,7 +208,7 @@ if (isset($_POST['updateStation'])) {
             </div>
         </form>
 
-        
+
 
 
 
@@ -274,7 +276,7 @@ if (isset($_POST['addEmployee'])) {
 
 // add new fuel 
 
-if(isset($_POST['addNewFuel'])){
+if (isset($_POST['addNewFuel'])) {
     $fuelType = $_POST['fuelType'];
     $unitPrice = $_POST['unitPrice'];
     $availableLiters = $_POST['availableLiters'];
@@ -284,23 +286,20 @@ if(isset($_POST['addNewFuel'])){
     if ($checkfuel->num_rows > 0) {
         $_SESSION['checkfuel'] = 'Sorry... Fuel is already registred! Please try again!';
         header("location:../fuel.php");
-    }
-   
-    else {
+    } else {
         $result = $conn->query("INSERT INTO `fuels` (`FuelType`, `UnitPrice`, `AvailableLiters`) VALUES ('$fuelType', '$unitPrice', '$availableLiters')");
-        if($result){
-        $_SESSION['status'] = "Fuel inserted successfully";
-        header("location:../fuel.php");
+        if ($result) {
+            $_SESSION['status'] = "Fuel inserted successfully";
+            header("location:../fuel.php");
+        }
     }
-}
     $conn->close();
     $result->close();
-    
 }
 
 // update fuel prices
 
-if(isset($_POST['updateFuelPrice'])){
+if (isset($_POST['updateFuelPrice'])) {
     $diesel = $_POST['diesel'];
     $petrol = $_POST['petrol'];
     $gas = $_POST['gas'];
@@ -325,6 +324,73 @@ if(isset($_POST['updateFuelPrice'])){
 
 // insert into the sales and update litters
 
+
+// Update fuels with jquery
+
+if (isset($_POST['updateFuelPro'])) {
+    $FuelID = $_POST['FuelID'];
+
+    $conn = getConnection();
+    $result = $conn->query("SELECT * FROM Fuels WHERE FuelID = $FuelID");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+?>
+
+    <?php
+    foreach ($rows as $row) {
+    ?>
+        <input type="HIDDEN" name="FuelID" class="form-control" name="FuelStatus" id="" value=" <?php echo $row['FuelID']; ?> ">
+
+        <div class="row d-flex justify-content-center">
+            <div class="col d-flex flex-column d-block">
+                <label for="fuel type" class="font-weight-bold">Select Fuel Type</label>
+                <select name="fuelType" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                    <option value="<?php echo $row['FuelType']; ?>"><?php echo $row['FuelType']; ?></option>
+
+                </select>
+
+
+            </div>
+            <div class="col d-flex flex-column d-block">
+                <label for="fuel type" class="font-weight-bold">Unit Price</label>
+                <input type="text" value="<?php echo $row['UnitPrice']; ?>" name="unitPrice" class="form-control">
+            </div>
+        </div>
+
+        <div class="row d-flex ">
+            <div class="col d-flex flex-column">
+                <label for="" class="font-weight-bold">Available Liters</label>
+                <input type="text" value="<?php echo $row['AvailableLiters']; ?>" name="availableLiters" class="form-control" aria-label=".cost">
+            </div>
+
+        </div>
+
+
+    <?php  }
+    ?>
+
+<?php
+
+}
+
+// update fuel
+
+if (isset($_POST['updateFuel'])) {
+    $FuelID = $_POST['FuelID'];
+    $fuelType = $_POST['fuelType'];
+    $unitPrice = $_POST['unitPrice'];
+    $availableLiters = $_POST['availableLiters'];
+
+    $conn = getConnection();
+    $result = $conn->query("UPDATE fuels SET FuelType = '$fuelType', UnitPrice = '$unitPrice', AvailableLiters = '$availableLiters'  WHERE FuelID = $FuelID");
+
+    if ($result) {
+        $_SESSION['status'] = "Status updated successfully";
+        header("location:../fuel.php");
+    }
+    $conn->close();
+    $result->close();
+}
 
 
 // update status fuels with jqeury
@@ -389,8 +455,8 @@ if (isset($_POST['updateFuelStatus'])) {
     <?php  }
     ?>
 
-    <?php
- 
+<?php
+
 }
 
 // last step update status fuels with jqeury
@@ -430,12 +496,9 @@ function getFuels()
     $result = $conn->query("SELECT * FROM fuels");
     $rows = $result->fetch_all(MYSQLI_ASSOC);
     if ($result->num_rows > 0) {
-        
     }
-    if($rows){
-
-    }
-    else {
+    if ($rows) {
+    } else {
         echo "No data available in table!";
     }
     $conn->close();
@@ -443,24 +506,24 @@ function getFuels()
     return $rows;
 }
 
-Function getPetrol(){
+function getPetrol()
+{
     $conn = getConnection();
     $result = $conn->query("SELECT FuelID, FuelType, SUM(AvailableLiters) AS 'TotalLiterSupplied', ( UnitPrice * SUM(AvailableLiters) ) AS 'Cost', Supplier,`Date` FROM `fuels` WHERE FuelType = 'Petrol' GROUP BY FuelID,FuelType, UnitPrice, Supplier,`Date`");
     $rows = $result->fetch_all(MYSQLI_ASSOC);
-    if($result ){
-
+    if ($result) {
     }
     $conn->close();
     $result->close();
     return $rows;
 }
 
-Function getDeisel(){
+function getDeisel()
+{
     $conn = getConnection();
     $result = $conn->query("SELECT FuelID, FuelType, SUM(AvailableLiters) AS 'TotalLiterSupplied', ( UnitPrice * SUM(AvailableLiters) ) AS 'Cost', Supplier,`Date` FROM `fuels` WHERE FuelType = 'Deisel' GROUP BY FuelID,FuelType, UnitPrice, Supplier,`Date`");
     $rows = $result->fetch_all(MYSQLI_ASSOC);
-    if($result ){
-
+    if ($result) {
     }
     $conn->close();
     $result->close();
@@ -481,4 +544,22 @@ function getEmployees()
     $conn->close();
     $result->close();
     return $rows;
+}
+
+
+if (isset($_POST['addPump'])) {
+    $pumpDesc = $_POST['pumpDesc'];
+    $pumpstatus = $_POST['status'];
+    $fuelType = $_POST['fuelType'];
+    $pumpCode =  $_POST['pumpCode'];
+
+    $conn = getConnection();
+
+    $result = $conn->query("INSERT INTO pumps (`pumpCode`,`pumpDesc`,`fuelType`,`Status`) VALUES('$pumpCode','$pumpDesc','$fuelType','$pumpstatus')");
+    if ($result) {
+        $_SESSION['status'] = "Pump inserted successfully";
+        header("location:../Pumps.php");
+    }
+    $conn->close();
+    $result->close();
 }

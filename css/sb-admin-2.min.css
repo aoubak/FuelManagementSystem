@@ -12110,13 +12110,15 @@ a:focus {
 }
 
 .bg-register-image {
-    background: url(https://source.unsplash.com/Mv9hjnEUHR4/600x800);
+    background-image: url(/fms/puplic/images/login.jpg);
+    /* background: url(https://source.unsplash.com/Mv9hjnEUHR4/600x800); */
     background-position: center;
     background-size: cover
 }
 
 .bg-password-image {
-    background: url(https://source.unsplash.com/oWTW-jNGl9I/600x800);
+    background-image: url(/fms/puplic/images/login.jpg);
+    /* background: url(https://source.unsplash.com/oWTW-jNGl9I/600x800); */
     background-position: center;
     background-size: cover
 }
@@ -12653,7 +12655,7 @@ form .form-group .errorm input {
     left: 10px;
 }
 
-.ProfileBanner .profileImage .active{
+.ProfileBanner .profileImage .active {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -12699,6 +12701,7 @@ form .form-group .errorm input {
         display: none;
     }
 }
+
 @media (min-width:768px) {
 
     .myProfile .ProfileInfoMod {
@@ -12712,31 +12715,131 @@ form .form-group .errorm input {
         display: block;
     }
 }
+
 @media (max-width:576px) {
 
     .myProfile .ProfileInfo {
         display: none;
     }
+
     .myProfile .banner {
         margin-bottom: .25rem !important;
     }
-    
+
 }
-.myProfile .content{
+
+.myProfile .content {
     display: none;
 }
 
-.myProfile .content.active{
+.myProfile .content.active {
     display: block;
 }
 
-.myProfile .Profilelinks .list-group .active{
+.myProfile .Profilelinks .list-group .active {
     color: white !important;
 }
 
-.myProfile .editProfile .editImage{
+.myProfile .actions a.active {
+    color: white !important;
+}
+
+
+.myProfile .editProfile .editImage {
     height: 100px;
 }
-.myProfile .editProfile .editImage img{
+
+.myProfile .editProfile .editImage img {
     height: 100%;
 }
+
+
+/* otp css */
+
+.col-otp {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:where(.container-otp, form, .input-field, header) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container-otp {
+    background: #fff;
+    padding: 30px 65px;
+    border-radius: 12px;
+    row-gap: 20px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.container-otp header {
+    display: flex;
+    height: 65px;
+    width: 65px;
+    background: #4070f4;
+    color: #fff;
+    font-size: 2.5rem;
+    border-radius: 50%;
+}
+
+.container-otp h4 {
+    font-size: 1.25rem;
+    /* color: #333; */
+    font-weight: 500;
+}
+
+form .input-field {
+    flex-direction: row;
+    column-gap: 10px;
+}
+
+.input-field input {
+    height: 45px;
+    width: 42px;
+    border-radius: 6px;
+    outline: none;
+    font-size: 1.125rem;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.input-field input:focus {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.input-field input::-webkit-inner-spin-button,
+.input-field input::-webkit-outer-spin-button {
+    display: none;
+}
+
+.container-otp form button {
+    margin-top: 25px;
+    width: 100%;
+    color: #fff;
+    font-size: 1rem;
+    border: none;
+    padding: 9px 0;
+    cursor: pointer;
+    border-radius: 6px;
+    pointer-events: none;
+    background: #6e93f7;
+    transition: all 0.2s ease;
+}
+
+.container-otp form button.active {
+    background: #198754;
+    pointer-events: auto;
+}
+
+.container-otp form button:hover {
+    background: #1cb06b;
+}
+
+
+/* end otp css */

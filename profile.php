@@ -2,7 +2,7 @@
 include("view/partials/head.php");
 include("includes/dbManager.php");
 checkLogin();
-if (isLogin()==false){
+if (isLogin() == false) {
     header("location:login.php");
 }
 ?>
@@ -91,6 +91,10 @@ if (isLogin()==false){
                     <!-- Content Row -->
                     <!-- DataTales Example -->
                     <div class="card shadow myProfile mb-4">
+
+                        
+                        
+
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">My Profile</h6>
                             <div class="actions">
@@ -99,10 +103,10 @@ if (isLogin()==false){
                                         Actions
                                     </button>
                                     <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
-                                        <div class="d-block list-group m-2 ">
-                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black tab-btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-gear"></i></span> Generel</a>
-                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-pen-to-square"></i></span> Edit Profile</a>
-                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-key"></i></span> Password</a>
+                                        <div class="d-block list-group actions">
+                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black Atab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-gear"></i></span> Generel</a>
+                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black Atab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-pen-to-square"></i></span> Edit Profile</a>
+                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black Atab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-key"></i></span> Password</a>
                                         </div>
 
                                     </div>
@@ -110,16 +114,43 @@ if (isLogin()==false){
 
                             </div>
                         </div>
+                        <?php
+                        if (isLogin() == true) {
+                            $EmployeeID = $_SESSION['EmployeeID'];
+
+                            $conn = getConnection();
+                            $result = $conn->query("SELECT * FROM Employees where EmployeeID='$EmployeeID'");
+                            $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+                            $Employees = $rows;
+                            foreach ($Employees as $row) {
+                        ?>
+
+                                <!-- <h2>
+                                    <?php
+                                    echo $row['UserName'];
+                                    ?>
+                                </h2> -->
+
+                        <?php  }
+                        }
+
+                        ?>
                         <div class="card-body">
                             <div class="row banner mb-5">
                                 <div class="col  ProfileBanner border border-1 rounded rounded-1 p-0">
                                     <div class="ProfileInfo bg-white pl-3 pr-3 pt-3 shadow  rounded rounded-2">
                                         <div class="username d-flex align-content-center">
-                                            <h5 class="  text-dark m-0 font-weight-bold">AOUBAK </h5>
+                                            <h5 class="  text-dark m-0 font-weight-bold">
+                                                <?php
+                                                echo strtoupper($row['UserName']);
+                                                ?> </h5>
                                             <span class="Verify d-flex align-items-center"><i class='bx bxs-badge-check bx-tada text-success '></i></span>
                                         </div>
 
-                                        <p>aoubak01@gmail.com</p>
+                                        <p> <?php
+                                            echo $row['Email'];
+                                            ?></p>
                                     </div>
                                     <img src="puplic/images/tt-01.jpg" alt="">
                                     <div class="col-2 profileImage  border border-1 p-0 rounded rounded-1">
@@ -141,10 +172,15 @@ if (isLogin()==false){
                                 <div class="col-3 d-none d-sm-block bg-light p-2 rounded-left rounded-2 border border-1  flex-column">
                                     <div class="ProfileInfo">
                                         <div class="username d-flex align-content-center">
-                                            <h5 class="  text-dark m-0 font-weight-bold">AOUBAK </h5>
-                                            <span class="Verify d-flex align-items-center"><i class='bx bxs-badge-check bx-tada text-success '></i></span>
+                                            <h5 class="  text-dark m-0 font-weight-bold">
+                                                <?php
+                                                echo strtoupper($row['UserName']);
+                                                ?> </h5>
+                                            <span class="Verify d-flex align-items-center"><i class='bx bxs-badge-check bx-tada text-success '></i> </span>
                                         </div>
-                                        <p>aoubak01@gmail.com</p>
+                                        <p><?php
+                                            echo $row['Email'];
+                                            ?></p>
                                     </div>
                                     <div class="Profilelinks ">
                                         <div class="d-block list-group ">
@@ -157,25 +193,29 @@ if (isLogin()==false){
 
                                 </div>
                                 <!-- user conent -->
-                                <div class="col content active p-2 border border-1 rounded-right rounded-2">
+                                <div class="col content acontent active p-2 border border-1 rounded-right rounded-2">
                                     <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
                                         <h5 class="font-weight-bold">AOUBAK / General</h5>
                                         <span> Update your username and manage your account</span>
                                     </div>
                                     <div class="user-data pl-3 pr-3  mt-2">
                                         <label for="" class=" text-dark ">Username</label>
-                                        <input type="text" class="form-control" placeholder="">
+                                        <input type="text" value="<?php
+                                                                    echo $row['UserName'];
+                                                                    ?>" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data pl-3 pr-3 mt-2">
                                         <label for="" class=" text-dark">Email</label>
-                                        <input type="text" class="form-control" placeholder="">
+                                        <input type="text" value="<?php
+                                                                    echo $row['Email'];
+                                                                    ?>" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data  mt-2 modal-footer">
                                         <button type="submit" class="btn btn-primary">Save Changes</button>
                                     </div>
                                 </div>
                                 <!-- edit Profile -->
-                                <div class="col content editProfile p-2 border border-1 rounded-right rounded-2">
+                                <div class="col content acontent editProfile p-2 border border-1 rounded-right rounded-2">
                                     <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
                                         <h5 class="font-weight-bold">AOUBAK / Edit Profile</h5>
                                         <span> Set up your and enhance your profile</span>
@@ -194,28 +234,65 @@ if (isLogin()==false){
                                     </div>
                                     <div class="user-data pl-3 pr-3  mt-2">
                                         <label for="" class="text-dark">Name</label>
-                                        <input type="text" class="form-control" placeholder="">
+                                        <input type="text" value="<?php
+                                                                    echo $row['Name'];
+                                                                    ?>" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data pl-3 pr-3 mt-2">
                                         <label for="" class="text-dark">Contact</label>
-                                        <input type="text" class="form-control" placeholder="">
+                                        <input type="text" value="<?php
+                                                                    echo $row['ContactNumber'];
+                                                                    ?>" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data pl-3 pr-3 mt-2">
                                         <label for="" class="text-dark">Station</label>
                                         <select name="staion" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                                    <?php
-                                                    $stations = getStations();
-                                                    foreach ($stations as $Station) {
+                                            <?php
+                                            $stations = getStations();
+                                            // foreach ($stations as $Station) {
+                                            ?>
 
-                                                    ?>
-                                                        <option value="<?php echo $Station['StationID']; ?>"><?php echo $Station['Name']; ?></option>
-                                                    <?php } ?>
-                                                </select>
+                                            <?php
+                                            if (isLogin() == true) {
+                                                $EmployeeID = $_SESSION['EmployeeID'];
+
+                                                $conn = getConnection();
+                                                $result = $conn->query("SELECT s.StationID, s.Name, e.Role FROM `employees` e INNER JOIN `stations` s on e.StationID = s.StationID WHERE EmployeeID ='$EmployeeID' ");
+                                                $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+                                                $Employees = $rows;
+                                                foreach ($Employees as $row) {
+                                            ?>
+                                                    <option value="<?php echo $Station['StationID']; ?>">-- <?php echo $row['Name']; ?> --</option>
+                                            <?php  }
+                                            } ?>
+                                            <option value="">Main Station</option>
+                                            <option value="">Second Station</option>
+                                            <option value="">Third Station</option>
+                                            <option value="">Fourth Station</option>
+                                            <option value="">Fifth Station</option>
+
+
+                                        </select>
                                     </div>
                                     <div class="user-data pl-3 pr-3 mt-2">
                                         <label for="" class="text-dark">Role</label>
                                         <select name="role" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                            <option selected>Choose...</option>
+                                            <?php
+                                            if (isLogin() == true) {
+                                                $EmployeeID = $_SESSION['EmployeeID'];
+
+                                                $conn = getConnection();
+                                                $result = $conn->query("SELECT s.StationID, s.Name, e.Role FROM `employees` e INNER JOIN `stations` s on e.StationID = s.StationID WHERE EmployeeID ='$EmployeeID' ");
+                                                $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+                                                $Employees = $rows;
+                                                foreach ($Employees as $row) {
+                                            ?>
+                                                    <option value="<?php echo $Station['StationID']; ?>">-- <?php echo $row['Role']; ?> --</option>
+                                            <?php  }
+                                            } ?>
+
                                             <option value="Pump Operator">Pump Operator</option>
                                             <option value="Accountant/Cashier">Accountant/Cashier</option>
                                             <option value="Station Manager">Station Manager</option>
@@ -228,7 +305,7 @@ if (isLogin()==false){
                                         <button type="submit" class="btn btn-primary">Save Changes</button>
                                     </div>
                                 </div>
-                                <div class="col content  p-2 border border-1 rounded-right rounded-2">
+                                <div class="col content acontent p-2 border border-1 rounded-right rounded-2">
                                     <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
                                         <h5 class="font-weight-bold">AOUBAK / Password</h5>
                                         <span> Manage your password</span>
@@ -238,7 +315,7 @@ if (isLogin()==false){
                                         <input type="text" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data pl-3 pr-3 mt-2">
-                                        <label for=""class="text-dark">New Password</label>
+                                        <label for="" class="text-dark">New Password</label>
                                         <input type="text" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data  mt-2 modal-footer">
@@ -288,7 +365,7 @@ if (isLogin()==false){
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are
+                <div class="modal-body">Select <span class="text-danger">"Logout"</span> below if you are
                     ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button"

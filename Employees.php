@@ -43,7 +43,7 @@ include("includes/dbManager.php");
                                         </button>
                                     </div>
                                     <div class="modal-body ">
-                                     
+
 
 
                                         <div class="row d-flex justify-content-center">
@@ -142,7 +142,7 @@ include("includes/dbManager.php");
 
                             ?>
                                 <div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
-                                    <strong> <?php echo $_SESSION['checkMail']; ?></strong> 
+                                    <strong> <?php echo $_SESSION['checkMail']; ?></strong>
                                 </div>
                             <?php
 
@@ -275,7 +275,7 @@ include("includes/dbManager.php");
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are
+                <div class="modal-body">Select <span class="text-danger">"Logout"</span> below if you are
                     ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button"

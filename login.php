@@ -14,11 +14,20 @@ function getConnection(
     }
     return $conn;
 }
+
+if(isset($_COOKIE['email']) &&  isset($_COOKIE['password'])){
+    $id=$_COOKIE['email'];
+    $pass=$_COOKIE['password'];
+}else{
+    $id = "";
+    $pass = "";
+}
+
 $emailError = "";
 $passwordError = "";
 $email = "";
 $password = "";
-$P = "";
+$ErrorEmailPass = "";
 
 
 if (isset($_POST['submit'])) {
@@ -42,15 +51,22 @@ if (isset($_POST['submit'])) {
             $_SESSION['EmployeeID'] = $row['EmployeeID'];
             $_SESSION['Role'] = $row['Role'];
 
+            if(isset($_POST['remember_me'])){
+                setcookie('email', $_POST['email'], time() + (60*60*24));
+                setcookie('password', $_POST['password'], time() + (60*60*24));
+            }
+
             header("location:index.php");
             exit();
         }
+        else {
+            // $_SESSION['status'] = "No Username or Password found";
+            //  $ErrorEmailPass= "No Username or Password found";
+             $ErrorEmailPass= "It's look like you're not yet member! click on the buttom link to signup.";
+           
+        }
     }
-    else {
-        // $_SESSION['status'] = "No Username or Password found";
-         $P= "No Username or Password found";
-       
-    }
+    
 }
 
 ?>
@@ -105,23 +121,23 @@ if (isset($_POST['submit'])) {
                                     
 
                                         <?php
-                                        if( empty($P)){
+                                        if( empty($ErrorEmailPass)){
 
                                         }
                                         else{
                                             ?>
                                             <div class="alert alert-danger">
-                                            <?php echo $P; ?> </div>
+                                            <?php echo $ErrorEmailPass; ?> </div>
 
                                        <?php }
                                          ?>
+                                
 
-                                    
                                     <form action="#" method="post" class="use">
                                         <div class="form-group">
                                             <div>
                                                 <input type="email" name="email" class="form-control form-control-user"
-                                                    id="Email" value="<?php echo $email ?>" aria-describedby="emailHelp"
+                                                    id="Email" value="<?php echo $id ?>" aria-describedby="emailHelp"
                                                     placeholder="Email">
                                                 <span></span>
                                                 <div class="errordisplay"><?php echo $emailError ?></div>
@@ -130,13 +146,14 @@ if (isset($_POST['submit'])) {
                                         <div class="form-group">
                                             <div>
                                                 <input type="password" name="password" class="form-control form-control-user"
-                                                    id="Password" value="<?php echo $email ?>" placeholder="Password">
+                                                    id="Password" value="<?php echo $pass ?>" placeholder="Password" aria-describedby="passwordHelpBlock">
+                                                    
                                                 <div class="errordisplay"><?php echo $passwordError ?></div>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck">
+                                                <input type="checkbox" name="remember_me" class="custom-control-input" id="customCheck">
                                                 <label class="custom-control-label" for="customCheck">Remember
                                                     Me</label>
                                             </div>
@@ -155,10 +172,10 @@ if (isset($_POST['submit'])) {
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="forgot-password.html">Forgot Password?</a>
+                                        <a class="small" href="forgot-password.php">Forgot Password?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="register.html">Create an Account!</a>
+                                        <a class="small" href="register.php">Create an Account!</a>
                                     </div>
                                 </div>
                             </div>
