@@ -547,19 +547,36 @@ function getEmployees()
 }
 
 
+// add pumps
+
 if (isset($_POST['addPump'])) {
+    $pumpName = $_POST['pumpName'];
     $pumpDesc = $_POST['pumpDesc'];
-    $pumpstatus = $_POST['status'];
-    $fuelType = $_POST['fuelType'];
-    $pumpCode =  $_POST['pumpCode'];
+    $stationID =  $_POST['stationID'];
+    $fuelID = $_POST['fuelID'];
+   
 
     $conn = getConnection();
 
-    $result = $conn->query("INSERT INTO pumps (`pumpCode`,`pumpDesc`,`fuelType`,`Status`) VALUES('$pumpCode','$pumpDesc','$fuelType','$pumpstatus')");
+    $result = $conn->query("INSERT INTO pumps (`pumpName`,`pumpDesc`,`fuelID`,`stationID`) VALUES('$pumpName','$pumpDesc','$stationID','$fuelID')");
     if ($result) {
         $_SESSION['status'] = "Pump inserted successfully";
         header("location:../Pumps.php");
     }
     $conn->close();
     $result->close();
+}
+
+
+
+function getPumps()
+{
+    $conn = getConnection();
+    $result = $conn->query("SELECT * FROM pumps");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    if ($rows) {
+    }
+    $conn->close();
+    $result->close();
+    return $rows;
 }

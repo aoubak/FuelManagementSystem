@@ -11664,6 +11664,13 @@ a:focus {
     z-index: 1
 }
 
+.sidebar .sidebar-brand .sidebar-brand-icon .image{
+    background-color: #0f6848 !important;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+}
+
 .sidebar .sidebar-brand .sidebar-brand-icon i {
     font-size: 2rem
 }
@@ -12763,7 +12770,7 @@ form .form-group .errorm input {
     justify-content: center;
 }
 
-:where(.container-otp, form, .input-field, header) {
+:where(.container-otp, .formOTP, .input-field, .headerOTP) {
     display: flex;
     flex-direction: column;
     align-items: center;

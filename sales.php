@@ -39,8 +39,8 @@ if (isLogin() == false) {
                 <div class="container-fluid">
 
                     <!-- Modal new sales-->
-                    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                        <div class="modal-dialog">
+                    <div class="modal fade bd-example-modal-lg" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header text-white bg-primary ">
                                     <h5 class="modal-title font-weight-bold" id="staticBackdropLabel">Pump Record</h5>
@@ -49,37 +49,61 @@ if (isLogin() == false) {
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <div class="row d-flex justify-content-center">
+                                    <div class="row mb-3 d-flex justify-content-center">
                                         <div class="col d-flex flex-column d-block">
                                             <label for="fuel type" class="font-weight-bold">Select Pump</label>
                                             <select class="custom-select" name="pumpName" id="">
                                                 <option selected>-Choose-</option>
                                                 <option value="">COC3</option>
                                             </select>
-                                            <label for="fuel type" class="font-weight-bold">Today's Price</label>
-                                            <input type="text" name="location" class="form-control">
+                                            <label for="fuel type" class="font-weight-bold">Previous Reading</label>
+                                            <input type="text" name="previousRead" class="form-control">
 
                                         </div>
                                         <div class="col d-flex flex-column d-block">
-
                                             <label for="" class="font-weight-bold">Fuel Type</label>
                                             <select class="custom-select" name="pumpName" id="">
-                                                <option selected>-Choose-</option>
-                                                <option value="">Petrol</option>
-                                                <option value="">Diesel</option>
+                                                <?php
+                                                $fuels = getFuels();
+                                                foreach ($fuels as $fuel) {
+                                                ?>
+                                                    <option value=""><?php echo $fuel["FuelType"] ?></option>
+                                                <?php } ?>
                                             </select>
                                             <label for="fuel type" class="font-weight-bold">Current Reading</label>
                                             <input type="text" name="location" class="form-control">
                                         </div>
 
+                                        <div class="col d-flex flex-column d-block">
+                                            <label for="fuel type" class="font-weight-bold">Today's Price</label>
+                                            <input type="text" name="location" class="form-control">
+                                            <label for="" class="font-weight-bold">Sold Liters</label>
+                                            <input type="text" name="location" class="form-control">
+
+                                        </div>
+
                                     </div>
                                     <div class="row d-flex ">
+                                        <div class="col d-flex flex-column d-block">
+
+                                            <label for="fuel type" class="font-weight-bold">Amount</label>
+                                            <input type="text" name="location" class="form-control">
+
+                                        </div>
+
                                         <div class="col d-flex flex-column">
                                             <label for="fuel type" class="font-weight- text-danger"> Assign this pump to Atendent (Shaqaalaha)</label>
                                             <select class="custom-select" name="pumpName" id="">
                                                 <option selected>-Choose-</option>
                                                 <option value="">COC3</option>
                                             </select>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row d-flex ">
+                                        <div class="col d-flex flex-column">
+
                                         </div>
 
                                     </div>

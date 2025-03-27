@@ -48,37 +48,47 @@ if (isLogin() == false) {
                                     <div class="modal-body ">
                                         <div class="row d-flex justify-content-center">
                                             <div class="col d-flex flex-column d-block">
+                                                <label for="fuel type" class="form-select-sm  font-weight-bold">Pump Name</label>
+                                                <input type="text" name="pumpName" class="form-control">
+                                                <label for="" class="font-weight-bold">Station</label>
+                                                <select name="stationID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                    <?php
+                                                    $stations = getStations();
+                                                    foreach ($stations as $station) {
+                                                    ?>
+                                                        <option value="<?php echo $station["StationID"] ?>"><?php echo $station["Name"] ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col d-flex flex-column d-block">
                                                 <label for="fuel type" class="form-select-sm  font-weight-bold">Pump Desc</label>
                                                 <input type="text" name="pumpDesc" class="form-control">
-                                                <label for="" class="font-weight-bold">Pump Status</label>
-                                                <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                <!-- <label for="" class="font-weight-bold">Pump Status</label>
+                                                <select name="pumpStatus" class="custom-select form-select-sm" aria-label=".form-select-sm example">
                                                     <option selected>Choose...</option>
                                                     <option value="1">Active</option>
                                                     <option value="0">In active</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="col d-flex flex-column d-block">
+                                                </select> -->
                                                 <label for="fuel type" class="form-select-sm example font-weight-bold">Fuel Type</label>
-                                                <select name="fuelType" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                <select name="fuelID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
                                                     <?php
-                                                   
+
                                                     $fuels = getFuels();
                                                     foreach ($fuels as $fuel) {
                                                     ?>
-                                                        <option value="<?php echo $fuel['FuelType'] ?>"><?php echo $fuel['FuelType'] ?></option>
+                                                        <option value="<?php echo $fuel['FuelID'] ?>"><?php echo $fuel['FuelType'] ?></option>
                                                     <?php   } ?>
                                                 </select>
-                                                <label for="" class="font-weight-bold">Pomp Code</label>
-                                                <input type="text" name="pumpCode" class="form-control" aria-label=".cost">
                                             </div>
+
+                                            
                                         </div>
 
 
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" name="addPump" class="btn btn-primary">Submit</button>
+                                        <button type="submit" name="addPump" class="btn btn-primary">Submit</button>
                                     </div>
                                 </div>
                             </form>
@@ -144,7 +154,7 @@ if (isLogin() == false) {
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            
+
                             <h6 class="m-0 font-weight-bold text-primary">Pump List</h6>
                             <div class="actions">
                                 <div class="dropdown  bg-white ">
@@ -161,10 +171,10 @@ if (isLogin() == false) {
                             </div>
                         </div>
 
-                        
+
                         <div class="card-body">
 
-                        <?php
+                            <?php
                             if (isset($_SESSION['status'])) {
 
                             ?>
@@ -180,10 +190,11 @@ if (isLogin() == false) {
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead class="bg-primary text-white">
                                         <tr>
-                                            <th>Pump Code</th>
-                                            <th>Pump Dec </th>
-                                            <th>Fuel Type</th>
-                                            <th>Date</th>
+                                            <th>PumpID</th>
+                                            <th>Pump Name </th>
+                                            <th>Pump Desc </th>
+                                            <th>Fuel ID</th>
+                                            <th>StationID</th>
                                             <th>Status</th>
                                             <th>Action</th>
 
@@ -192,50 +203,54 @@ if (isLogin() == false) {
                                     </thead>
                                     <tfoot class="bg-gray-800 text-white">
                                         <tr>
-                                            <th>Pump Code</th>
-                                            <th>Pump Dec </th>
-                                            <th>Fuel Type</th>
-                                            <th>Date</th>
+                                        <th>PumpID</th>
+                                            <th>Pump Name </th>
+                                            <th>Pump Desc </th>
+                                            <th>Fuel ID</th>
+                                            <th>StationID</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
                                     <tbody>
+                                        <?php
+                                        $pumps = getPumps();
+                                        foreach ($pumps as $pump) {
+                                        ?>
 
+                                        
                                         <tr>
-                                            <td class="pump_name">BRT-081 </td>
-                                            <td>EXPERESS-A </td>
-                                            <td> <span class=" font-weight-bold text-primary">GAS</span></td>
-                                            <td>12/2/2025</td>
-                                            <td> <span class="bg-success text-white p-1 rounded ">Active</span></td>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bd-update-modal-lg">
+                                            <td class="pump_name"> <?php echo $pump['pumpID'] ?></td>
+                                            <td><?php echo $pump['pumpName'] ?> </td>
+                                            <td><?php echo $pump['pumpDesc'] ?> </td>
+                                            <td> <span class=" "><?php echo $pump['fuelID'] ?></span></td>
+                                            <td><?php echo $pump['stationID'] ?></td>
+                                            <!-- <td><?php echo $pump['createdAt'] ?></td> -->
+                                            <td> 
+                                                    <?php
+                                                    if ($pump['status'] == 0) {
+                                                        echo '<span  class="bg-danger text-white p-1 rounded">In Active</span> ';
+                                                    }
+                                                   ?>
+                                                
+                                                <?php
+                                                    if ($pump['status'] == 1) {
+                                                        echo '<span  class="bg-success text-white p-1 border-0 rounded">Active</span>';
+                                                    }
+                                                    
+                                                    ?>
+                                               
+                                                <button class="btn btn-info btn-sm updateFuelStatus">
+                                                        <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
+                                            </td>
+                                            <td><button class="btn btn-primary btn-sm updateStation">
                                                     <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
-                                                <button class="delete_data btn btn-danger btn-sm">
+                                                <button class="btn btn-danger btn-sm deleteStation">
                                                     <i class="fa-solid fa-trash-can fa-sm"></i></button>
                                             </td>
 
-
                                         </tr>
-                                        <tr>
-                                            <td class="pump_name">3CC-022 </td>
-                                            <td>EXPERESS-A</td>
-                                            <td> <span class=" font-weight-bold text-primary">GAS</span></td>
-                                            <td>12/2/2025</td>
-                                            <td> <span class="bg-success text-white p-1 rounded ">Active</span></td>
-                                            <td>
-                                                <button class="btn btn-primary btn-sm">
-                                                    <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
-                                                <button class="delete_data btn btn-danger btn-sm">
-                                                    <i class="fa-solid fa-trash-can fa-sm"></i></button>
-                                            </td>
-
-
-                                        </tr>
-
-
-
-
+                                        <?php } ?>
                                     </tbody>
                                 </table>
                             </div>

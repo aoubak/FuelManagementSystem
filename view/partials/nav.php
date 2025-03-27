@@ -16,10 +16,12 @@
                   <button class="btn btn-primary" type="button">
                       <i class="fas fa-search fa-sm"></i>
                   </button>
+                
               </div>
           </div>
+        
       </form>
-
+  
       <!-- Topbar Navbar -->
       <ul class="navbar-nav ml-auto">
 
@@ -192,11 +194,27 @@
           <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="mr-2 d-none d-lg-inline text-success small font-weight-bold"><?php
-                        echo strtoupper( $row['Role']);
+                  <span class="mr-2 d-none d-lg-inline text-success small font-weight-bold">
+                    <?php
+                    // strtoupper( $row['Role'])
+                         if((empty($row['Role'])) ){
+                            echo "|";
+                           
+
+                         } else{
+                            echo $row['Role'];
+                        } ;
                         ?></span>
-                  <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php
-                        echo strtoupper( $row['UserName']);
+                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                    <?php
+                    if((empty($row['UserName'])) ){
+                        echo "|";
+                       
+
+                     } else{
+                        echo $row['UserName'];
+                    } 
+                        // echo strtoupper( $row['UserName']);
                         ?></span>
                   <img class="img-profile rounded-circle"
                       src="puplic/images/profile.jpg">

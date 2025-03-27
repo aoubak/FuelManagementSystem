@@ -79,11 +79,11 @@ foreach ($rows as $KEROSENE) {
                     </button> -->
 
                     <!-- Modal -->
-                    <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-lg " role="document">
                             <div class="modal-content">
                             <form action="includes/dbManager.php" method="post">
-                                <div class="modal-header bg-success text-white">
+                                <div class="modal-header bg-primary text-white">
                                     <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">FUEL PRICE CONTROL</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>

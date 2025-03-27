@@ -204,7 +204,7 @@ include("includes/dbManager.php");
                                         ?>
                                             <tr>
                                                 <td><?php echo $Employee['EmployeeID']; ?></td>
-                                                <td><?php echo $Employee['Name']; ?></td>
+                                                <td><?php echo $Employee['fisrtName']; ?></td>
                                                 <td><?php echo $Employee['UserName']; ?></td>
                                                 <td><span class="text-primary font-weight-bold p-1 rounded"><?php echo $Employee['Role']; ?></span></td>
                                                 <td><?php echo $Employee['Sex']; ?></td>

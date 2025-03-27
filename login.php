@@ -15,10 +15,10 @@ function getConnection(
     return $conn;
 }
 
-if(isset($_COOKIE['email']) &&  isset($_COOKIE['password'])){
-    $id=$_COOKIE['email'];
-    $pass=$_COOKIE['password'];
-}else{
+if (isset($_COOKIE['email']) &&  isset($_COOKIE['password'])) {
+    $id = $_COOKIE['email'];
+    $pass = $_COOKIE['password'];
+} else {
     $id = "";
     $pass = "";
 }
@@ -39,8 +39,7 @@ if (isset($_POST['submit'])) {
     }
     if (empty($password)) {
         $passwordError = "Password is required";
-    } 
-    elseif (empty($email) == false && empty($password) == false) {
+    } elseif (empty($email) == false && empty($password) == false) {
 
         $conn = getConnection();
         $result = $conn->query("SELECT * FROM employees WHERE email ='$email' AND `password` = '$password' ");
@@ -51,22 +50,19 @@ if (isset($_POST['submit'])) {
             $_SESSION['EmployeeID'] = $row['EmployeeID'];
             $_SESSION['Role'] = $row['Role'];
 
-            if(isset($_POST['remember_me'])){
-                setcookie('email', $_POST['email'], time() + (60*60*24));
-                setcookie('password', $_POST['password'], time() + (60*60*24));
+            if (isset($_POST['remember_me'])) {
+                setcookie('email', $_POST['email'], time() + (60 * 60 * 24));
+                setcookie('password', $_POST['password'], time() + (60 * 60 * 24));
             }
 
             header("location:index.php");
             exit();
-        }
-        else {
+        } else {
             // $_SESSION['status'] = "No Username or Password found";
             //  $ErrorEmailPass= "No Username or Password found";
-             $ErrorEmailPass= "It's look like you're not yet member! click on the buttom link to signup.";
-           
+            $ErrorEmailPass = "It's look like you're not yet member! click on the buttom link to signup.";
         }
     }
-    
 }
 
 ?>
@@ -84,7 +80,8 @@ if (isset($_POST['submit'])) {
     <meta name="author" content="">
 
     <title>FMS - Login</title>
-
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="puplic/images/YW.png">
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
@@ -118,20 +115,18 @@ if (isset($_POST['submit'])) {
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
 
-                                    
 
-                                        <?php
-                                        if( empty($ErrorEmailPass)){
 
-                                        }
-                                        else{
-                                            ?>
-                                            <div class="alert alert-danger">
+                                    <?php
+                                    if (empty($ErrorEmailPass)) {
+                                    } else {
+                                    ?>
+                                        <div class="alert alert-danger">
                                             <?php echo $ErrorEmailPass; ?> </div>
 
-                                       <?php }
-                                         ?>
-                                
+                                    <?php }
+                                    ?>
+
 
                                     <form action="#" method="post" class="use">
                                         <div class="form-group">
@@ -147,7 +142,7 @@ if (isset($_POST['submit'])) {
                                             <div>
                                                 <input type="password" name="password" class="form-control form-control-user"
                                                     id="Password" value="<?php echo $pass ?>" placeholder="Password" aria-describedby="passwordHelpBlock">
-                                                    
+
                                                 <div class="errordisplay"><?php echo $passwordError ?></div>
                                             </div>
                                         </div>

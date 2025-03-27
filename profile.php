@@ -235,7 +235,7 @@ if (isLogin() == false) {
                                     <div class="user-data pl-3 pr-3  mt-2">
                                         <label for="" class="text-dark">Name</label>
                                         <input type="text" value="<?php
-                                                                    echo $row['Name'];
+                                                                    echo $row['fisrtName'];
                                                                     ?>" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data pl-3 pr-3 mt-2">

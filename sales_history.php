@@ -102,7 +102,7 @@ if (isLogin()==false){
                                         Actions
                                     </button>
                                     <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
-                                        <a href="fuel.php" class="dropdown-item"> Veiw Fuel</a>
+                                        <a href="sales.php" class="dropdown-item"> Sales</a>
 
                                     </div>
                                 </div>
@@ -110,20 +110,25 @@ if (isLogin()==false){
                             </div>
                         </div>
                         <div class="card-body">
-                        <p class="font-weight-bold text-dark text-center">Search sales based on date sold</p>
-                            <div class="col-12 d-flex flex-row d-sm-block mb-3  ">
-                                
-                                <div class="col-6 p-2 rounded d-flex border border-1 align-items-center">
+                        <p class="font-weight-bold text-dark ">Search sales based on date sold</p>
+                            <div class="row   mb-3  ">
+                                <div class="col d-sm-block d-md-flex d-flex flex-row border border-1 rounded">
+
+                                <div class="col-6 p-2 d-flex  align-items-center">
                                     <span class="font-weight-bold text-dark">From</span>
                                     <input type="date" name="" id="" class="form-control mr-2 ml-2">
                                     <span class="font-weight-bold text-dark">To</span>
 
                                 </div>
-                                <div class="col-6 p-2 bor rounded d-flex border border-1 align-items-center">
+                                <div class="col-6 p-2 bor rounded d-flex  align-items-center">
                                     <input type="date" name="" id="" class="form-control mr-2">
                                     <button type="submit" class="btn btn-success">Search</button>
                                 </div>
+
+                                </div>
+
                             </div>
+
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead class="bg-primary text-white">

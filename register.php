@@ -1,3 +1,100 @@
+<?php
+function getConnection(
+    $host = "localhost",
+    $user = "root",
+    $password = "",
+    $databasename = "fms"
+) {
+    $conn = new mysqli($host, $user, $password, $databasename);
+    if ($conn->connect_error) {
+        echo "Error connecting to Database. $conn->connect_error with error: $conn->connect_error ";
+        return false;
+    }
+    return $conn;
+}
+
+$emailError = "";
+$passwordError = "";
+$repeatPasswordError = "";
+$fnameError = "";
+$lnameError = "";
+$userNameError = "";
+$success = "";
+
+$email = "";
+$username = "";
+$password = "";
+$repeatPassword = "";
+$fname = "";
+$lname = "";
+
+$ErrorEmailPass = "";
+$matchPassword = "";
+
+
+if (isset($_POST['submit'])) {
+    $fname = $_POST['fname'];
+    $lname = $_POST['lname'];
+    $email = $_POST['email'];
+    $username = $_POST['userName'];
+    $password = $_POST['password'];
+    $repeatPassword = $_POST['repeatPassword'];
+
+
+    if (empty($fname)) {
+        $fnameError = "Fisrt Name is required";
+    }
+
+    if (empty($lname)) {
+        $lnameError = "Last Name is required";
+    }
+
+    if (empty($email)) {
+        $emailError = "Email is required";
+    }
+    if (empty($password)) {
+        $passwordError = "Password is required";
+    }
+    if (empty($repeatPassword)) {
+        $repeatPasswordError = "Password is required";
+    }
+    if (empty($username)) {
+        $userNameError = "Username is required";
+    }
+
+    if (empty($password) == false && empty($repeatPassword) == false && ($password != $repeatPassword)) {
+        $matchPassword = "Password did not match.";
+    } elseif (empty($email) == false && empty($password) == false && empty($fname) == false && empty($lname) == false) {
+
+        $conn = getConnection();
+        $result = $conn->query("INSERT INTO employees (`fisrtname`, `lastname`, `email`,`UserName`, `password`) VALUE('$fname', '$lname', '$email','$username', '$password')");
+
+
+        if ($result == true) {
+            $success = "Registration is successfully";
+
+            // $_SESSION['status'] = "Registration is successfully";
+            // header("location:register.php");
+            // exit();
+        }
+
+
+
+
+        //     if ($result) {
+
+        //         header("location:index.php");
+        //         exit();
+        //     } else {
+
+        //         $ErrorEmailPass = "It's look like you're not yet member! click on the buttom link to signup.";
+        //     }
+        // }
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,8 +106,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Register</title>
-
+    <title>FMS - Register</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="puplic/images/YW.png">
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
@@ -36,34 +134,62 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                             </div>
-                            <form class="use">
+
+                            <form action="#" method="post" class="use">
+                                <?php
+                                if (empty($success)) {
+                                } else {
+                                ?>
+                                    <div class="alert alert-success">
+                                        <?php echo $success; ?> <a class="font-weight-bold" href="login.php">Login Now!</a> </div>
+
+                                <?php }
+                                ?>
+
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="exampleFirstName"
+                                        <input type="text" name="fname" value="<?php echo $fname ?>" class="form-control form-control-user" id="exampleFirstName"
                                             placeholder="First Name">
+                                        <div class="errordisplay"><?php echo $fnameError ?> </div>
                                     </div>
+
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" id="exampleLastName"
+                                        <input type="text" name="lname" value="<?php echo $lname ?>" class="form-control form-control-user" id="exampleLastName"
                                             placeholder="Last Name">
+                                        <div class="errordisplay"><?php echo $lnameError ?> </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail"
+                                <div class="form-group row">
+                                <div class="col-sm-6 mb-3 mb-sm-0">
+                                    <input type="email" name="email" value="<?php echo $email ?>" class="form-control form-control-user" id="exampleInputEmail"
                                         placeholder="Email Address">
+                        
+                                    <div class="errordisplay"><?php echo $emailError ?> </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <input type="text" name="userName" value="<?php echo $username ?>" class="form-control form-control-user" id="exampleLastName"
+                                            placeholder="Username">
+                                        <div class="errordisplay"><?php echo $userNameError ?> </div>
+                                    </div>
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user"
+                                        <input type="password" name="password" value="<?php echo $password ?>" class="form-control form-control-user"
                                             id="exampleInputPassword" placeholder="Password">
+                                        <div class="errordisplay"><?php echo $passwordError ?> </div>
+                                        <div class="errordisplay"><?php echo $matchPassword ?> </div>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user"
+                                        <input type="password" name="repeatPassword" value="<?php echo $repeatPassword ?>" class="form-control form-control-user"
                                             id="exampleRepeatPassword" placeholder="Repeat Password">
+                                        <div class="errordisplay"><?php echo $repeatPasswordError ?> </div>
+                                        <div class="errordisplay"><?php echo $matchPassword ?> </div>
                                     </div>
                                 </div>
-                                <a href="login.html" class="btn btn-primary btn-user btn-block">
+                                <button type="submit" name="submit" class="btn btn-primary btn-user btn-block">Register Account</button>
+                                <!-- <a href="#" name="submit"  class="btn btn-primary btn-user btn-block">
                                     Register Account
-                                </a>
+                                </a> -->
                                 <hr>
                                 <a href="index.php" class="btn btn-google btn-user btn-block">
                                     <i class="fab fa-google fa-fw"></i> Register with Google

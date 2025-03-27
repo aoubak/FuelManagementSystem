@@ -103,11 +103,11 @@ if (isset($_POST['submit'])) {
         <div class="row justify-content-center">
             <div class="col-otp ">
             <div class="container-otp ">
-                <header class="text-white bg-success">
+                <header class="headerOTP text-white bg-success ">
                     <i class="bx bxs-check-shield"></i>
                 </header>
                 <h4>Enter OTP Code</h4>
-                <form action="#">
+                <form class="formOTP" action="#">
                     <div class="input-field">
                         <input id="inputOTP" type="number" />
                         <input id="inputOTP" type="number" disabled />
