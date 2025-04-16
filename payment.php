@@ -1,4 +1,5 @@
 <?php
+// header("Refresh:0");
 include("view/partials/head.php");
 include("includes/dbManager.php");
 
@@ -6,6 +7,17 @@ checkLogin();
 if (isLogin() == false) {
     header("location:login.php");
 }
+if (!isset($_GET['transaction_no'])) {
+    // If 'transaction_no' not found in URL
+    header("Location:sales.php");
+    exit();
+}
+
+
+// if (isset($_SESSION['refresh_payment'])) {
+//     unset($_SESSION['refresh_payment']);
+//     echo "<script>location.reload();</script>";
+// }
 ?>
 
 <body id="page-top">
@@ -54,12 +66,12 @@ if (isLogin() == false) {
                                         <div class="row mb-3 d-flex justify-content-center">
                                             <div class="col d-flex flex-column d-block">
                                                 <label for="fuel type" class="font-weight-bold">Select Pump</label>
-                                                <select class="custom-select" id="pumpName" name="pumpName" onchange="fetchPumpFuel()" id="">
+                                                <select class="custom-select" name="pumpName" id="">
                                                     <?php
                                                     $pumps = getPumps();
                                                     foreach ($pumps as $pump) {
                                                     ?>
-                                                        <option value="<?php echo $pump["pumpID"]; ?>"> <?php echo $pump["pumpName"]; ?></option>
+                                                        <option value="<?php echo $pump["pumpName"]; ?>"> <?php echo $pump["pumpName"]; ?></option>
                                                     <?php } ?>
                                                 </select>
                                                 <label for="fuel type" class="font-weight-bold">Previous Reading</label>
@@ -186,8 +198,7 @@ if (isLogin() == false) {
                         foreach ($Employees as $row) {
 
 
-                            echo $row['fuelType'];
-                            echo $row['transaction_no'];
+                          
                         }
                     }
 
@@ -195,22 +206,22 @@ if (isLogin() == false) {
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">SALES</h1>
-                        <a href="sales_history.php" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                        <h1 class="h3 mb-0 text-gray-800">Payment Info</h1>
+                        <!-- <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> -->
                     </div>
 
                     <!-- Content Row -->
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-primary">Pump Reading & Sale Calulation</h6>
+                        <div class="card-header py-3  d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Payment and Invoice</h6>
                             <div class="actions">
                                 <div class="dropdown  bg-white ">
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Actions
                                     </button>
                                     <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
-                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#staticBackdrop"><i class="fa-solid fa-plus bg-primary text-white p-1 rounded "></i> Add New Sales</a>
+                                        <a href="sales.php" class="dropdown-item"><i class="fa-solid fa-plus bg-primary text-white p-1 rounded "></i> Add New Sales</a>
                                         <a href="sales_history.php" class="dropdown-item"> <i class="fa-solid fa-clock-rotate-left  bg-primary text-white p-1 rounded"></i> Veiw Sales History</a>
 
                                     </div>
@@ -221,22 +232,7 @@ if (isLogin() == false) {
 
 
                         <div class="card-body">
-
                             <?php
-                           
-                            if (isset($_SESSION['status'])) {
-
-                            ?>
-                                <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
-                                    <strong> <?php echo $_SESSION['status']; ?></strong>
-                                </div>
-                            <?php
-
-                                unset($_SESSION['status']);
-                            }
-                            ?>
-
-                             <?php
                             if (isset($_SESSION['warning'])) {
 
                             ?>
@@ -248,59 +244,70 @@ if (isLogin() == false) {
                                 unset($_SESSION['warning']);
                             }
                             ?>
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead class="bg-primary text-white">
-                                        <tr>
-                                            <th>TRN_NO</th>
-                                            <th>Fuel </th>
-                                            <th>PumpNo</th>
-                                            <th>unitPrice</th>
-                                            <th>PreReading (BS)</th>
-                                            <th>CurReading (AS)</th>
-                                            <th>LtrSold</th>
-                                            <th>Amount</th>
-                                            
+                            <form action="includes/dbManager.php" method="post">
 
 
-                                        </tr>
-                                    </thead>
-                                    <tfoot class="bg-gray-800 text-white">
-                                        <tr>
-                                        <th>TRN_NO</th>
-                                            <th>Fuel </th>
-                                            <th>PumpNo</th>
-                                            <th>unitPrice</th>
-                                            <th>PreReading (BS)</th>
-                                            <th>CurReading (AS)</th>
-                                            <th>LtrSold</th>
-                                            <th>Amount</th>
-                                            
-                                        </tr>
-                                    </tfoot>
-                                    <tbody>
+                                <input type="hidden" name="tran_no" value="<?php echo $row['transaction_no']; ?>" readonly>
+                                <?php 
+                               
+                                    // $trasn_No = $_GET['transaction_no'];
+                                    if($row['transaction_no'] = "" ){
+                                        header("location:../sales.php");
+                                    }
+                                
+                                ?>
+                                <div class="row mb-3 d-flex justify-content-center">
+                                    <div class="col d-flex flex-column d-block">
+                                        <label for="fuel type" class="font-weight-bold">Payment Method</label>
+                                        <select class="custom-select" name="paymentMethod" id="">
+                                            <option selected> -choose-</option>
+                                            <option value="Cash"> Cash</option>
+                                            <option value="Card"> Card</option>
+                                            <option value="Mobile"> Mobile</option>
+                                        </select>
+                                        <label for="fuel type" class="font-weight-bold">Tax Rate %</label>
+                                        <input type="text" id="pre_read" name="tax" class="form-control">
+
+                                    </div>
+                                    <div class="col d-flex flex-column d-block">
+                                        <label for="" class="font-weight-bold">Entery Method</label>
+
+                                        <select class="custom-select" id="fuelType" name="enteryMethod">
+
+                                            <option selected>-Choose-</option>
+                                            <option value="Swiped">Swiped</option>
+                                            <option value="Inserted">Inserted</option>
+                                            <option value="Manual">Manual</option>
+
+                                        </select>
+
+                                        <label for="fuel type" class="font-weight-bold">Invoice Number</label>
                                         <?php
+                                      
 
-                                        $sales = getSales();
-                                        foreach ($sales as $sale) {
-
-
+                                        $newInvoice = getNewInvoice();
                                         ?>
-                                            <tr>
-                                                <td><?php echo $sale['transaction_no']; ?></td>
-                                                <td><?php echo $sale['fuelType']; ?></td>
-                                                <td><?php echo $sale['pumpNo']; ?></td>
-                                                <td><?php echo $sale['unitPrice']; ?></td>
-                                                <td><?php echo $sale['preRead']; ?> ltr</td>
-                                                <td><?php echo $sale['curRead']; ?> ltr</td>
-                                                <td><?php echo $sale['ltrSold']; ?> ltr</td>
-                                                <td><span class="text-primary font-weight-bold p-1 rounded"><?php echo $sale['amount']; ?></span></td>
-                                               
-                                            </tr>
-                                        <?php } ?>
-                                    </tbody>
-                                </table>
-                            </div>
+                                        <input type="text" value="<?php echo $newInvoice; ?>" name="invoiceNo" readonly class="form-control text-danger">
+                                    </div>
+
+
+
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12 modal-footer">
+                                        <button type="submit" name="addPaymentInfo" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+
+                            </form>
                         </div>
                     </div>
                     <div class="row">
@@ -350,78 +357,6 @@ if (isLogin() == false) {
         </div>
 
 
-        <script>
-            function fetchPrice() {
-                var fuelType = document.getElementById("fuelType").value;
-
-
-                if (fuelType !== "") {
-                    $.ajax({
-                        url: "includes/dbManager.php",
-                        type: "POST",
-                        data: {
-                            fuelType: fuelType
-                        },
-                        success: function(response) {
-                            document.getElementById("unitPrice").value = response;
-                        }
-                    });
-                } else {
-                    document.getElementById("unitPrice").value = "";
-                }
-                //  calculateAmount();
-            }
-
-
-            //  → Auto Calculation:
-            // Liters Sold = Current Reading - Pre Reading
-
-            // function calculateLiters() {
-            //     var preRead = parseFloat(document.getElementById('pre_read').value) || 0;
-            //     var currentRead = parseFloat(document.getElementById('current_read').value) || 0;
-            //     var fuelPrice = document.getElementById("unitPrice").value;
-
-            //     var litersSold = currentRead - preRead;
-            //     var amount = litersSold * fuelPrice;
-
-            //     if (litersSold >= 0) {
-            //         document.getElementById('liters_sold').value = litersSold;
-            //     } else {
-            //         document.getElementById('liters_sold').value = 0; // or show error if you want
-            //     }
-
-            //     if (amount >= 0) {
-            //         document.getElementById('amount').value = amount;
-            //     } else {
-            //         document.getElementById('amount').value = 0; // or show error if you want
-            //     }
-
-            // }
-
-            function calculateLitersAndAmount() {
-                var preRead = parseFloat(document.getElementById('pre_read').value) || 0;
-                var currentRead = parseFloat(document.getElementById('current_read').value) || 0;
-
-                var litersSold = currentRead - preRead;
-
-                if (litersSold >= 0) {
-                    document.getElementById('liters_sold').value = litersSold;
-                } else {
-                    document.getElementById('liters_sold').value = 0;
-                }
-
-                calculateAmount(); // auto update amount when reading changes
-            }
-
-            function calculateAmount() {
-                var litersSold = parseFloat(document.getElementById('liters_sold').value) || 0;
-                var fuelPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
-
-                var amount = litersSold * fuelPrice;
-
-                document.getElementById('amount').value = amount.toFixed(2);
-            }
-        </script>
 
         <?php
         include("view/partials/footer.php");

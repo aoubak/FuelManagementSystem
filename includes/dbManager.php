@@ -455,7 +455,7 @@ if (isset($_POST['updateFuelStatus'])) {
     <?php  }
     ?>
 
-<?php
+    <?php
 
 }
 
@@ -554,7 +554,7 @@ if (isset($_POST['addPump'])) {
     $pumpDesc = $_POST['pumpDesc'];
     $stationID =  $_POST['stationID'];
     $fuelID = $_POST['fuelID'];
-   
+
 
     $conn = getConnection();
 
@@ -580,3 +580,364 @@ function getPumps()
     $result->close();
     return $rows;
 }
+
+// fetch Fuel price
+
+
+if (isset($_POST['fuelType'])) {
+    $conn =  getConnection();
+    $fuelType = $_POST['fuelType'];
+    $query = "SELECT UnitPrice FROM fuels WHERE FuelType = '$fuelType'";
+    $result = mysqli_query($conn, $query);
+
+    if ($row = mysqli_fetch_assoc($result)) {
+        echo $row['UnitPrice'];
+    } else {
+        echo "0";
+    }
+}
+
+function getNewInvoice()
+{
+    $conn = getConnection();
+    $result = $conn->query("SELECT invoice_no FROM sales ORDER BY id DESC LIMIT 1,1");
+    $lastInvoice = $result->fetch_all(MYSQLI_ASSOC);
+
+    if (!empty($lastInvoice) && !empty($lastInvoice[0]['invoice_no'])) {
+        $lastNumber = $lastInvoice[0]['invoice_no'];  // example: INV-000145
+        $number = (int) str_replace('INV-', '', $lastNumber); // Remove INV- and convert to int
+        $newInvoice = 'INV-' . str_pad($number + 1, 6, '0', STR_PAD_LEFT);
+    } else {
+        $newInvoice = 'INV-000001';  // first invoice if no record found
+    }
+
+    return $newInvoice;
+}
+
+
+// isert sales table
+if (isset($_POST['deleteFuel'])) {
+    $FuelID = $_POST['FuelID'];
+
+    $conn = getConnection();
+    $result = $conn->query("DELETE FROM Fuels WHERE FuelID = $FuelID");
+    if ($result) {
+        $_SESSION['delete'] = "Fuel deleted successfully";
+        header("location:../Fuel.php");
+    }
+    $conn->close();
+    $result->close();
+}
+
+
+// Auto generate unique transaction code
+function generateTransCode()
+{
+    $prefix = "GMS-";  // Transaction Prefix
+    $code = mt_rand(100000, 999999);  // Random 6 digits
+    $trans_code = $prefix . $code;
+    $conn = getConnection();
+
+    $sql = "SELECT COUNT(*) AS total FROM sales WHERE transaction_no = '$trans_code'";
+    $result = $conn->query($sql);
+    $row = $result->fetch_assoc();
+
+    if ($row['total'] > 0) {
+        // If code exists → regenerate again
+        return generateTransCode();
+    }
+    return $trans_code;
+}
+
+
+
+
+
+if (isset($_POST['addSales'])) {
+    $conn = getConnection();
+
+    $transaction_no = $trans_code = generateTransCode();
+
+    $employeeID = $_POST['employeeID'];
+    $stationID = $_POST['stationID'];
+    $fuelType = $_POST['fuelType'];
+    $pumpNo = $_POST['pumpName'];
+    $unitPrice = $_POST['unitPrice'];
+    $preRead = $_POST['preRead'];
+    $curRead = $_POST['curRead'];
+    $soldLtr = $_POST['LtrSold'];
+    $amount = $_POST['amount'];
+
+    // Check Available Fuel liters.
+    $checkFuel = mysqli_query($conn, "SELECT AvailableLiters FROM fuels WHERE FuelType='$fuelType'");
+    $row = mysqli_fetch_assoc($checkFuel);
+
+    if ($row['AvailableLiters'] >= $soldLtr) {
+
+        // if checking fuel success & then make sales record. 
+
+        $result = $conn->query("INSERT INTO sales (`atendentID`,`transaction_no`,`fuelType`,`pumpNo`,`unitPrice`,`preRead`,`curRead`,`ltrSold`,`amount`,`stationID`) VALUE($employeeID,'$transaction_no','$fuelType','$pumpNo','$unitPrice','$preRead','$curRead','$soldLtr','$amount','$stationID' )");
+        mysqli_query($conn, "UPDATE fuels SET AvailableLiters=AvailableLiters-'$soldLtr' WHERE FuelType='$fuelType'");
+
+        if ($result) {
+            $_SESSION['refresh_payment'] = true;
+            $_SESSION['warning'] = "Sales record created successfully! Please complete the sales entry.";
+            header("location:../payment.php?transaction_no=$transaction_no");
+        }
+        $conn->close();
+        $result->close();
+    } else {
+        $_SESSION['warning'] = "Not Enough Fuel Stock! Please request a new order of fuel -> $fuelType.";
+        header("location:../sales.php");
+        exit();
+    }
+}
+
+
+
+function getSales()
+{
+    $conn = getConnection();
+    $result = $conn->query("SELECT * FROM `sales` ORDER by id DESC LIMIT 1");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    if ($rows) {
+    }
+    $conn->close();
+    $result->close();
+    return $rows;
+}
+
+
+if (isset($_POST['addPaymentInfo'])) {
+    $conn = getConnection();
+
+    $tran_no = $_POST['tran_no'];
+    $paymentMethod = $_POST['paymentMethod'];
+    $tax = $_POST['tax'];
+    $enteryMethod = $_POST['enteryMethod'];
+    $invoiceNo = $_POST['invoiceNo'];
+    $result = $conn->query("UPDATE sales SET `payment_method` = '$paymentMethod',`entry_method`='$enteryMethod',`tax`='$tax',`invoice_no`='$invoiceNo' WHERE transaction_no='$tran_no'");
+
+    if ($result) {
+        $_SESSION['status'] = "Sales compelted successfully!";
+        header("location:../sales.php");
+        exit();
+    } else {
+        $_SESSION['status'] = "Sales is not compelted!";
+        header("location:../sales.php");
+        exit();
+    }
+    $conn->close();
+    $result->close();
+}
+
+// To day fuel sales
+
+function getTodayFuelSales($fuelType)
+{
+    $conn = getConnection();
+    $query = "SELECT SUM(amount) AS total_amount FROM sales WHERE fuelType = '$fuelType' AND DATE(created_at) = CURDATE()";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    return $row['total_amount'] ?? 0;  // return 0 if no sales
+}
+
+
+// genearte invoice
+
+if(isset($_GET['invoice_no'])) {
+    $invoice_no = $_GET['invoice_no'];
+
+    echo "
+    <script>
+        window.onload = function() {
+            generateReceipt('$invoice_no');
+            window.location.href = '../sales_history.php';
+        }
+    </script>
+    ";
+}
+
+
+
+
+
+if (isset($_POST["invoice_no"])) {
+    $invoice_no = $_POST["invoice_no"];
+    // $newInvoice_no = preg_replace('/\D/', '', $invoice_no);
+
+    $conn = getConnection();
+    $result = $conn->query("SELECT * FROM sales WHERE invoice_no = '$invoice_no'");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+    foreach ($rows as $row) {
+
+    ?>
+        <div class="row">
+            <div class="col ">
+                <div class="col mb-5 d-flex justify-content-between">
+                    <div class="">
+                        <p class="m-0 font-weight-bold">Fuel Management System</p>
+                        <p class="m-0">86 Main St.</p>
+                        <p class="m-0">Gacayte, MainVT2045</p>
+                        <p class="m-0">+252907796534</p>
+                    </div>
+                    <div class=" img-fluid ">
+                        <img class=" float-right rounded border-5" style="width: 100px;" src="puplic/images/profile.jpg" alt="">
+
+                    </div>
+                </div>
+
+                <div style="border-top: 2px dashed rgba(128, 128, 128, 0.5); margin: 5px 0;"></div>
+                <div class="col ">
+                    <div class="time d-flex align-items-center justify-content-between">
+                        <div>
+                            <p class="text-center m-0 text-dark font-weight-">
+                                <?php
+                                echo  $date = date('d-m-Y', strtotime($row['created_at']));  // Output: 2025-04-10
+                               
+                                ?></p>
+                        </div>
+
+                        <div>
+                            <p class="text-center m-0 text-dark font-weight-"><?php echo $time = date('H:i:s', strtotime($row['created_at']));?></p>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="border-top: 2px dashed rgba(128, 128, 128, 0.5); margin: 5px 0;"></div>
+                <div class="col ">
+                    <div class="time d-flex align-items-cente align-baseline  justify-content-between">
+                        <div>
+                            <p class=" m-0 text-dark font-weight-">Memeber</p>
+                            <p class=" m-0 text-dark font-weight-">Trans</p>
+                            <p class=" m-0 text-dark font-weight-">Pump</p>
+                        </div>
+
+                        <div>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['atendentID']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['transaction_no']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['pumpNo']; ?></p>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="border-top: 2px dashed rgba(128, 128, 128, 0.5); margin: 5px 0;"></div>
+
+                <div class="col ">
+                    <div class="time d-flex align-items-cente align-baseline  justify-content-between">
+                        <div>
+                            <p class=" m-0 text-dark font-weight-">Fuel</p>
+                            <p class=" m-0 text-dark font-weight-">Liter/KG/Gallon</p>
+                            <p class=" m-0 text-dark font-weight-">Price/L</p>
+                            <p class=" m-0 text-dark font-weight-">Tax</p>
+                            <p class=" m-0 text-dark font-weight-">Total</p>
+                        </div>
+
+                        <div>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['fuelType'];?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['ltrSold'];?></p>
+                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['unitPrice'];?></p>
+                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['tax'];?></p>
+                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['amount'];?></p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div style="border-top: 2px dashed rgba(128, 128, 128, 0.5); margin: 5px 0;"></div>
+
+                <div class="col ">
+                    <div class="time d-flex align-items-cente align-baseline  justify-content-between">
+                        <div>
+                            <!-- <p class=" m-0 text-dark font-weight-">Visa</p> -->
+                            <p class=" m-0 text-dark font-weight-">Entery Method/L</p>
+                            <p class=" m-0 text-dark font-weight-">Station</p>
+                            <p class=" m-0 text-dark font-weight-">Invoice</p>
+                        </div>
+
+                        <div>
+                            <!-- <p class="text-right m-0 text-dark font-weight-">Credit</p> -->
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['entry_method'];?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['stationID'];?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['invoice_no'];?></p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col mt-5">
+                    <div class="time d-flex align-items-cente align-baseline  justify-content-between">
+                        <div>
+                            <p class=" m-0 text-dark ">Thank you</p>
+                            <p class=" m-0 text-dark ">Have a nice day</p>
+
+                        </div>
+
+                        <div class=" img-fluid ">
+                            <img class=" float-right rounded border-5" style="width: 100px;" src="puplic/images/profile.jpg" alt="">
+                            <!-- <i class='bx bxs-gas-pump float-right '></i> -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col d-flex flex-column align-items-center">
+                    <h4>Barcode</h4>
+                </div>
+
+            </div>
+
+        </div>
+
+
+<?php
+    }
+}
+
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    
+    if(isset($_POST['updateProfile'])){
+        $employeeID = $_POST['employeeID'];
+        $userName = $_POST['userName'];
+        $email = $_POST['email'];
+        // SQL Update General Info
+
+        $conn = getConnection();
+        $result = $conn->query("UPDATE Employees SET `Email` = '$email',`UserName`='$userName' WHERE EmployeeID='$employeeID'");
+
+        if ($result) {
+            $_SESSION['status'] = "General detailes updated successfully!";
+            header("location:../profile.php");
+            exit();
+        } 
+        
+        
+    }
+
+    if(isset($_POST['updateEdit'])){
+        $employeeID = $_POST['employeeID'];
+
+        $name = $_POST['name'];
+        $contact = $_POST['contact'];
+        $station = $_POST['station'];
+        $role = $_POST['role'];
+        // SQL Update Edit Profile Info
+
+        $conn = getConnection();
+        $result = $conn-> query("UPDATE Employees SET `fisrtName`= '$name', `ContactNumber`='$contact', `StationID` = '$station', `Role`= '$role' WHERE EmployeeID = '$employeeID' ");
+        if($result){
+            $_SESSION['status'] = "Profile detailes updated successfully!";
+            header("location:../profile.php");
+            exit();
+        }
+    }
+
+    if(isset($_POST['updatePassword'])){
+        $old_pass = $_POST['old_pass'];
+        $new_pass = $_POST['new_pass'];
+        $confirm_pass = $_POST['confirm_pass'];
+        // SQL Update Password
+    }
+
+}
+

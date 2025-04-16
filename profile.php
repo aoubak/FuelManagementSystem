@@ -92,8 +92,8 @@ if (isLogin() == false) {
                     <!-- DataTales Example -->
                     <div class="card shadow myProfile mb-4">
 
-                        
-                        
+
+
 
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h6 class="m-0 font-weight-bold text-primary">My Profile</h6>
@@ -162,11 +162,15 @@ if (isLogin() == false) {
 
                             <div class="ProfileInfoMod ">
                                 <div class="username d-flex align-content-center">
-                                    <h5 class="  text-dark m-0 font-weight-bold">AOUBAK </h5>
+                                    <h5 class="  text-dark m-0 font-weight-bold"> <?php
+                                                                                    echo strtoupper($row['UserName']);
+                                                                                    ?> </h5>
                                     <span class="Verify d-flex align-items-center"><i class='bx bxs-badge-check bx-tada text-success '></i></span>
                                 </div>
 
-                                <p>aoubak01@gmail.com</p>
+                                <p><?php
+                                    echo $row['Email'];
+                                    ?></p>
                             </div>
                             <div class="row   ">
                                 <div class="col-3 d-none d-sm-block bg-light p-2 rounded-left rounded-2 border border-1  flex-column">
@@ -184,143 +188,187 @@ if (isLogin() == false) {
                                     </div>
                                     <div class="Profilelinks ">
                                         <div class="d-block list-group ">
-                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black tab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-gear"></i></span> Generel</a>
-                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black tab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-pen-to-square"></i></span> Edit Profile</a>
-                                            <a href="#" class="list-group-item mb-1 list-group-item-action text-dark text-black tab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-key"></i></span> Password</a>
+                                            <a href="#general" class="list-group-item mb-1 list-group-item-action text-dark text-black tab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-gear"></i></span> Generel</a>
+                                            <a href="#edit" class="list-group-item mb-1 list-group-item-action text-dark text-black tab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-pen-to-square"></i></span> Edit Profile</a>
+                                            <a href="#password" class="list-group-item mb-1 list-group-item-action text-dark text-black tab_btn" aria-current="true"> <span class="ProfileLinksIcons"><i class="fa-solid fa-key"></i></span> Password</a>
                                         </div>
                                     </div>
 
 
                                 </div>
                                 <!-- user conent -->
+
                                 <div class="col content acontent active p-2 border border-1 rounded-right rounded-2">
-                                    <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
-                                        <h5 class="font-weight-bold">AOUBAK / General</h5>
-                                        <span> Update your username and manage your account</span>
-                                    </div>
-                                    <div class="user-data pl-3 pr-3  mt-2">
-                                        <label for="" class=" text-dark ">Username</label>
-                                        <input type="text" value="<?php
-                                                                    echo $row['UserName'];
-                                                                    ?>" class="form-control" placeholder="">
-                                    </div>
-                                    <div class="user-data pl-3 pr-3 mt-2">
-                                        <label for="" class=" text-dark">Email</label>
-                                        <input type="text" value="<?php
-                                                                    echo $row['Email'];
-                                                                    ?>" class="form-control" placeholder="">
-                                    </div>
-                                    <div class="user-data  mt-2 modal-footer">
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    </div>
+
+                                    <form action="includes/dbManager.php" method="post">
+                                        <input type="hidden" name="employeeID" value="<?php echo $row['EmployeeID']; ?>">
+
+                                        <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
+                                            <h5 class="font-weight-bold"><?php
+                                                                            echo $row['UserName'];
+                                                                            ?> / General</h5>
+                                            <span> Update your username and manage your account</span>
+                                        </div>
+                                        <?php
+
+                                        if (isset($_SESSION['status'])) {
+
+                                        ?>
+                                            <div class="alert alert-success mt-2 d-flex justify-content-between align-items-center" role="alert">
+                                                <strong> <?php echo $_SESSION['status']; ?></strong>
+                                            </div>
+                                        <?php
+
+                                            unset($_SESSION['status']);
+                                        }
+                                        ?>
+                                        <div class="user-data pl-3 pr-3  mt-2">
+
+                                            <label for="" class="text-dark">Username</label>
+                                            <input type="text" name="userName" value="<?php
+                                                                                        echo $row['UserName'];
+                                                                                        ?>" class="form-control" placeholder="">
+                                        </div>
+                                        <div class="user-data pl-3 pr-3 mt-2">
+                                            <label for="" class=" text-dark">Email</label>
+                                            <input type="text" name="email" value="<?php
+                                                                                    echo $row['Email'];
+                                                                                    ?>" class="form-control" placeholder="">
+                                        </div>
+
+                                        <div class="user-data mt-2 modal-footer">
+                                            <button type="submit" name="updateProfile" class="btn btn-primary">Save Changes</button>
+                                        </div>
+                                    </form>
                                 </div>
+
                                 <!-- edit Profile -->
                                 <div class="col content acontent editProfile p-2 border border-1 rounded-right rounded-2">
-                                    <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
-                                        <h5 class="font-weight-bold">AOUBAK / Edit Profile</h5>
-                                        <span> Set up your and enhance your profile</span>
-                                    </div>
-                                    <div class="user-data pl-3 pr-3 pt-3 pb-3 mt-2 rounded rounded-2 border border-1 border-danger d-flex  align-items-center ">
-                                        <div class="editImage mr-4">
-                                            <img src="puplic/images/profile.jpg" class="rounded rounded-circle" alt="">
+                                    <form action="includes/dbManager.php" method="post">
+                                        <input type="hidden" name="employeeID" value="<?php echo $row['EmployeeID']; ?>">
+
+                                        <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
+                                            <h5 class="font-weight-bold">AOUBAK / Edit Profile</h5>
+                                            <span> Set up your and enhance your profile</span>
+                                        </div>
+                                        <div class="user-data pl-3 pr-3 pt-3 pb-3 mt-2 rounded rounded-2 border border-1 border-danger d-flex  align-items-center ">
+                                            <div class="editImage mr-4">
+                                                <img src="puplic/images/profile.jpg" class="rounded rounded-circle" alt="">
+                                            </div>
+
+                                            <div class="custom-file  mr-4">
+                                                <input type="file" class="custom-file-input" id="inputGroupFile01">
+                                                <label class="custom-file-label text-danger" for="inputGroupFile01">Update your current image - Choose file</label>
+
+                                            </div>
+                                            <button type="submit" class="btn btn-danger"> Delete </button>
                                         </div>
 
-                                        <div class="custom-file  mr-4">
-                                            <input type="file" class="custom-file-input" id="inputGroupFile01">
-                                            <label class="custom-file-label text-danger" for="inputGroupFile01">Update your current image - Choose file</label>
-
+                                        <div class="user-data pl-3 pr-3  mt-2">
+                                            <label for="" class="text-dark">Name</label>
+                                            <input type="text" name="name" value="<?php
+                                                                                    echo $row['fisrtName'];
+                                                                                    ?>" class="form-control" placeholder="">
                                         </div>
-                                        <button type="submit" class="btn btn-danger"> Delete </button>
-                                    </div>
-                                    <div class="user-data pl-3 pr-3  mt-2">
-                                        <label for="" class="text-dark">Name</label>
-                                        <input type="text" value="<?php
-                                                                    echo $row['fisrtName'];
-                                                                    ?>" class="form-control" placeholder="">
-                                    </div>
-                                    <div class="user-data pl-3 pr-3 mt-2">
-                                        <label for="" class="text-dark">Contact</label>
-                                        <input type="text" value="<?php
-                                                                    echo $row['ContactNumber'];
-                                                                    ?>" class="form-control" placeholder="">
-                                    </div>
-                                    <div class="user-data pl-3 pr-3 mt-2">
-                                        <label for="" class="text-dark">Station</label>
-                                        <select name="staion" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                            <?php
-                                            $stations = getStations();
-                                            // foreach ($stations as $Station) {
-                                            ?>
+                                        <div class="user-data pl-3 pr-3 mt-2">
+                                            <label for="" class="text-dark">Contact</label>
+                                            <input type="text" name="contact" value="<?php
+                                                                                        echo $row['ContactNumber'];
+                                                                                        ?>" class="form-control" placeholder="">
+                                        </div>
+                                        <div class="user-data pl-3 pr-3 mt-2">
+                                            <label for="" class="text-dark">Station</label>
+                                            <select name="station" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                <?php
+                                                $stations = getStations();
+                                                // foreach ($stations as $Station) {
+                                                ?>
 
-                                            <?php
-                                            if (isLogin() == true) {
-                                                $EmployeeID = $_SESSION['EmployeeID'];
+                                                <?php
+                                                if (isLogin() == true) {
+                                                    $EmployeeID = $_SESSION['EmployeeID'];
 
-                                                $conn = getConnection();
-                                                $result = $conn->query("SELECT s.StationID, s.Name, e.Role FROM `employees` e INNER JOIN `stations` s on e.StationID = s.StationID WHERE EmployeeID ='$EmployeeID' ");
-                                                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                                                    $conn = getConnection();
+                                                    $result = $conn->query("SELECT s.StationID, s.Name, e.Role FROM `employees` e INNER JOIN `stations` s on e.StationID = s.StationID WHERE EmployeeID ='$EmployeeID' ");
+                                                    $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-                                                $Employees = $rows;
-                                                foreach ($Employees as $row) {
-                                            ?>
-                                                    <option value="<?php echo $Station['StationID']; ?>">-- <?php echo $row['Name']; ?> --</option>
-                                            <?php  }
-                                            } ?>
-                                            <option value="">Main Station</option>
+                                                    $Employees = $rows;
+                                                    foreach ($Employees as $row) {
+                                                ?>
+                                                        <option value="<?php echo $Station['StationID']; ?>">-- <?php echo $row['Name']; ?> --</option>
+                                                <?php  }
+                                                } ?>
+
+                                              
+                                                    <option value="">- choose the below options -</option>
+                                                    <?php
+                                                    $stations = getStations();
+                                                    foreach ($stations as $station) {
+
+                                                    ?>
+                                                        <option value="<?php echo $station['StationID']; ?>"><?php echo $station['Name']; ?></option>
+                                                    <?php } ?>
+                                               
+                                                <!-- <option value="">Main Station</option>
                                             <option value="">Second Station</option>
                                             <option value="">Third Station</option>
                                             <option value="">Fourth Station</option>
-                                            <option value="">Fifth Station</option>
+                                            <option value="">Fifth Station</option> -->
 
 
-                                        </select>
-                                    </div>
-                                    <div class="user-data pl-3 pr-3 mt-2">
-                                        <label for="" class="text-dark">Role</label>
-                                        <select name="role" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                            <?php
-                                            if (isLogin() == true) {
-                                                $EmployeeID = $_SESSION['EmployeeID'];
+                                            </select>
+                                        </div>
+                                        <div class="user-data pl-3 pr-3 mt-2">
+                                            <label for="" class="text-dark">Role</label>
+                                            <select name="role" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                <?php
+                                                if (isLogin() == true) {
+                                                    $EmployeeID = $_SESSION['EmployeeID'];
 
-                                                $conn = getConnection();
-                                                $result = $conn->query("SELECT s.StationID, s.Name, e.Role FROM `employees` e INNER JOIN `stations` s on e.StationID = s.StationID WHERE EmployeeID ='$EmployeeID' ");
-                                                $rows = $result->fetch_all(MYSQLI_ASSOC);
+                                                    $conn = getConnection();
+                                                    $result = $conn->query("SELECT s.StationID, s.Name, e.Role FROM `employees` e INNER JOIN `stations` s on e.StationID = s.StationID WHERE EmployeeID ='$EmployeeID' ");
+                                                    $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-                                                $Employees = $rows;
-                                                foreach ($Employees as $row) {
-                                            ?>
-                                                    <option value="<?php echo $Station['StationID']; ?>">-- <?php echo $row['Role']; ?> --</option>
-                                            <?php  }
-                                            } ?>
+                                                    $Employees = $rows;
+                                                    foreach ($Employees as $row) {
+                                                ?>
+                                                        <option value="<?php echo $Station['StationID']; ?>">-- <?php echo $row['Role']; ?> --</option>
+                                                <?php  }
+                                                } ?>
 
-                                            <option value="Pump Operator">Pump Operator</option>
-                                            <option value="Accountant/Cashier">Accountant/Cashier</option>
-                                            <option value="Station Manager">Station Manager</option>
-                                            <option value="Mechanic/Technician">Mechanic/Technician</option>
-                                            <option value="Security Guard">Security Guard </option>
-                                        </select>
-                                    </div>
+                                                <option value="Pump Operator">-choose the below options-</option>
+                                                <option value="Pump Operator">Pump Operator</option>
+                                                <option value="Accountant/Cashier">Accountant/Cashier</option>
+                                                <option value="Station Manager">Station Manager</option>
+                                                <option value="Mechanic/Technician">Mechanic/Technician</option>
+                                                <option value="Security Guard">Security Guard </option>
+                                            </select>
+                                        </div>
 
-                                    <div class="user-data  mt-2 modal-footer">
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    </div>
+                                        <div class="user-data  mt-2 modal-footer">
+                                            <button type="submit" name="updateEdit" class="btn btn-primary">Save Changes</button>
+                                        </div>
+                                    </form>
                                 </div>
+
                                 <div class="col content acontent p-2 border border-1 rounded-right rounded-2">
+                                    <form action="includes/dbManager.php" method="post">
                                     <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
                                         <h5 class="font-weight-bold">AOUBAK / Password</h5>
                                         <span> Manage your password</span>
                                     </div>
                                     <div class="user-data pl-3 pr-3  mt-2">
                                         <label for="" class="text-dark">Old Password</label>
-                                        <input type="text" class="form-control" placeholder="">
+                                        <input type="text" name="oldPass" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data pl-3 pr-3 mt-2">
                                         <label for="" class="text-dark">New Password</label>
-                                        <input type="text" class="form-control" placeholder="">
+                                        <input type="text" name="newPass" class="form-control" placeholder="">
                                     </div>
                                     <div class="user-data  mt-2 modal-footer">
                                         <button type="submit" class="btn btn-primary">Save Changes</button>
                                     </div>
+                                    </form>
                                 </div>
                             </div>
 
@@ -395,6 +443,33 @@ if (isLogin() == false) {
 
     <!-- box icons -->
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- <script>
+        function confirmCreateReceipt() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to create a new receipt?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6', // blue
+                cancelButtonColor: '#d33', // red
+                confirmButtonText: 'Yes, Create it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Creating...',
+                        text: 'Please wait...',
+                        timer: 1000,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    }).then(() => {
+                        window.location.href = 'create_receipt.php';
+                    })
+                }
+            })
+        }
+    </script> -->
 
 
 </body>
