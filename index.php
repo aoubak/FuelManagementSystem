@@ -57,7 +57,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 ?>
 
 
-
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -90,6 +89,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target=".bd-example-modal-lg"><i
                                 class="fa fa-gas-pump fa-sm text-white-50"></i> Price Control</a>
                     </div>
+                   
                     <!-- Button trigger modal -->
                     <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
                         Launch demo modal
@@ -172,6 +172,9 @@ while ($row = mysqli_fetch_assoc($result)) {
                         </div>
                     </div>
                     <div class="row">
+                        <!-- From Uiverse.io by satyamchaudharydev -->
+
+                       
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
@@ -375,13 +378,13 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <div class="row mb-3">
                         <div class="col-xl-6  col-md-6 ">
                             <div class="card p-2 ">
-                            <h5 class="m-0 text-dark">Today Fuel Sales per <span class="font-weight-bold text-primary">Amount</span></h6>
+                                <h5 class="m-0 text-dark">Today Fuel Sales per <span class="font-weight-bold text-primary">Amount</span></h6>
 
                             </div>
                         </div>
                         <div class="col-xl-6  col-md-6 ">
                             <div class="card p-2 ">
-                            <h5 class="m-0 text-dark">Monthly Sales per <span class="font-weight-bold text-primary"> Fuel</span></h6>
+                                <h5 class="m-0 text-dark">Monthly Sales per <span class="font-weight-bold text-primary"> Fuel</span></h6>
 
                             </div>
                         </div>
@@ -446,9 +449,9 @@ while ($row = mysqli_fetch_assoc($result)) {
                                             ];
 
                                             // prepare dataset per fuel
-                                             $datasets = [ ];
+                                            $datasets = [];
 
-                                            
+
                                             foreach ($fuelTypes as $fuel) {
                                                 $fuelData = [];
                                                 foreach ($months as $month) {
@@ -463,8 +466,6 @@ while ($row = mysqli_fetch_assoc($result)) {
                                                     'borderColor' => str_replace('0.7', '1', $color), // stronger border
                                                     'borderWidth' => 2,
                                                 ];
-                                              
-                                                
                                             }
 
 
@@ -576,7 +577,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                         'rgba(255, 99, 132, 0.7)', // gas
                         'rgba(75, 192, 192, 0.7)' // Kerosene
 
-                        
+
                     ],
                     borderColor: [
                         'rgba(54, 162, 235, 1)',
@@ -602,8 +603,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 
 
     <script>
-
-
         var ctx = document.getElementById('monthFuelSalesChart').getContext('2d');
 
         var fuelSalesChart = new Chart(ctx, {

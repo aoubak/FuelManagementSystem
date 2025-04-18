@@ -34,66 +34,7 @@ if (isLogin() == false) {
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Modal -->
-                    <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-lg " role="document">
-                            <form action="includes/dbManager.php" method="post">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Add New Pump</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body ">
-                                        <div class="row d-flex justify-content-center">
-                                            <div class="col d-flex flex-column d-block">
-                                                <label for="fuel type" class="form-select-sm  font-weight-bold">Pump Name</label>
-                                                <input type="text" name="pumpName" class="form-control">
-                                                <label for="" class="font-weight-bold">Station</label>
-                                                <select name="stationID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                                    <?php
-                                                    $stations = getStations();
-                                                    foreach ($stations as $station) {
-                                                    ?>
-                                                        <option value="<?php echo $station["StationID"] ?>"><?php echo $station["Name"] ?></option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                            <div class="col d-flex flex-column d-block">
-                                                <label for="fuel type" class="form-select-sm  font-weight-bold">Pump Desc</label>
-                                                <input type="text" name="pumpDesc" class="form-control">
-                                                <!-- <label for="" class="font-weight-bold">Pump Status</label>
-                                                <select name="pumpStatus" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                                    <option selected>Choose...</option>
-                                                    <option value="1">Active</option>
-                                                    <option value="0">In active</option>
-                                                </select> -->
-                                                <label for="fuel type" class="form-select-sm example font-weight-bold">Fuel Type</label>
-                                                <select name="fuelID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                                    <?php
-
-                                                    $fuels = getFuels();
-                                                    foreach ($fuels as $fuel) {
-                                                    ?>
-                                                        <option value="<?php echo $fuel['FuelID'] ?>"><?php echo $fuel['FuelType'] ?></option>
-                                                    <?php   } ?>
-                                                </select>
-                                            </div>
-
-                                            
-                                        </div>
-
-
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" name="addPump" class="btn btn-primary">Submit</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                 
                     <!-- Modal -->
                     <div class="modal fade bd-update-modal-lg" id="exampleModalCenterUpdate" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-lg " role="document">
@@ -138,6 +79,44 @@ if (isLogin() == false) {
                             </div>
                         </div>
                     </div>
+                    <!-- modal -->
+                    <div class="modal fade bd-updateStatus-modal-lg" id="PumpStatusModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-lg " role="document">
+                        <form action="includes/dbManager.php" method="post">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Update Pump Status </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body ">
+
+                                    <div class="row d-flex justify-content-center ">
+                                        <div class="col d-flex flex-column d-block ViewPumpStatus">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" name="upPumpsStatus" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+                <!-- modal -->
+
+                <div class="modal fade updatePumps" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content ViewPumps" id="">
+                        
+                        </div>
+                    </div>
+                </div>
                     <!-- Page Heading -->
                     <div
                         class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -220,7 +199,7 @@ if (isLogin() == false) {
 
                                         
                                         <tr>
-                                            <td class="pump_name"> <?php echo $pump['pumpID'] ?></td>
+                                            <td class="pumpID"> <?php echo $pump['pumpID'] ?></td>
                                             <td><?php echo $pump['pumpName'] ?> </td>
                                             <td><?php echo $pump['pumpDesc'] ?> </td>
                                             <td> <span class=" "><?php echo $pump['fuelID'] ?></span></td>
@@ -240,10 +219,10 @@ if (isLogin() == false) {
                                                     
                                                     ?>
                                                
-                                                <button class="btn btn-info btn-sm updateFuelStatus">
+                                                <button class="btn btn-info btn-sm updatePumpStatus">
                                                         <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
                                             </td>
-                                            <td><button class="btn btn-primary btn-sm updateStation">
+                                            <td><button class="btn btn-primary btn-sm updatePumpStatus">
                                                     <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
                                                 <button class="btn btn-danger btn-sm deleteStation">
                                                     <i class="fa-solid fa-trash-can fa-sm"></i></button>
@@ -317,6 +296,58 @@ if (isLogin() == false) {
 
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
+
+    <script>
+         $(document).ready(function() {
+        $('.updatePumpStatus').click(function(e) {
+            e.preventDefault();
+
+            var pumpID = $(this).closest('tr').find('.pumpID').text();
+
+            console.log(pumpID);
+            $.ajax({
+                method: "POST",
+                url: "includes/dbManager.php",
+                data: {
+                    'updatePumpStatus': true,
+                    'pumpID': pumpID,
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('.ViewPumpStatus').html(response);
+                    $('#PumpStatusModel').modal('show');
+
+                }
+            });
+
+        });
+    });
+    // update pumps
+    $(document).ready(function() {
+        $('.updatePump').click(function(e) {
+            e.preventDefault();
+
+            var pumpID = $(this).closest('tr').find('.pumpID').text();
+
+            // console.log(StationID);
+            $.ajax({
+                method: "POST",
+                url: "includes/dbManager.php",
+                data: {
+                    'updatePump': true,
+                    'pumpID': pumpID,
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('.ViewPumps').html(response);
+                    $('.updatePumps').modal('show');
+
+                }
+            });
+            
+        });
+    });
+    </script>
 
 
 

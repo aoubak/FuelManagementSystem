@@ -79,7 +79,6 @@ if (isset($_POST['upStationStatus'])) {
     $conn->close();
     $result->close();
 }
-
 // update status Sesion view fucntion with JQuery
 if (isset($_POST['updateStationStatus'])) {
     $stationID = $_POST['StationID'];
@@ -89,7 +88,6 @@ if (isset($_POST['updateStationStatus'])) {
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 ?>
-    <!-- <label for="fuel type" class="font-weight-bold">Station Status: </label> -->
 
     <?php
     foreach ($rows as $row) {
@@ -142,11 +140,7 @@ if (isset($_POST['updateStationStatus'])) {
     ?>
 
     <?php
-    // if ($result) {
-    //     header("location:../stations.php");
-    // }
-    // $conn->close();
-    // $result->close();
+
 }
 
 // delete Station
@@ -941,3 +935,103 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 }
 
+
+if (isset($_POST['updatePumpStatus'])) {
+    $pumpID = $_POST['pumpID'];
+
+    $conn = getConnection();
+    $result = $conn->query("SELECT pumpID, status FROM pumps WHERE pumpID = '$pumpID'");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+?>
+
+    <?php
+    foreach ($rows as $row) {
+    ?>
+        <input type="hidden" name="pumpID" class="form-control" name="stationStatus" id="" value=" <?php echo $row['pumpID']; ?> ">
+
+        <?php
+        if ($row['status'] == 0) {
+            echo '
+            <div class="row d-flex justify-content-center ">
+            <div class="col d-flex flex-column d-block ViewStationStatus">
+            
+            <label for="fuel type" class="font-weight-bold">Current Status: </label>
+                    <button class="btn btn-danger" disabled> In Active </button>
+                </div>
+
+                 <div class="col d-flex flex-column d-block ViewStationStatus">
+                     <label for="fuel type" class="font-weight-bold">Update Status</label>
+                        <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Choose...</option>
+                            <option value="1">Active</option>
+                            <option value="0">In Active</option>
+                        </select>
+                </div>
+                </div> ';
+        }
+        if ($row['status'] == 1) {
+            echo '
+            <div class="row d-flex justify-content-center ">
+            <div class="col d-flex flex-column d-block ViewStationStatus">
+            <label for="fuel type" class="font-weight-bold">Current Status: </label>
+                    <button class="btn btn-success " disabled>Active </button>
+                </div>
+
+                 <div class="col d-flex flex-column d-block ViewStationStatus">
+                     <label for="fuel type" class="font-weight-bold">Update Status</label>
+                        <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Choose...</option>
+                            <option value="1">Active</option>
+                            <option value="0">In Active</option>
+                        </select>
+                </div>
+                </div> ';
+        }
+
+
+        ?>
+
+    <?php  }
+    ?>
+
+    <?php
+
+}
+
+// after model show will run this code to update the pump's status.
+
+if (isset($_POST['upPumpsStatus'])) {
+    $pumpID = $_POST['pumpID'];
+    $status = $_POST['status'];
+
+    $conn = getConnection();
+    $result = $conn->query("UPDATE pumps SET status = '$status' WHERE StationID = $pumpID");
+
+    if ($result) {
+        $_SESSION['status'] = "Status updated successfully";
+        header("location:../pumps.php");
+    }
+    $conn->close();
+    $result->close();
+}
+
+if (isset($_POST['updatePumpBtn'])) {
+    $stationID = $_POST['StationID'];
+    $name = $_POST['name'];
+    $location = $_POST['location'];
+    $contactNumber = $_POST['contactNumber'];
+
+    $conn = getConnection();
+    $result = $conn->query("UPDATE `stations` SET `Name` = '$name', `Location` = '$location' , `ContactNumber` = '$contactNumber' WHERE `stations`.`StationID` = $stationID");
+
+    if ($result) {
+        $_SESSION['status'] = "Station updated successfully";
+        header("location:../stations.php");
+    } else {
+
+        echo "Station not upadted";
+    }
+    $conn->close();
+    $result->close();
+}
