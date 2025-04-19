@@ -1017,13 +1017,14 @@ if (isset($_POST['upPumpsStatus'])) {
 }
 
 if (isset($_POST['updatePumpBtn'])) {
-    $stationID = $_POST['StationID'];
-    $name = $_POST['name'];
-    $location = $_POST['location'];
-    $contactNumber = $_POST['contactNumber'];
+    $pumpID = $_POST['pumpID'];
+    $pumpName = $_POST['pumpName'];
+    $pumpDesc = $_POST['pumpDesc'];
+    $fuelID = $_POST['fuelID'];
+    $stationID = $_POST['stationID'];
 
     $conn = getConnection();
-    $result = $conn->query("UPDATE `stations` SET `Name` = '$name', `Location` = '$location' , `ContactNumber` = '$contactNumber' WHERE `stations`.`StationID` = $stationID");
+    $result = $conn->query("UPDATE `pumps` SET `pumpName` = '$pumpName', `pumpDesc` = '$pumpDesc' , `fuelID` = '$fuelID',`Staion` WHERE `stations`.`StationID` = $stationID");
 
     if ($result) {
         $_SESSION['status'] = "Station updated successfully";
