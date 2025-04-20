@@ -739,7 +739,7 @@ function getTodayFuelSales($fuelType)
 
 // genearte invoice
 
-if(isset($_GET['invoice_no'])) {
+if (isset($_GET['invoice_no'])) {
     $invoice_no = $_GET['invoice_no'];
 
     echo "
@@ -789,12 +789,12 @@ if (isset($_POST["invoice_no"])) {
                             <p class="text-center m-0 text-dark font-weight-">
                                 <?php
                                 echo  $date = date('d-m-Y', strtotime($row['created_at']));  // Output: 2025-04-10
-                               
+
                                 ?></p>
                         </div>
 
                         <div>
-                            <p class="text-center m-0 text-dark font-weight-"><?php echo $time = date('H:i:s', strtotime($row['created_at']));?></p>
+                            <p class="text-center m-0 text-dark font-weight-"><?php echo $time = date('H:i:s', strtotime($row['created_at'])); ?></p>
                         </div>
                     </div>
 
@@ -829,11 +829,11 @@ if (isset($_POST["invoice_no"])) {
                         </div>
 
                         <div>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['fuelType'];?></p>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['ltrSold'];?></p>
-                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['unitPrice'];?></p>
-                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['tax'];?></p>
-                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['amount'];?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['fuelType']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['ltrSold']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['unitPrice']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['tax']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['amount']; ?></p>
                         </div>
                     </div>
 
@@ -852,9 +852,9 @@ if (isset($_POST["invoice_no"])) {
 
                         <div>
                             <!-- <p class="text-right m-0 text-dark font-weight-">Credit</p> -->
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['entry_method'];?></p>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['stationID'];?></p>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['invoice_no'];?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['entry_method']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['stationID']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['invoice_no']; ?></p>
                         </div>
                     </div>
 
@@ -884,13 +884,13 @@ if (isset($_POST["invoice_no"])) {
         </div>
 
 
-<?php
+    <?php
     }
 }
 
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    
-    if(isset($_POST['updateProfile'])){
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    if (isset($_POST['updateProfile'])) {
         $employeeID = $_POST['employeeID'];
         $userName = $_POST['userName'];
         $email = $_POST['email'];
@@ -903,12 +903,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $_SESSION['status'] = "General detailes updated successfully!";
             header("location:../profile.php");
             exit();
-        } 
-        
-        
+        }
     }
 
-    if(isset($_POST['updateEdit'])){
+    if (isset($_POST['updateEdit'])) {
         $employeeID = $_POST['employeeID'];
 
         $name = $_POST['name'];
@@ -918,21 +916,20 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         // SQL Update Edit Profile Info
 
         $conn = getConnection();
-        $result = $conn-> query("UPDATE Employees SET `fisrtName`= '$name', `ContactNumber`='$contact', `StationID` = '$station', `Role`= '$role' WHERE EmployeeID = '$employeeID' ");
-        if($result){
+        $result = $conn->query("UPDATE Employees SET `fisrtName`= '$name', `ContactNumber`='$contact', `StationID` = '$station', `Role`= '$role' WHERE EmployeeID = '$employeeID' ");
+        if ($result) {
             $_SESSION['status'] = "Profile detailes updated successfully!";
             header("location:../profile.php");
             exit();
         }
     }
 
-    if(isset($_POST['updatePassword'])){
+    if (isset($_POST['updatePassword'])) {
         $old_pass = $_POST['old_pass'];
         $new_pass = $_POST['new_pass'];
         $confirm_pass = $_POST['confirm_pass'];
         // SQL Update Password
     }
-
 }
 
 
@@ -943,7 +940,7 @@ if (isset($_POST['updatePumpStatus'])) {
     $result = $conn->query("SELECT pumpID, status FROM pumps WHERE pumpID = '$pumpID'");
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-?>
+    ?>
 
     <?php
     foreach ($rows as $row) {
@@ -995,9 +992,68 @@ if (isset($_POST['updatePumpStatus'])) {
     <?php  }
     ?>
 
-    <?php
+<?php
 
 }
+
+// update pumps with jqeury
+if (isset($_POST['updatePumpView'])) {
+    $pumpID = $_POST['pumpID'];
+
+    $conn = getConnection();
+    $result = $conn->query("SELECT * FROM pumps where pumpid = $pumpID");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+
+    foreach ($rows as $row) {
+    ?>
+        <form action="includes/dbManager.php" method="post">
+            <input type="hidden" value="<?php echo $row['pumpID']; ?>" name="pumpID" id="pumpID" class="form-control">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bold ">Update Pump</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="row d-flex justify-content-center">
+                    <div class="col d-flex flex-column d-block">
+                        <label for="fuel type" class="font-weight-bold"> Name</label>
+                        <input type="text" name="name" value="<?php echo $row['pumpName']; ?>" class="form-control">
+                        <label for="fuel type" class="font-weight-bold">pumpDesc</label>
+                        <input type="text" name="pumpDesc" value="<?php echo $row['pumpDesc']; ?>" class="form-control">
+                    </div>
+                    <div class="col d-flex flex-column d-block">
+                        <label for="" class="font-weight-bold">Station</label>
+                        
+                        <input type="text" name="station" value="<?php echo $row['stationID']; ?>" class="form-control" aria-label=".cost">
+                        <label for="" class="font-weight-bold">Fuel</label>
+                        <input type="text" name="fuel" value="<?php echo $row['fuelID']; ?>" class="form-control" aria-label=".cost">
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" name="updatePumpBtn" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+
+
+
+
+
+    <?php }
+    ?>
+
+<?php
+   
+}
+
+
+
 
 // after model show will run this code to update the pump's status.
 
@@ -1035,4 +1091,207 @@ if (isset($_POST['updatePumpBtn'])) {
     }
     $conn->close();
     $result->close();
+}
+
+// get all suppliers.
+function getSuppliers()
+{
+    $conn = getConnection();
+    $result = $conn->query("SELECT * FROM suppliers");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    if ($rows) {
+    }
+    $conn->close();
+    $result->close();
+    return $rows;
+}
+// get all suppliers end.
+
+
+// add suppliers
+if (isset($_POST['addSupplier'])) {
+    $supplierName = $_POST['supplierName'];
+    $contactNumber = $_POST['contactNumber'];
+    $email = $_POST['email'];
+    $location = $_POST['location'];
+
+    $conn = getConnection();
+    $result = $conn->query("INSERT INTO suppliers (`Name`,`ContactNumber`,`Email`,`Location`) VALUES('$supplierName','$contactNumber','$email','$location')");
+    if ($result) {
+        $_SESSION['status'] = "Supplier inserted successfully";
+        header("location:../suppliers.php");
+    }
+    $conn->close();
+    $result->close();   
+}
+
+
+if (isset($_POST['updateSupplierStatus'])) {
+    $supplierID = $_POST['supplierID'];
+
+    $conn = getConnection();
+    $result = $conn->query("SELECT id, status FROM suppliers WHERE id = '$supplierID'");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+    ?>
+
+    <?php
+    foreach ($rows as $row) {
+    ?>
+        <input type="hidden" name="supplierID" class="form-control" name="stationStatus" id="" value=" <?php echo $row['id']; ?> ">
+
+        <?php
+        if ($row['status'] == 0) {
+            echo '
+            <div class="row d-flex justify-content-center ">
+            <div class="col d-flex flex-column d-block ViewStationStatus">
+            
+            <label for="fuel type" class="font-weight-bold">Current Status: </label>
+                    <button class="btn btn-danger" disabled> In Active </button>
+                </div>
+
+                 <div class="col d-flex flex-column d-block ViewStationStatus">
+                     <label for="fuel type" class="font-weight-bold">Update Status</label>
+                        <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Choose...</option>
+                            <option value="1">Active</option>
+                            <option value="0">In Active</option>
+                        </select>
+                </div>
+                </div> ';
+        }
+        if ($row['status'] == 1) {
+            echo '
+            <div class="row d-flex justify-content-center ">
+            <div class="col d-flex flex-column d-block ViewStationStatus">
+            <label for="fuel type" class="font-weight-bold">Current Status: </label>
+                    <button class="btn btn-success " disabled>Active </button>
+                </div>
+
+                 <div class="col d-flex flex-column d-block ViewStationStatus">
+                     <label for="fuel type" class="font-weight-bold">Update Status</label>
+                        <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Choose...</option>
+                            <option value="1">Active</option>
+                            <option value="0">In Active</option>
+                        </select>
+                </div>
+                </div> ';
+        }
+
+
+        ?>
+
+    <?php  }
+    ?>
+
+<?php
+
+}
+
+if (isset($_POST['upSuppleirStatus'])) {
+    $supplierID = $_POST['supplierID'];
+    $status = $_POST['status'];
+
+    $conn = getConnection();
+    $result = $conn->query("UPDATE suppliers SET status = '$status' WHERE id = $supplierID");
+
+    if ($result) {
+        $_SESSION['status'] = "Status updated successfully";
+        header("location:../suppliers.php");
+    }
+    $conn->close();
+    $result->close();
+}
+
+// update suppliers
+if (isset($_POST['updateSupplirBtn'])) {
+    $supplierID = $_POST['supplierID'];
+    $supplierName = $_POST['name'];
+    $contactNumber = $_POST['contactNumber'];
+    $email = $_POST['email'];
+    $location = $_POST['location'];
+
+    $conn = getConnection();
+    $result = $conn->query("UPDATE suppliers SET `Name` = '$supplierName', `ContactNumber` = '$contactNumber', `Email` = '$email', `Location` = '$location' WHERE id = $supplierID");
+
+    if ($result) {
+        $_SESSION['status'] = "Supplier updated successfully";
+        header("location:../suppliers.php");
+    } else {
+        $_SESSION['status'] = "Supplier not upadted";
+        header("location:../suppliers.php");
+    }
+    $conn->close();
+    $result->close();
+}
+
+// delete suppliers
+if (isset($_POST['deleteSupplier'])) {
+    $supplierID = $_POST['supplierID'];
+
+    $conn = getConnection();
+    $result = $conn->query("DELETE FROM suppliers WHERE id = $supplierID");
+    if ($result) {
+        $_SESSION['delete'] = "Supplier deleted successfully";
+        header("location:../suppliers.php");
+    }
+    $conn->close();
+    $result->close();
+}
+
+if (isset($_POST['updateSupplierView'])) {
+    $supplierID = $_POST['supplierID'];
+
+    $conn = getConnection();
+    $result = $conn->query("SELECT * FROM suppliers where id = $supplierID");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+
+    foreach ($rows as $row) {
+    ?>
+
+
+        <form action="includes/dbManager.php" method="post">
+            <input type="hidden" value="<?php echo $row['id']; ?>" name="supplierID" id="supplierID" class="form-control">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bold ">Update Supplier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="modal-body">
+                <div class="row d-flex justify-content-center">
+                    <div class="col d-flex flex-column d-block">
+                        <label for="fuel type" class="font-weight-bold">Supplier Name</label>
+                        <input type="text" name="name" value="<?php echo $row['name']; ?>" class="form-control">
+                        <label for="fuel type" class="font-weight-bold">Location</label>
+                        <input type="text" name="location" value="<?php echo $row['location']; ?>" class="form-control">
+                    </div>
+                    <div class="col d-flex flex-column d-block">
+                        <label for="" class="font-weight-bold">Email</label>
+                        <input type="text" name="email" value="<?php echo $row['email']; ?>" class="form-control" aria-label=".cost">
+                        <label for="" class="font-weight-bold">Contact numer</label>
+                        <input type="text" name="contactNumber" value="<?php echo $row['contactNumber']; ?>" class="form-control" aria-label=".cost">
+
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" name="updateSupplirBtn" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+
+
+
+
+
+    <?php }
+    ?>
+
+<?php
+   
 }

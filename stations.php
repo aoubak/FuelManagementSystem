@@ -253,7 +253,7 @@ if (isLogin()==false){
                                                 }
                                                 ?>
 
-                                                <button class="btn btn-info btn-sm updateStationStatus m-1" data-toggle="modal" data-target=".bd-updateStationStatus-modal-lg">
+                                                <button class="btn btn-info btn-sm updateStationStatus " data-toggle="modal" data-target=".bd-updateStationStatus-modal-lg">
                                                     <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
                                             </td>
                                             <td><button class="btn btn-primary btn-sm updateStation">

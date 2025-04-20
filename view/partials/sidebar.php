@@ -48,8 +48,8 @@
                   <a class="collapse-item" href="pumps.php">Pumps</a>
                   <a class="collapse-item" href="sales.php">Sales</a>
                   <a class="collapse-item" href="Employees.php">Employees</a>
+                  <a class="collapse-item" href="Suppliers.php">Suppliers</a>
                   <a class="collapse-item" href="payroll.html">Payroll</a>
-                  <a class="collapse-item" href="Supliers.html">Supliers</a>
                   <a class="collapse-item" href="Creditors.html">Creditors</a>
               </div>
           </div>

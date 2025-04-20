@@ -110,7 +110,7 @@ if (isLogin() == false) {
                 </div>
                 <!-- modal -->
 
-                <div class="modal fade updatePumps" tabindex="-1">
+                <div class="modal fade updatePumpModal" tabindex="-1">
                     <div class="modal-dialog">
                         <div class="modal-content ViewPumps" id="">
                         
@@ -222,7 +222,7 @@ if (isLogin() == false) {
                                                 <button class="btn btn-info btn-sm updatePumpStatus">
                                                         <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
                                             </td>
-                                            <td><button class="btn btn-primary btn-sm updatePumpStatus">
+                                            <td><button class="btn btn-primary btn-sm updatePumpView">
                                                     <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
                                                 <button class="btn btn-danger btn-sm deleteStation">
                                                     <i class="fa-solid fa-trash-can fa-sm"></i></button>
@@ -322,9 +322,10 @@ if (isLogin() == false) {
 
         });
     });
+
     // update pumps
     $(document).ready(function() {
-        $('.updatePump').click(function(e) {
+        $('.updatePumpView').click(function(e) {
             e.preventDefault();
 
             var pumpID = $(this).closest('tr').find('.pumpID').text();
@@ -334,13 +335,13 @@ if (isLogin() == false) {
                 method: "POST",
                 url: "includes/dbManager.php",
                 data: {
-                    'updatePump': true,
+                    'updatePumpView': true,
                     'pumpID': pumpID,
                 },
                 success: function(response) {
                     console.log(response);
                     $('.ViewPumps').html(response);
-                    $('.updatePumps').modal('show');
+                    $('.updatePumpModal').modal('show');
 
                 }
             });
