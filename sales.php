@@ -54,7 +54,8 @@ if (isLogin() == false) {
                                         <div class="row mb-3 d-flex justify-content-center">
                                             <div class="col d-flex flex-column d-block">
                                                 <label for="fuel type" class="font-weight-bold">Select Pump</label>
-                                                <select class="custom-select" id="pumpName" name="pumpName" onchange="fetchPumpFuel()" id="">
+                                                <select class="custom-select" id="pumpName" name="pumpName" onchange="fetchPumpFuel()" required>
+                                                    <option selected>-- Choose --</option>
                                                     <?php
                                                     $pumps = getPumps();
                                                     foreach ($pumps as $pump) {
@@ -68,7 +69,7 @@ if (isLogin() == false) {
                                             </div>
                                             <div class="col d-flex flex-column d-block">
                                                 <label for="" class="font-weight-bold">Fuel Type</label>
-
+                                                <!-- <input type="text" name="" id="fuelType1"> -->
                                                 <select class="custom-select" id="fuelType" name="fuelType" onchange="fetchPrice()">
 
                                                     <option selected>-Choose-</option>
@@ -223,7 +224,7 @@ if (isLogin() == false) {
                         <div class="card-body">
 
                             <?php
-                           
+
                             if (isset($_SESSION['status'])) {
 
                             ?>
@@ -236,7 +237,7 @@ if (isLogin() == false) {
                             }
                             ?>
 
-                             <?php
+                            <?php
                             if (isset($_SESSION['warning'])) {
 
                             ?>
@@ -260,14 +261,14 @@ if (isLogin() == false) {
                                             <th>CurReading (AS)</th>
                                             <th>LtrSold</th>
                                             <th>Amount</th>
-                                            
+
 
 
                                         </tr>
                                     </thead>
                                     <tfoot class="bg-gray-800 text-white">
                                         <tr>
-                                        <th>TRN_NO</th>
+                                            <th>TRN_NO</th>
                                             <th>Fuel </th>
                                             <th>PumpNo</th>
                                             <th>unitPrice</th>
@@ -275,7 +276,7 @@ if (isLogin() == false) {
                                             <th>CurReading (AS)</th>
                                             <th>LtrSold</th>
                                             <th>Amount</th>
-                                            
+
                                         </tr>
                                     </tfoot>
                                     <tbody>
@@ -295,7 +296,7 @@ if (isLogin() == false) {
                                                 <td><?php echo $sale['curRead']; ?> ltr</td>
                                                 <td><?php echo $sale['ltrSold']; ?> ltr</td>
                                                 <td><span class="text-primary font-weight-bold p-1 rounded"><?php echo $sale['amount']; ?></span></td>
-                                               
+
                                             </tr>
                                         <?php } ?>
                                     </tbody>
@@ -370,6 +371,30 @@ if (isLogin() == false) {
                     document.getElementById("unitPrice").value = "";
                 }
                 //  calculateAmount();
+            }
+
+            function fetchPumpFuel() {
+                var pumpName = document.getElementById("pumpName").value;
+
+
+                if (pumpName !== "") {
+                    $.ajax({
+                        url: "includes/dbManager.php",
+                        type: "POST",
+                        data: {
+                            pumpName: pumpName
+                        },
+                        success: function(response) {
+                            document.getElementById("fuelType").value = response;
+
+                            // Call fetchPrice() to get the price for the selected fuel type
+
+                            fetchPrice();
+                        }
+                    });
+                } else {
+                    document.getElementById("fuelType").value = "Deisel";
+                }
             }
 
 

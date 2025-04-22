@@ -7,6 +7,17 @@ if (isLogin() == false) {
 }
 ?>
 
+<?php if (isset($_GET['error']) && $_GET['error'] == 'invalid'): ?>
+    <script>
+        alert('Invalid Image Extension');
+    </script>
+<?php endif; ?>
+
+<?php if (isset($_GET['error']) && $_GET['error'] == 'size'): ?>
+    <script>
+        alert('Image Size Is Too Large');
+    </script>
+<?php endif; ?>
 
 <body id="page-top">
 
@@ -152,10 +163,15 @@ if (isLogin() == false) {
                                             echo $row['Email'];
                                             ?></p>
                                     </div>
-                                    <img src="puplic/images/tt-01.jpg" alt="">
+                                    <img src="public/images/tt-01.jpg" alt="banner">
                                     <div class="col-2 profileImage  border border-1 p-0 rounded rounded-1">
                                         <div class="active bg-success text-white rounded rounded-2 p-1 bx-flashing">Active</div>
-                                        <img src="puplic/images/profile.jpg" alt="">
+
+                                        <?php if (!empty($row['image'])): ?>
+                                            <img src="public/images/users/<?php echo htmlspecialchars(trim($row['image'])); ?>" alt="userImage">
+                                        <?php else: ?>
+                                            <img src="public/images/users/default-profile.jpg" alt="">
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -244,26 +260,64 @@ if (isLogin() == false) {
 
                                 <!-- edit Profile -->
                                 <div class="col content acontent editProfile p-2 border border-1 rounded-right rounded-2">
+
+
+                                    <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
+                                        <h5 class="font-weight-bold">AOUBAK / Edit Profile</h5>
+                                        <span> Set up your and enhance your profile</span>
+                                    </div>
+
+                                    <div class=" col user-data d-flex pl-3 pr-3 pt-3 pb-3 mt-2 rounded rounded-2 border border-1 border-danger d-flex  align-items-center ">
+                                        <form action="includes/dbManager.php" method="post" enctype="multipart/form-data" class="d-block d-lg-flex w-100">
+                                            <input type="hidden" name="employeeID" value="<?php echo $row['EmployeeID']; ?>">
+
+                                            <div class="editImage mr-4">
+                                                <?php if (!empty($row['image'])): ?>
+
+                                                    <img src="public/images/users/<?php echo htmlspecialchars(trim($row['image'])); ?>" alt="" class="rounded-circle">
+                                                    <!-- <img src="public/images/users/65ca8ba0b5186.jpg" alt="" class="rounded-circle" > -->
+
+                                                <?php else: ?>
+                                                    <img src="public/images/users/default-profile.jpg" alt="" class="rounded-circle">
+                                                <?php endif; ?>
+                                            </div>
+                                            </span>
+                                            <input type="hidden" name="old_image"
+                                                VALUE="<?php echo $row['image']; ?>">
+                                            <div class="col d-block mt-3">
+
+                                                <div class="image_file_uplod">
+                                                    <!-- <div class="custom-file  mr-4">
+                                                        <label for="">upade </label>
+                                                        <input type="file" name="new_image" class="custom-file-input" id="inputGroupFile01">
+                                                        <label class="custom-file-label text-danger" for="inputGroupFile01">Update your current image - Choose file</label>
+
+                                                    </div> -->
+                                                    <!-- name="new_image" -->
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                                                        </div>
+                                                        <div class="custom-file">
+                                                            <input type="file" name="new_image" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                                                            <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="btns mt-3">
+                                                    <button type="submit" name="update_user_image" class="btn btn-primary"> Upload </button>
+                                                    <button type="delete_user_image" class="btn btn-danger  ml-2"> Delete </button>
+                                                </div>
+
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
                                     <form action="includes/dbManager.php" method="post">
                                         <input type="hidden" name="employeeID" value="<?php echo $row['EmployeeID']; ?>">
-
-                                        <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
-                                            <h5 class="font-weight-bold">AOUBAK / Edit Profile</h5>
-                                            <span> Set up your and enhance your profile</span>
-                                        </div>
-                                        <div class="user-data pl-3 pr-3 pt-3 pb-3 mt-2 rounded rounded-2 border border-1 border-danger d-flex  align-items-center ">
-                                            <div class="editImage mr-4">
-                                                <img src="puplic/images/profile.jpg" class="rounded rounded-circle" alt="">
-                                            </div>
-
-                                            <div class="custom-file  mr-4">
-                                                <input type="file" class="custom-file-input" id="inputGroupFile01">
-                                                <label class="custom-file-label text-danger" for="inputGroupFile01">Update your current image - Choose file</label>
-
-                                            </div>
-                                            <button type="submit" class="btn btn-danger"> Delete </button>
-                                        </div>
-
                                         <div class="user-data pl-3 pr-3  mt-2">
                                             <label for="" class="text-dark">Name</label>
                                             <input type="text" name="name" value="<?php
@@ -299,16 +353,16 @@ if (isLogin() == false) {
                                                 <?php  }
                                                 } ?>
 
-                                              
-                                                    <option value="">- choose the below options -</option>
-                                                    <?php
-                                                    $stations = getStations();
-                                                    foreach ($stations as $station) {
 
-                                                    ?>
-                                                        <option value="<?php echo $station['StationID']; ?>"><?php echo $station['Name']; ?></option>
-                                                    <?php } ?>
-                                               
+                                                <option value="">- choose the below options -</option>
+                                                <?php
+                                                $stations = getStations();
+                                                foreach ($stations as $station) {
+
+                                                ?>
+                                                    <option value="<?php echo $station['StationID']; ?>"><?php echo $station['Name']; ?></option>
+                                                <?php } ?>
+
                                                 <!-- <option value="">Main Station</option>
                                             <option value="">Second Station</option>
                                             <option value="">Third Station</option>
@@ -353,21 +407,25 @@ if (isLogin() == false) {
 
                                 <div class="col content acontent p-2 border border-1 rounded-right rounded-2">
                                     <form action="includes/dbManager.php" method="post">
-                                    <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
-                                        <h5 class="font-weight-bold">AOUBAK / Password</h5>
-                                        <span> Manage your password</span>
-                                    </div>
-                                    <div class="user-data pl-3 pr-3  mt-2">
-                                        <label for="" class="text-dark">Old Password</label>
-                                        <input type="text" name="oldPass" class="form-control" placeholder="">
-                                    </div>
-                                    <div class="user-data pl-3 pr-3 mt-2">
-                                        <label for="" class="text-dark">New Password</label>
-                                        <input type="text" name="newPass" class="form-control" placeholder="">
-                                    </div>
-                                    <div class="user-data  mt-2 modal-footer">
-                                        <button type="submit" class="btn btn-primary">Save Changes</button>
-                                    </div>
+                                        
+                                    <!-- $EmployeeID = $_SESSION['EmployeeID']; -->
+                                    <input type="hidden" name="employeeID" value="<?php echo $_SESSION['EmployeeID']; ?>" >
+
+                                        <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
+                                            <h5 class="font-weight-bold">AOUBAK / Password</h5>
+                                            <span> Manage your password</span>
+                                        </div>
+                                        <div class="user-data pl-3 pr-3  mt-2">
+                                            <label for="" class="text-dark">Old Password</label>
+                                            <input type="text" name="oldPass" class="form-control" placeholder="">
+                                        </div>
+                                        <div class="user-data pl-3 pr-3 mt-2">
+                                            <label for="" class="text-dark">New Password</label>
+                                            <input type="text" name="newPass" class="form-control" placeholder="">
+                                        </div>
+                                        <div class="user-data  mt-2 modal-footer">
+                                            <button type="submit" name="update_password" class="btn btn-primary">Save Changes</button>
+                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -444,6 +502,16 @@ if (isLogin() == false) {
     <!-- box icons -->
     <script src="https://unpkg.com/boxicons@2.1.4/dist/boxicons.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+        document.querySelector('.custom-file-input').addEventListener('change', function(e) {
+            var fileName = e.target.files[0].name;
+            var nextSibling = e.target.nextElementSibling;
+            nextSibling.innerText = fileName;
+        });
+    </script>
+
     <!-- <script>
         function confirmCreateReceipt() {
             Swal.fire({

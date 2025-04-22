@@ -1,4 +1,33 @@
 <?php
+
+session_start(); // <- MUST BE HERE, very first thing
+
+// checking if the user is already logged in
+if (!isset($_SESSION['EmployeeID']) && isset($_COOKIE['remember_token'])) {
+    $token = $_COOKIE['remember_token'];
+    $hashedToken = hash('sha256', $token);
+
+    $conn = getConnection();
+    $stmt = $conn->prepare("SELECT EmployeeID, Role FROM employees WHERE remember_token = ?");
+    $stmt->bind_param("s", $hashedToken);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        $_SESSION['EmployeeID'] = $user['EmployeeID'];
+        $_SESSION['Role'] = $user['Role'];
+
+        // OPTIONAL redirect after auto-login
+        header("Location: index.php");
+        exit();
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+
+
 // session_start();
 
 function getConnection(
@@ -15,13 +44,9 @@ function getConnection(
     return $conn;
 }
 
-if (isset($_COOKIE['email']) &&  isset($_COOKIE['password'])) {
-    $id = $_COOKIE['email'];
-    $pass = $_COOKIE['password'];
-} else {
-    $id = "";
-    $pass = "";
-}
+
+
+
 
 $emailError = "";
 $passwordError = "";
@@ -30,40 +55,105 @@ $password = "";
 $ErrorEmailPass = "";
 
 
+// if (isset($_POST['submit'])) {
+//     $email = $_POST['email'];
+//     $password = $_POST['password'];
+
+//     if (empty($email)) {
+//         $emailError = "Email is required";
+//     }
+//     if (empty($password)) {
+//         $passwordError = "Password is required";
+//     } elseif (empty($email) == false && empty($password) == false) {
+
+        
+
+//         $result = $conn->query("SELECT * FROM employees WHERE email ='$email' AND `password` = '$password' ");
+//         if (mysqli_num_rows($result) > 0) {
+
+//             session_start();
+//             $row = $result->fetch_assoc();
+//             $_SESSION['EmployeeID'] = $row['EmployeeID'];
+//             $_SESSION['Role'] = $row['Role'];
+
+//             if (isset($_POST['remember_me'])) {
+//                 setcookie('email', $_POST['email'], time() + (60 * 60 * 24));
+//                 setcookie('password', $_POST['password'], time() + (60 * 60 * 24));
+//             }
+
+//             header("location:index.php");
+//             exit();
+//         } else {
+           
+//             $ErrorEmailPass = "It's look like you're not yet member! click on the buttom link to signup.";
+//         }
+//     }
+// }
+
+
+
 if (isset($_POST['submit'])) {
-    $email = $_POST['email'];
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
     if (empty($email)) {
         $emailError = "Email is required";
     }
+
     if (empty($password)) {
         $passwordError = "Password is required";
-    } elseif (empty($email) == false && empty($password) == false) {
+    }
 
+    if (!empty($email) && !empty($password)) {
         $conn = getConnection();
-        $result = $conn->query("SELECT * FROM employees WHERE email ='$email' AND `password` = '$password' ");
-        if (mysqli_num_rows($result) > 0) {
 
-            session_start();
+        // Prepare statement to prevent SQL Injection
+        $stmt = $conn->prepare("SELECT EmployeeID, Role, Password FROM employees WHERE Email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            $_SESSION['EmployeeID'] = $row['EmployeeID'];
-            $_SESSION['Role'] = $row['Role'];
 
-            if (isset($_POST['remember_me'])) {
-                setcookie('email', $_POST['email'], time() + (60 * 60 * 24));
-                setcookie('password', $_POST['password'], time() + (60 * 60 * 24));
+            // Verify hashed password
+            if (password_verify($password, $row['Password'])) {
+                session_start();
+                $_SESSION['EmployeeID'] = $row['EmployeeID'];
+                $_SESSION['Role'] = $row['Role'];
+
+                // Remember me with secure way
+
+                if (isset($_POST['remember_me'])) {
+                    $token = bin2hex(random_bytes(32)); // 64-character secure token
+                    $hashedToken = hash('sha256', $token);
+                
+                    // Store hashed token in DB
+                    $updateToken = $conn->prepare("UPDATE employees SET remember_token = ? WHERE EmployeeID = ?");
+                    $updateToken->bind_param("si", $hashedToken, $row['EmployeeID']);
+                    $updateToken->execute();
+                
+                    // Set cookie with original token (not hashed)
+                    setcookie('remember_token', $token, time() + (60 * 60 * 24 * 7), "/", "", true, true); // 7 days, Secure + HTTPOnly
+                }
+                
+
+                header("Location: index.php");
+                exit();
+            } else {
+                $ErrorEmailPass = "Incorrect email or password.";
             }
-
-            header("location:index.php");
-            exit();
         } else {
-            // $_SESSION['status'] = "No Username or Password found";
-            //  $ErrorEmailPass= "No Username or Password found";
-            $ErrorEmailPass = "It's look like you're not yet member! click on the buttom link to signup.";
+            $ErrorEmailPass = "No account found with that email.";
         }
+
+        $stmt->close();
+        $conn->close();
     }
 }
+
+
 
 ?>
 
@@ -132,7 +222,7 @@ if (isset($_POST['submit'])) {
                                         <div class="form-group">
                                             <div>
                                                 <input type="email" name="email" class="form-control form-control-user"
-                                                    id="Email" value="<?php echo $id ?>" aria-describedby="emailHelp"
+                                                    id="Email" value="" aria-describedby="emailHelp"
                                                     placeholder="Email">
                                                 <span></span>
                                                 <div class="errordisplay"><?php echo $emailError ?></div>
@@ -141,7 +231,7 @@ if (isset($_POST['submit'])) {
                                         <div class="form-group">
                                             <div>
                                                 <input type="password" name="password" class="form-control form-control-user"
-                                                    id="Password" value="<?php echo $pass ?>" placeholder="Password" aria-describedby="passwordHelpBlock">
+                                                    id="Password" value="" placeholder="Password" aria-describedby="passwordHelpBlock">
 
                                                 <div class="errordisplay"><?php echo $passwordError ?></div>
                                             </div>

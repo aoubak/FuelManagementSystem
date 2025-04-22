@@ -281,13 +281,17 @@ if (!isset($_GET['transaction_no'])) {
 
                                         </select>
 
-                                        <label for="fuel type" class="font-weight-bold">Invoice Number</label>
+                                        <label for="sales type" class="font-weight-bold">Sales Type</label>
                                         <?php
                                       
 
                                         $newInvoice = getNewInvoice();
                                         ?>
-                                        <input type="text" value="<?php echo $newInvoice; ?>" name="invoiceNo" readonly class="form-control text-danger">
+                                        <select class="custom-select" name="salesType" id="">
+                                            <option value="<?php echo $newInvoice; ?>" > Invoice</option>
+                                            <option value="Cash"> Cash</option>
+                                        </select>
+                                        <!-- <input type="text" value="<?php echo $newInvoice; ?>" name="invoiceNo" readonly class="form-control text-danger"> -->
                                     </div>
 
 

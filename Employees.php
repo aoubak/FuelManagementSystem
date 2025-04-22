@@ -49,16 +49,20 @@ include("includes/dbManager.php");
                                         <div class="row d-flex justify-content-center">
                                             <div class="col d-flex flex-column d-block">
 
-
-
+                                                <label for="fuel type" class="form-select-sm  font-weight-bold">First Name</label>
+                                                <input type="text" name="fisrtName" class="form-control" placeholder="Ayub">
+                                                
                                                 <label for="fuel type" class="form-select-sm  font-weight-bold">Name</label>
-                                                <input type="text" name="name" class="form-control" placeholder="Name">
+                                                <input type="text" name="lastName" class="form-control" placeholder="Said">
+
                                                 <label for="fuel type" class="form-select-sm  font-weight-bold">Email</label>
-                                                <input type="Email" name="email" class="form-control" placeholder="Name">
+                                                <input type="Email" name="email" class="form-control" placeholder="ayub@gmail.com">
+
                                                 <label for="" class="font-weight-bold">User Name</label>
-                                                <input type="text" name="username" class="form-control" placeholder="Username">
+                                                <input type="text" name="username" class="form-control" placeholder="ayub123">
+
                                                 <label for="" class="font-weight-bold">Contact Number</label>
-                                                <input type="text" name="contactNumber" class="form-control" placeholder="Contact Number">
+                                                <input type="text" name="contactNumber" class="form-control" placeholder="+252 63 1234567">
 
                                             </div>
                                             <div class="col d-flex flex-column d-block">
@@ -69,7 +73,7 @@ include("includes/dbManager.php");
                                                     <option value="Female">Female</option>
                                                 </select>
                                                 <label for="" class="font-weight-bold">Password</label>
-                                                <input type="password" name="password" class="form-control" placeholder="Password">
+                                                <input type="password" name="password" class="form-control" placeholder="*********">
                                                 <!-- <label for="" class="font-weight-bold">Confirm Password</label>
                                                 <input type="password" class="form-control" placeholder="Confirm Password"> -->
                                                 <label for="fuel type" class="font-weight-bold">Staions:</label>
@@ -167,7 +171,7 @@ include("includes/dbManager.php");
                                     <thead class="bg-primary text-white">
                                         <tr>
                                             <th>EmployeeID</th>
-                                            <th>Name</th>
+                                            <th>Image</th>
                                             <th>Username</th>
                                             <th>Role</th>
                                             <th>Sex</th>
@@ -183,7 +187,7 @@ include("includes/dbManager.php");
                                     <tfoot class="bg-gray-800 text-white">
                                         <tr>
                                             <th>EmployeeID</th>
-                                            <th>Name</th>
+                                            <th>Image</th>
                                             <th>Username</th>
                                             <th>Role</th>
                                             <th>Sex</th>
@@ -204,7 +208,13 @@ include("includes/dbManager.php");
                                         ?>
                                             <tr>
                                                 <td><?php echo $Employee['EmployeeID']; ?></td>
-                                                <td><?php echo $Employee['fisrtName']; ?></td>
+
+                                                <td><?php if (!empty($Employee['image'])): ?>
+                                                    <img src="public/images/users/<?php echo trim($Employee['image']); ?>" class="img-fluid rounded rounded-circle" width="50px" height="50px">
+                                                <?php else: ?>
+                                                    <img src="public/images/users/default-profile.jpg" alt="" class="img-fluid" width="50px" height="50px">
+                                                <?php endif; ?></td>
+                                                
                                                 <td><?php echo $Employee['UserName']; ?></td>
                                                 <td><span class="text-primary font-weight-bold p-1 rounded"><?php echo $Employee['Role']; ?></span></td>
                                                 <td><?php echo $Employee['Sex']; ?></td>

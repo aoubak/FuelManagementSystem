@@ -10,18 +10,19 @@
       <form
           class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
           <div class="input-group">
-              <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                  aria-label="Search" aria-describedby="basic-addon2">
+          <input type="text" id="searchdash" name="search" class="form-control bg-light border-0 small" 
+       placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" autocomplete="off">
+
               <div class="input-group-append">
                   <button class="btn btn-primary" type="button">
                       <i class="fas fa-search fa-sm"></i>
                   </button>
-                
+
               </div>
           </div>
-        
+
       </form>
-  
+
       <!-- Topbar Navbar -->
       <ul class="navbar-nav ml-auto">
 
@@ -179,12 +180,6 @@
                 foreach ($Employees as $row) {
             ?>
 
-                  <!-- <h2>
-                      <?php
-                        echo $row['UserName'];
-                        ?>
-                  </h2> -->
-                  
           <?php  }
             }
 
@@ -195,29 +190,28 @@
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="mr-2 d-none d-lg-inline text-success small font-weight-bold">
-                    <?php
-                    // strtoupper( $row['Role'])
-                         if((empty($row['Role'])) ){
+                      <?php
+                        // strtoupper( $row['Role'])
+                        if ((empty($row['Role']))) {
                             echo "|";
-                           
-
-                         } else{
+                        } else {
                             echo $row['Role'];
-                        } ;
+                        };
                         ?></span>
                   <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                    <?php
-                    if((empty($row['UserName'])) ){
-                        echo "|";
-                       
-
-                     } else{
-                        echo $row['UserName'];
-                    } 
-                        // echo strtoupper( $row['UserName']);
+                      <?php
+                        if ((empty($row['UserName']))) {
+                            echo "|";
+                        } else {
+                            echo $row['UserName'];
+                        }
                         ?></span>
-                  <img class="img-profile rounded-circle"
-                      src="puplic/images/profile.jpg">
+                
+                  <?php if (!empty($row['image'])): ?>
+                      <img src="public/images/users/<?php echo trim($row['image']); ?>" alt="" class="img-profile rounded-circle">
+                  <?php else: ?>
+                      <img src="public/images/users/default-profile.jpg" alt="" class="img-profile rounded-circle">
+                  <?php endif; ?>
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"

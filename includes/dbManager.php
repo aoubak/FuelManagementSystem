@@ -31,6 +31,57 @@ function isLogin()
     return isset($_SESSION['EmployeeID']);
 }
 
+// update user image
+
+if (isset($_POST['update_user_image'])) {
+    $employeeID = $_POST['employeeID'];
+
+    if ($_FILES["new_image"]["error"] == 4) {
+        echo
+        "<script> alert('Uknnown error Accured'); </script>";
+    } else {
+        $new_image = $_FILES['new_image']['name'];
+        $old_image = $_POST['old_image'];
+        $fileSize = $_FILES["new_image"]["size"];
+        $tmpName = $_FILES["new_image"]["tmp_name"];
+
+        $validImageExtension = ['jpg', 'jpeg', 'png'];
+        $imageExtension = explode('.', $new_image);
+        $imageExtension = strtolower(end($imageExtension));
+
+        if (!in_array($imageExtension, $validImageExtension)) {
+            header("Location: ../profile.php?error=invalid");
+            exit;
+        } else if ($fileSize > 1000000) {
+            header("Location: ../profile.php?error=size");
+            exit;
+        } else {
+
+            $newImageName = uniqid();
+            $newImageName .= '.' . $imageExtension;
+
+            // move_uploaded_file($tmpName, '/public/images/users/'. $newImageName);
+            if (move_uploaded_file($tmpName, '../public/images/users/' . $newImageName)) {
+                echo "Moved successfully!";
+            } else {
+
+                $_SESSION['status'] = "Failed to move file! $tmpName to ../public/images/users/$newImageName";
+                header("location:../profile.php");
+                exit();
+            }
+
+            $conn = getConnection();
+            $result = $conn->query("UPDATE employees SET image='$newImageName' WHERE EmployeeID='$employeeID'");
+            if ($result) {
+
+                $_SESSION['status'] = "Image updated successfully!";
+                header("location:../profile.php");
+            }
+            $conn->close();
+            $result->close();
+        }
+    }
+}
 
 
 // login aouthentication end ----------------------
@@ -243,7 +294,8 @@ if (isset($_POST['updateStationBtn'])) {
 
 // add Employee
 if (isset($_POST['addEmployee'])) {
-    $name = $_POST['name'];
+    $fisrtName = $_POST['fisrtName'];
+    $lastName = $_POST['lastName'];
     $email = $_POST['email'];
     $username = $_POST['username'];
     $password =  $_POST['password'];
@@ -252,13 +304,16 @@ if (isset($_POST['addEmployee'])) {
     $sex = $_POST['sex'];
     $contactNumber = $_POST['contactNumber'];
 
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+
     $conn = getConnection();
     $checkMail = $conn->query("SELECT Email FROM Employees WHERE Email = '$email'");
     if ($checkMail->num_rows > 0) {
         $_SESSION['checkMail'] = 'Sorry... Email is already registred! Please try again!';
         header("location:../Employees.php");
     } else {
-        $result = $conn->query("INSERT INTO employees (Name,Email,UserName,ContactNumber,Password,StationID,Role,sex) VALUES('$name','$email','$username',$contactNumber,$password,'$stationID','$role','$sex')");
+        $result = $conn->query("INSERT INTO employees (fisrtName,lastName,Email,UserName,ContactNumber,Password,StationID,Role,sex) VALUES('$name','$email','$username',$contactNumber,$hashedPassword,'$stationID','$role','$sex')");
         if ($result) {
             $_SESSION['status'] = "Employee inserted successfully";
             header("location:../Employees.php");
@@ -278,7 +333,7 @@ if (isset($_POST['addNewFuel'])) {
     $conn = getConnection();
     $checkfuel = $conn->query("SELECT FuelType FROM fuels WHERE FuelType = '$fuelType'");
     if ($checkfuel->num_rows > 0) {
-        $_SESSION['checkfuel'] = 'Sorry... Fuel is already registred! Please try again!';
+        $_SESSION['checkfuel'] = "This fuel [$fuelType] is already registered in our system. Please contact support if you need assistance.";
         header("location:../fuel.php");
     } else {
         $result = $conn->query("INSERT INTO `fuels` (`FuelType`, `UnitPrice`, `AvailableLiters`) VALUES ('$fuelType', '$unitPrice', '$availableLiters')");
@@ -500,6 +555,8 @@ function getFuels()
     return $rows;
 }
 
+
+
 function getPetrol()
 {
     $conn = getConnection();
@@ -524,10 +581,57 @@ function getDeisel()
     return $rows;
 }
 
+// fuel_order_history
+// insert into fuel order history table
+if (isset($_POST['addFuelOrder'])) {
+    $fuelType = $_POST['fuelType'];
+    $qtyLiters = $_POST['qtyLiters'];
+    $unitPrice = $_POST['unitPrice'];
+    $totalCost = $_POST['totalCost'];
+    $delivery_note = $_POST['delivery_note'];
+    $supplier = $_POST['supplier'];
+    $received_by = $_POST['received_by'];
+    $remarks = $_POST['remarks'];
 
+    $conn = getConnection();
+
+    // Insert into Fuel_order_history table
+    $result = $conn->query("INSERT INTO `Fuel_order_history` (`fuel_type`, `quantity_liters`, `unit_price`, `total_cost`, `delivery_note`, `supplier_name`, `received_by`, `Remarks`) VALUES ('$fuelType', '$qtyLiters', '$unitPrice', '$totalCost', '$delivery_note', '$supplier', '$received_by', '$remarks')");
+
+    if ($result) {
+        // Update the fuels table to add the qtyLiters to the available liters
+        $updateFuel = $conn->query("UPDATE `fuels` SET `AvailableLiters` = `AvailableLiters` + $qtyLiters WHERE `FuelType` = '$fuelType'");
+
+        if ($updateFuel) {
+            $_SESSION['status'] = "Fuel order inserted and available liters updated successfully";
+        } else {
+            $_SESSION['status'] = "Fuel order inserted, but failed to update available liters";
+        }
+
+        header("location:../Fuel.php");
+    } else {
+        $_SESSION['status'] = "Failed to insert fuel order";
+        header("location:../Fuel.php");
+    }
+
+    $conn->close();
+}
+
+// delete fuel order history
+if (isset($_POST['deleteFuelOrder'])) {
+    $id = $_POST['id'];
+
+    $conn = getConnection();
+    $result = $conn->query("DELETE FROM Fuel_order_history WHERE id = $id");
+    if ($result) {
+        $_SESSION['delete'] = "Fuel order deleted successfully";
+        header("location:../Fuel_order_history.php");
+    }
+    $conn->close();
+    $result->close();
+}
 
 // select all employeess
-
 function getEmployees()
 {
     $conn = getConnection();
@@ -575,8 +679,8 @@ function getPumps()
     return $rows;
 }
 
-// fetch Fuel price
-
+// in sales page logics
+// fetch Fuel price using jquery
 
 if (isset($_POST['fuelType'])) {
     $conn =  getConnection();
@@ -591,22 +695,65 @@ if (isset($_POST['fuelType'])) {
     }
 }
 
+// fetch fuel type by pump name using jquery
+
+if (isset($_POST['pumpName'])) {
+    $conn =  getConnection();
+    $pumpName = $_POST['pumpName'];
+    $query = "SELECT f.FuelType FROM `pumps` p INNER JOIN `fuels` f on p.fuelID = f.FuelID WHERE pumpID ='$pumpName'";
+    $result = mysqli_query($conn, $query);
+
+    if ($row = mysqli_fetch_assoc($result)) {
+        echo $row['FuelType'];
+    } else {
+        // echo $pumpName . " not found!";
+        echo "No fuel type found for the selected pump.";
+    }
+}
+
+// function getNewInvoice()
+// {
+//     $conn = getConnection();
+//     $result = $conn->query("SELECT invoice_no FROM sales ORDER BY id DESC LIMIT 1,1");
+//     $lastInvoice = $result->fetch_all(MYSQLI_ASSOC);
+
+//     if (!empty($lastInvoice) && !empty($lastInvoice[0]['invoice_no'])) {
+//         $lastNumber = $lastInvoice[0]['invoice_no'];  // example: INV-000145
+//         $number = (int) str_replace('INV-', '', $lastNumber); // Remove INV- and convert to int
+//         $newInvoice = 'INV-' . str_pad($number + 1, 6, '0', STR_PAD_LEFT);
+//     } else {
+//         $newInvoice = 'INV-000001';  // first invoice if no record found
+//     }
+
+//     return $newInvoice;
+// }
+
 function getNewInvoice()
 {
     $conn = getConnection();
-    $result = $conn->query("SELECT invoice_no FROM sales ORDER BY id DESC LIMIT 1,1");
-    $lastInvoice = $result->fetch_all(MYSQLI_ASSOC);
 
-    if (!empty($lastInvoice) && !empty($lastInvoice[0]['invoice_no'])) {
-        $lastNumber = $lastInvoice[0]['invoice_no'];  // example: INV-000145
-        $number = (int) str_replace('INV-', '', $lastNumber); // Remove INV- and convert to int
+    // Select the latest non-empty invoice number (ignores NULL or empty)
+    $result = $conn->query("
+        SELECT sales_ref 
+        FROM sales 
+        WHERE sales_ref LIKE 'INV-%' 
+        ORDER BY id DESC 
+        LIMIT 1
+    ");
+
+    $lastInvoice = $result->fetch_assoc();
+
+    if (!empty($lastInvoice) && !empty($lastInvoice['sales_ref'])) {
+        $lastNumber = $lastInvoice['sales_ref'];  // example: INV-000145
+        $number = (int) str_replace('INV-', '', $lastNumber);
         $newInvoice = 'INV-' . str_pad($number + 1, 6, '0', STR_PAD_LEFT);
     } else {
-        $newInvoice = 'INV-000001';  // first invoice if no record found
+        $newInvoice = 'INV-000001';  // First invoice if none found
     }
 
     return $newInvoice;
 }
+
 
 
 // isert sales table
@@ -662,26 +809,40 @@ if (isset($_POST['addSales'])) {
     $soldLtr = $_POST['LtrSold'];
     $amount = $_POST['amount'];
 
-    // Check Available Fuel liters.
-    $checkFuel = mysqli_query($conn, "SELECT AvailableLiters FROM fuels WHERE FuelType='$fuelType'");
-    $row = mysqli_fetch_assoc($checkFuel);
 
-    if ($row['AvailableLiters'] >= $soldLtr) {
+    // Check if the fuel status is active
+    $checkFuelStatus = mysqli_query($conn, "SELECT Status FROM fuels WHERE FuelType='$fuelType'");
+    $row = mysqli_fetch_assoc($checkFuelStatus);
 
-        // if checking fuel success & then make sales record. 
+    if ($row['Status'] == 1) { // 1 means active
 
-        $result = $conn->query("INSERT INTO sales (`atendentID`,`transaction_no`,`fuelType`,`pumpNo`,`unitPrice`,`preRead`,`curRead`,`ltrSold`,`amount`,`stationID`) VALUE($employeeID,'$transaction_no','$fuelType','$pumpNo','$unitPrice','$preRead','$curRead','$soldLtr','$amount','$stationID' )");
-        mysqli_query($conn, "UPDATE fuels SET AvailableLiters=AvailableLiters-'$soldLtr' WHERE FuelType='$fuelType'");
+        // if fuel status is active then check available fuel liters.
 
-        if ($result) {
-            $_SESSION['refresh_payment'] = true;
-            $_SESSION['warning'] = "Sales record created successfully! Please complete the sales entry.";
-            header("location:../payment.php?transaction_no=$transaction_no");
+        // Check Available Fuel liters.
+        $checkFuel = mysqli_query($conn, "SELECT AvailableLiters FROM fuels WHERE FuelType='$fuelType'");
+        $row = mysqli_fetch_assoc($checkFuel);
+
+        if ($row['AvailableLiters'] >= $soldLtr) {
+
+            // if checking fuel success & then make sales record. 
+
+            $result = $conn->query("INSERT INTO sales (`atendentID`,`transaction_no`,`fuelType`,`pumpNo`,`unitPrice`,`preRead`,`curRead`,`ltrSold`,`amount`,`stationID`) VALUE($employeeID,'$transaction_no','$fuelType','$pumpNo','$unitPrice','$preRead','$curRead','$soldLtr','$amount','$stationID' )");
+            mysqli_query($conn, "UPDATE fuels SET AvailableLiters=AvailableLiters-'$soldLtr' WHERE FuelType='$fuelType'");
+
+            if ($result) {
+                $_SESSION['refresh_payment'] = true;
+                $_SESSION['warning'] = "Sales record created successfully! Please complete the sales entry.";
+                header("location:../payment.php?transaction_no=$transaction_no");
+            }
+            $conn->close();
+            $result->close();
+        } else {
+            $_SESSION['warning'] = "Not Enough Fuel Stock! Please request a new order of fuel -> $fuelType.";
+            header("location:../sales.php");
+            exit();
         }
-        $conn->close();
-        $result->close();
     } else {
-        $_SESSION['warning'] = "Not Enough Fuel Stock! Please request a new order of fuel -> $fuelType.";
+        $_SESSION['warning'] = "Fuel is not active! Please contact the admin.";
         header("location:../sales.php");
         exit();
     }
@@ -709,8 +870,8 @@ if (isset($_POST['addPaymentInfo'])) {
     $paymentMethod = $_POST['paymentMethod'];
     $tax = $_POST['tax'];
     $enteryMethod = $_POST['enteryMethod'];
-    $invoiceNo = $_POST['invoiceNo'];
-    $result = $conn->query("UPDATE sales SET `payment_method` = '$paymentMethod',`entry_method`='$enteryMethod',`tax`='$tax',`invoice_no`='$invoiceNo' WHERE transaction_no='$tran_no'");
+    $salesType = $_POST['salesType'];
+    $result = $conn->query("UPDATE sales SET `payment_method` = '$paymentMethod',`entry_method`='$enteryMethod',`tax`='$tax',`sales_ref`='$salesType' WHERE transaction_no='$tran_no'");
 
     if ($result) {
         $_SESSION['status'] = "Sales compelted successfully!";
@@ -756,12 +917,12 @@ if (isset($_GET['invoice_no'])) {
 
 
 
-if (isset($_POST["invoice_no"])) {
-    $invoice_no = $_POST["invoice_no"];
+if (isset($_POST["transaction_no"])) {
+    $transaction_no = $_POST["transaction_no"];
     // $newInvoice_no = preg_replace('/\D/', '', $invoice_no);
 
     $conn = getConnection();
-    $result = $conn->query("SELECT * FROM sales WHERE invoice_no = '$invoice_no'");
+    $result = $conn->query("SELECT * FROM sales WHERE transaction_no = '$transaction_no'");
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
     foreach ($rows as $row) {
@@ -782,19 +943,22 @@ if (isset($_POST["invoice_no"])) {
                     </div>
                 </div>
 
-                <div style="border-top: 2px dashed rgba(128, 128, 128, 0.5); margin: 5px 0;"></div>
+                <!-- <div style="border-top: 2px dashed rgba(128, 128, 128, 0.5); margin: 5px 0;"></div> -->
                 <div class="col ">
                     <div class="time d-flex align-items-center justify-content-between">
                         <div>
-                            <p class="text-center m-0 text-dark font-weight-">
-                                <?php
-                                echo  $date = date('d-m-Y', strtotime($row['created_at']));  // Output: 2025-04-10
-
-                                ?></p>
+                            <p class="text-center m-0 text-dark font-weight-">Date</p>
                         </div>
 
                         <div>
-                            <p class="text-center m-0 text-dark font-weight-"><?php echo $time = date('H:i:s', strtotime($row['created_at'])); ?></p>
+                            <p class="text-center m-0 text-dark font-weight-bold">
+                                <?php
+                                $date = date('d-m-Y', strtotime($row['created_at']));
+                                $time = date('H:i:s', strtotime($row['created_at']));
+                                echo $date . " / " . $time;
+
+                                ?>
+                            </p>
                         </div>
                     </div>
 
@@ -809,9 +973,9 @@ if (isset($_POST["invoice_no"])) {
                         </div>
 
                         <div>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['atendentID']; ?></p>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['transaction_no']; ?></p>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['pumpNo']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold"><?php echo $row['atendentID']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold"><?php echo $row['transaction_no']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold"><?php echo $row['pumpNo']; ?></p>
                         </div>
                     </div>
 
@@ -829,11 +993,11 @@ if (isset($_POST["invoice_no"])) {
                         </div>
 
                         <div>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['fuelType']; ?></p>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['ltrSold']; ?></p>
-                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['unitPrice']; ?></p>
-                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['tax']; ?></p>
-                            <p class="text-right m-0 text-dark font-weight-">$<?php echo $row['amount']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold"><?php echo $row['fuelType']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold"><?php echo $row['ltrSold']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold">$<?php echo $row['unitPrice']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold">$<?php echo $row['tax']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold">$<?php echo $row['amount']; ?></p>
                         </div>
                     </div>
 
@@ -847,14 +1011,14 @@ if (isset($_POST["invoice_no"])) {
                             <!-- <p class=" m-0 text-dark font-weight-">Visa</p> -->
                             <p class=" m-0 text-dark font-weight-">Entery Method/L</p>
                             <p class=" m-0 text-dark font-weight-">Station</p>
-                            <p class=" m-0 text-dark font-weight-">Invoice</p>
+                            <p class=" m-0 text-dark font-weight-">Sales Type</p>
                         </div>
 
                         <div>
                             <!-- <p class="text-right m-0 text-dark font-weight-">Credit</p> -->
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['entry_method']; ?></p>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['stationID']; ?></p>
-                            <p class="text-right m-0 text-dark font-weight-"><?php echo $row['invoice_no']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold"><?php echo $row['entry_method']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold"><?php echo $row['stationID']; ?></p>
+                            <p class="text-right m-0 text-dark font-weight-bold"><?php echo $row['sales_ref']; ?></p>
                         </div>
                     </div>
 
@@ -930,6 +1094,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $confirm_pass = $_POST['confirm_pass'];
         // SQL Update Password
     }
+
+    if (isset($_POST['update_password'])) {
+        
+        $employeeID = $_POST['employeeID']; 
+        $oldPass = $_POST['oldPass'];
+        $newPass = $_POST['newPass'];
+
+        $conn = getConnection();
+
+        $getPass = $conn->query("SELECT password FROM employees WHERE EmployeeID = $employeeID");
+
+        if ($getPass && $getPass->num_rows > 0) {
+            $row = $getPass->fetch_assoc();
+            $storedPassword = $row['password'];
+
+            // Check if the stored password is still plain text
+            if ($storedPassword === $oldPass) {
+                // It's plain text and matches, so we update to hashed version
+                $newHashedPass = password_hash($newPass, PASSWORD_DEFAULT);
+                $update = $conn->query("UPDATE employees SET password = '$newHashedPass' WHERE EmployeeID = $employeeID");
+
+                if ($update) {
+                    $_SESSION['status'] = "Password updated and now secured!";
+                } else {
+                    $_SESSION['status'] = "Failed to update password.";
+                }
+            } elseif (password_verify($oldPass, $storedPassword)) {
+                // Already hashed, and verified
+                $newHashedPass = password_hash($newPass, PASSWORD_DEFAULT);
+                $update = $conn->query("UPDATE employees SET password = '$newHashedPass' WHERE EmployeeID = $employeeID");
+
+                if ($update) {
+                    $_SESSION['status'] = "Password updated successfully!";
+                } else {
+                    $_SESSION['status'] = "Failed to update password.";
+                }
+            } else {
+                $_SESSION['status'] = "Old password is incorrect.";
+            }
+
+            $getPass->close();
+            header("location:../profile.php");
+        } else {
+            $_SESSION['status'] = "User not found.";
+            header("location:../profile.php");
+        }
+
+        $conn->close();
+    }
+}
+
+// add pums
+if (isset($_POST['addPump'])) {
+    $pumpName = $_POST['pumpName'];
+    $pumpDesc = $_POST['pumpDesc'];
+    $stationID =  $_POST['stationID'];
+    $fuelID = $_POST['fuelID'];
+
+
+    $conn = getConnection();
+
+    $result = $conn->query("INSERT INTO pumps (`pumpName`,`pumpDesc`,`fuelID`,`stationID`) VALUES('$pumpName','$pumpDesc','$stationID','$fuelID')");
+    if ($result) {
+        $_SESSION['status'] = "Pump inserted successfully";
+        header("location:../Pumps.php");
+    }
+    $conn->close();
+    $result->close();
 }
 
 
@@ -992,7 +1224,7 @@ if (isset($_POST['updatePumpStatus'])) {
     <?php  }
     ?>
 
-<?php
+    <?php
 
 }
 
@@ -1021,17 +1253,61 @@ if (isset($_POST['updatePumpView'])) {
                 <div class="row d-flex justify-content-center">
                     <div class="col d-flex flex-column d-block">
                         <label for="fuel type" class="font-weight-bold"> Name</label>
-                        <input type="text" name="name" value="<?php echo $row['pumpName']; ?>" class="form-control">
+                        <input type="text" name="pumpName" value="<?php echo $row['pumpName']; ?>" class="form-control">
                         <label for="fuel type" class="font-weight-bold">pumpDesc</label>
                         <input type="text" name="pumpDesc" value="<?php echo $row['pumpDesc']; ?>" class="form-control">
                     </div>
                     <div class="col d-flex flex-column d-block">
                         <label for="" class="font-weight-bold">Station</label>
-                        
-                        <input type="text" name="station" value="<?php echo $row['stationID']; ?>" class="form-control" aria-label=".cost">
-                        <label for="" class="font-weight-bold">Fuel</label>
-                        <input type="text" name="fuel" value="<?php echo $row['fuelID']; ?>" class="form-control" aria-label=".cost">
+                        <select name="stationID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <?php
 
+                            $conn = getConnection();
+                            $result = $conn->query("SELECT s.StationID, s.Name FROM `pumps` p INNER JOIN `stations` s on p.StationID = s.StationID WHERE pumpID ='$pumpID'");
+                            $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+                            $pumps = $rows;
+                            foreach ($pumps as $pump) {
+                            ?>
+                                <option value="<?php echo $pump['StationID']; ?>">-- <?php echo $pump['Name']; ?> --</option>
+                            <?php  }
+                            ?>
+
+
+                            <option value="">- choose the below options -</option>
+                            <?php
+                            $stations = getStations();
+                            foreach ($stations as $station) {
+
+                            ?>
+                                <option value="<?php echo $station['StationID']; ?>"><?php echo $station['Name']; ?></option>
+                            <?php } ?>
+                        </select>
+                        <label for="" class="font-weight-bold">Fuel</label>
+                        <select name="fuelID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <?php
+
+                            $conn = getConnection();
+                            $result = $conn->query("SELECT f.FuelID, f.FuelType FROM `pumps` p INNER JOIN `fuels` f on p.fuelID = f.FuelID WHERE pumpID ='$pumpID'");
+                            $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+                            $pumps = $rows;
+                            foreach ($pumps as $pump) {
+                            ?>
+                                <option value="<?php echo $pump['FuelID']; ?>">-- <?php echo $pump['FuelType']; ?> --</option>
+                            <?php  }
+                            ?>
+
+
+                            <option value="">-- choose the below options --</option>
+                            <?php
+                            $fuels = getFuels();
+                            foreach ($fuels as $fuel) {
+
+                            ?>
+                                <option value="<?php echo $fuel['FuelID']; ?>"><?php echo $fuel['FuelType']; ?></option>
+                            <?php } ?>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -1049,8 +1325,10 @@ if (isset($_POST['updatePumpView'])) {
     ?>
 
 <?php
-   
+
 }
+
+
 
 
 
@@ -1074,24 +1352,41 @@ if (isset($_POST['upPumpsStatus'])) {
 
 if (isset($_POST['updatePumpBtn'])) {
     $pumpID = $_POST['pumpID'];
+
     $pumpName = $_POST['pumpName'];
     $pumpDesc = $_POST['pumpDesc'];
     $fuelID = $_POST['fuelID'];
     $stationID = $_POST['stationID'];
 
     $conn = getConnection();
-    $result = $conn->query("UPDATE `pumps` SET `pumpName` = '$pumpName', `pumpDesc` = '$pumpDesc' , `fuelID` = '$fuelID',`Staion` WHERE `stations`.`StationID` = $stationID");
+    $result = $conn->query("UPDATE `pumps` SET `pumpName` = '$pumpName', `pumpDesc` = '$pumpDesc' , `fuelID` = '$fuelID',`StationID`= '$stationID' WHERE `pumps`.`pumpID` = $pumpID");
 
     if ($result) {
-        $_SESSION['status'] = "Station updated successfully";
-        header("location:../stations.php");
+        $_SESSION['status'] = "Pump updated successfully";
+        header("location:../pumps.php");
     } else {
 
-        echo "Station not upadted";
+        echo "Pump not upadted";
     }
     $conn->close();
     $result->close();
 }
+
+// delete Pumps
+if (isset($_POST['deletePump'])) {
+    $pumpID = $_POST['pumpID'];
+
+    $conn = getConnection();
+    $result = $conn->query("DELETE FROM pumps WHERE pumpID = $pumpID");
+    if ($result) {
+        $_SESSION['delete'] = "Pump deleted successfully";
+        header("location:../pumps.php");
+    }
+    $conn->close();
+    $result->close();
+}
+
+
 
 // get all suppliers.
 function getSuppliers()
@@ -1122,7 +1417,7 @@ if (isset($_POST['addSupplier'])) {
         header("location:../suppliers.php");
     }
     $conn->close();
-    $result->close();   
+    $result->close();
 }
 
 
@@ -1133,7 +1428,7 @@ if (isset($_POST['updateSupplierStatus'])) {
     $result = $conn->query("SELECT id, status FROM suppliers WHERE id = '$supplierID'");
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-    ?>
+?>
 
     <?php
     foreach ($rows as $row) {
@@ -1185,7 +1480,7 @@ if (isset($_POST['updateSupplierStatus'])) {
     <?php  }
     ?>
 
-<?php
+    <?php
 
 }
 
@@ -1293,5 +1588,5 @@ if (isset($_POST['updateSupplierView'])) {
     ?>
 
 <?php
-   
+
 }

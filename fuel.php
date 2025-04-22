@@ -2,7 +2,7 @@
 include("view/partials/head.php");
 include("includes/dbManager.php");
 checkLogin();
-if (isLogin()==false){
+if (isLogin() == false) {
     header("location:login.php");
 }
 ?>
@@ -38,7 +38,8 @@ if (isLogin()==false){
                     <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-lg " role="document">
                             <div class="modal-content">
-                                <div class="modal-header bg-success text-white">
+                                <form action="includes/dbManager.php" method="post">
+                                <div class="modal-header bg-primary text-white">
                                     <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Enter Order Details</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
@@ -47,26 +48,54 @@ if (isLogin()==false){
                                 <div class="modal-body ">
                                     <div class="row d-flex justify-content-center">
                                         <div class="col d-flex flex-column d-block">
-                                            <label for="fuel type" class="form-select-sm  font-weight-bold">Fuel Type</label>
-                                            <select class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                                <option selected>Choose...</option>
-                                                <option value="1">Petrol</option>
-                                                <option value="2">Desiel</option>
-                                                <option value="3">Gas</option>
+                                            <label for="" class="form-select-sm  font-weight-bold">Fuel Type</label>
+                                            <select name="fuelType" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                <option selected>-- Choose --</option>
+                                                <?php
+                                                $fuels = getFuels();
+                                                foreach ($fuels as $fuel) {
+                                                ?>
+                                                    <option value="<?php echo $fuel["FuelType"]; ?>"> <?php echo $fuel["FuelType"]; ?></option>
+                                                <?php } ?>
                                             </select>
                                             <label for="" class="font-weight-bold">Total Liters</label>
-                                            <input type="text" class="form-control">
+                                            <input type="text" name="qtyLiters" id="qtyLiters" onkeyup="calculateTotalCost()" class="form-control">
+                                            <label for="" class="font-weight-bold">Total Cost</label>
+                                            <input type="text" name="totalCost" id="totalCost" class="form-control" readonly>
+                                            <label for="" class="font-weight-bold">Delivery Note: <span class=" font-italic font-weight-light text-danger"> optional</span></label>
+                                            <input type="text" name="delivery_note" class="form-control">
                                         </div>
                                         <div class="col d-flex flex-column d-block">
                                             <label for="fuel type" class="form-select-sm example font-weight-bold">Supplier</label>
-                                            <select class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                                                <option selected>Choose...</option>
-                                                <option value="1">AKSOM</option>
-                                                <option value="2">HASS</option>
-                                                <option value="3">3CCC</option>
+                                            <select name="supplier" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                <option selected>-- Choose --</option>
+                                                <?php
+                                                $suppliers = getSuppliers();
+                                                foreach ($suppliers as $supplier) {
+                                                ?>
+                                                    <option value="<?php echo $supplier["name"]; ?>"> <?php echo $supplier["name"]; ?></option>
+                                                <?php } ?>
                                             </select>
-                                            <label for="" class="font-weight-bold">Total Cost</label>
-                                            <input type="text" class="form-control" aria-label=".cost">
+                                            <label for="" class="font-weight-bold">Unite Price</label>
+                                            <input type="text" name="unitPrice" id="unitPrice" onkeyup="calculateTotalCost()" class="form-control" aria-label=".cost">
+                                            <?php
+                                                if (isLogin() == true) {
+                                                    $EmployeeID = $_SESSION['EmployeeID'];
+
+                                                    $conn = getConnection();
+                                                    $result = $conn->query("SELECT UserName FROM `employees` WHERE EmployeeID ='$EmployeeID' ");
+                                                    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+                                                    $Employees = $rows;
+                                                    foreach ($Employees as $row) {
+                                                ?>
+                                                        <label for="" class="font-weight-bold">Received By</label>
+                                                        <input type="text" name="received_by" class="form-control" value="<?php echo $row['UserName']; ?>" aria-label=".cost" readonly>
+                                                <?php  }
+                                                } ?>
+                                        
+                                            <label for="" class="font-weight-bold">Remarks: <span class=" font-italic font-weight-light text-danger">optional</span> </label>
+                                            <input type="text" name="remarks" class="form-control" aria-label=".cost">
                                         </div>
                                     </div>
 
@@ -74,8 +103,9 @@ if (isLogin()==false){
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Submit order</button>
+                                    <button type="submit" name="addFuelOrder" class="btn btn-primary">Submit order</button>
                                 </div>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -175,7 +205,7 @@ if (isLogin()==false){
                                         <div class="row d-flex justify-content-center ">
                                             <div class="col d-flex flex-column d-block ViewFuel">
 
-                                            
+
                                             </div>
 
                                         </div>
@@ -241,7 +271,7 @@ if (isLogin()==false){
                                     <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
                                         <a href="#" class="dropdown-item" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="fa-solid fa-plus bg-primary text-white p-1 rounded"></i> New Order</a>
                                         <a href="#" class="dropdown-item" data-toggle="modal" data-target="#staticBackdrop"> <i class="fa-solid fa-plus bg-primary text-white p-1 rounded"></i> New Fuel </a>
-                                        <a href="fuel_history.php" class="dropdown-item"> Veiw order history</a>
+                                        <a href="fuel_order_history.php" class="dropdown-item"><i class="fa-solid fa-clock-rotate-left  bg-primary text-white p-1 rounded"></i> Veiw order history</a>
 
                                     </div>
                                 </div>
@@ -427,7 +457,7 @@ if (isLogin()==false){
 
 
         // update 
-        
+
         $(document).ready(function() {
             $('.updateFuel').click(function(e) {
                 e.preventDefault();
@@ -479,7 +509,17 @@ if (isLogin()==false){
             });
         });
 
-        
+        function calculateTotalCost() {
+                var qtyLiters = parseFloat(document.getElementById('qtyLiters').value) || 0;
+                var unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
+                // multiply the two values to get the total cost 
+                
+                var totalCost = qtyLiters * unitPrice;
+
+                // and assign it to the totalCost input field
+                document.getElementById('totalCost').value = totalCost.toFixed(2);
+
+            }
     </script>
 
 </body>

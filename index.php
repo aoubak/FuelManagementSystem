@@ -89,7 +89,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target=".bd-example-modal-lg"><i
                                 class="fa fa-gas-pump fa-sm text-white-50"></i> Price Control</a>
                     </div>
-                   
+
                     <!-- Button trigger modal -->
                     <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
                         Launch demo modal
@@ -174,7 +174,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <div class="row">
                         <!-- From Uiverse.io by satyamchaudharydev -->
 
-                       
+
                         <!-- Earnings (Monthly) Card Example -->
                         <div class="col-xl-3 col-md-6 mb-4">
                             <div class="card border-left-primary shadow h-100 py-2">
@@ -478,6 +478,74 @@ while ($row = mysqli_fetch_assoc($result)) {
                                 </div>
                             </div>
                         </div>
+
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-xl-6  col-md-6 ">
+                            <div class="card p-2 ">
+                                <h5 class="m-0 text-dark">Total income Sales per <span class="font-weight-bold text-primary">Month</span></h6>
+
+                            </div>
+                        </div>
+                        <!-- <div class="col-xl-6  col-md-6 ">
+                            <div class="card p-2 ">
+                                <h5 class="m-0 text-dark">Monthly Sales per <span class="font-weight-bold text-primary"> Fuel</span></h6>
+
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-6 col-md-6 mb-4">
+                            <div class="card border-1 border border-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col ">
+                                            <?php
+                                            $conn = getConnection();
+
+                                            $query = "SELECT 
+                                                DATE_FORMAT(created_at, '%M %Y') AS sale_month,
+                                                SUM(amount) AS total_income
+                                                FROM sales 
+                                                GROUP BY sale_month
+                                                ORDER BY MIN(created_at) ASC";
+
+                                            $result = mysqli_query($conn, $query);
+
+                                            $months = [];
+                                            $incomes = [];
+                                            $colorMap = [
+                                                'January' => 'rgba(255, 99, 132, 0.6)',
+                                                'February' => 'rgba(54, 162, 235, 0.6)',
+                                                'March' => 'rgba(255, 206, 86, 0.6)',
+                                                'April' => 'rgba(75, 192, 192, 0.6)',
+                                                'May' => 'rgba(153, 102, 255, 0.6)',
+                                                'June' => 'rgba(255, 159, 64, 0.6)',
+                                                'July' => 'rgba(199, 199, 199, 0.6)',
+                                                'August' => 'rgba(83, 102, 255, 0.6)',
+                                                'September' => 'rgba(0, 191, 255, 0.6)',
+                                                'October' => 'rgba(46, 204, 113, 0.6)',
+                                                'November' => 'rgba(241, 196, 15, 0.6)',
+                                                'December' => 'rgba(231, 76, 60, 0.6)'
+                                            ];
+                                            $colors = [];
+
+                                            while ($row = mysqli_fetch_assoc($result)) {
+                                                $monthName = date('F', strtotime($row['sale_month']));
+                                                $months[] = $row['sale_month'];
+                                                $incomes[] = $row['total_income'];
+                                                $colors[] = $colorMap[$monthName] ?? 'rgba(100, 100, 100, 0.6)'; // fallback color
+                                            }
+                                            ?>
+
+                                            <canvas id="totalIncomeChart"></canvas>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -544,7 +612,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <!-- <script src="js/sb-admin-2.min.js"></script> -->
 
     <!-- Page level plugins -->
     <script src="vendor/chart.js/Chart.min.js"></script>
@@ -599,9 +667,6 @@ while ($row = mysqli_fetch_assoc($result)) {
         });
     </script>
 
-
-
-
     <script>
         var ctx = document.getElementById('monthFuelSalesChart').getContext('2d');
 
@@ -624,6 +689,71 @@ while ($row = mysqli_fetch_assoc($result)) {
             }
         });
     </script>
+
+<!-- 
+    <script>
+        var ctx = document.getElementById('totalIncomeChart').getContext('2d');
+
+        var totalIncomeChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: <?= json_encode($months) ?>,
+                datasets: [{
+                    label: 'Total Income ($)',
+                    data: <?= json_encode($incomes) ?>,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Total Income'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script> -->
+
+    <script>
+    var ctx = document.getElementById('totalIncomeChart').getContext('2d');
+
+    var totalIncomeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?= json_encode($months) ?>,
+            datasets: [{
+                label: 'Total Income ($)',
+                data: <?= json_encode($incomes) ?>,
+                backgroundColor: <?= json_encode($colors) ?>,
+                borderColor: <?= json_encode($colors) ?>,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Monthly Total Income (Random Color Bars)'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 
 
 </body>

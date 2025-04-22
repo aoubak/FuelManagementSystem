@@ -123,7 +123,7 @@ if (isLogin() == false) {
                             <form action="includes/dbManager.php" method="post">
                                 <input type="hidden" value="" name="supplierID" id="supplierID" class="form-control">
                                 <div class="modal-header bg-danger text-white">
-                                    <h5 class="modal-title font-weight-bold ">Delete Station</h5>
+                                    <h5 class="modal-title font-weight-bold ">Delete Supplier</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
