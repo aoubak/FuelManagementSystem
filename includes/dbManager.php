@@ -324,6 +324,48 @@ if (isset($_POST['addEmployee'])) {
     }
 }
 
+// update employee 
+if (isset($_POST['updateEmployeeBtn'])) {
+    $employeeID = $_POST['employeeID'];
+    $fisrtName = $_POST['fisrtName'];
+    $lastName = $_POST['lastName'];
+    $email = $_POST['email'];
+    $username = $_POST['username'];
+    $stationID = $_POST['staion'];
+    $role = $_POST['role'];
+    $sex = $_POST['sex'];
+    $contactNumber = $_POST['contactNumber'];
+
+    $conn = getConnection();
+    // $checkMail = $conn->query("SELECT Email FROM Employees WHERE Email = '$email' AND EmployeeID != '$employeeID'");
+    // if ($checkMail->num_rows > 0) {
+    //     $_SESSION['checkMail'] = 'Sorry... Email is already registered! Please try again!';
+    //     header("location:../Employees.php");
+    // } else {
+        $result = $conn->query("UPDATE employees SET fisrtName='$fisrtName', lastName='$lastName', Email='$email', UserName='$username', ContactNumber='$contactNumber', StationID='$stationID', Role='$role', sex='$sex' WHERE EmployeeID='$employeeID'");
+        if ($result) {
+            $_SESSION['status'] = "Employee updated successfully";
+            header("location:../Employees.php");
+        } else {
+            $_SESSION['status'] = "Failed to update employee";
+            header("location:../Employees.php");
+        }
+        $conn->close();
+    }
+// delete employee
+if (isset($_POST['deleteEmployee'])) {
+    $employeeID = $_POST['employeeID'];
+
+    $conn = getConnection();
+    $result = $conn->query("DELETE FROM Employees WHERE EmployeeID = $employeeID");
+    if ($result) {
+        $_SESSION['delete'] = "Employee deleted successfully";
+        header("location:../employees.php");
+    }
+    $conn->close();
+    $result->close();
+}
+
 // update employees status 
 if (isset($_POST['updateEmployeeStatus'])) {
     $employeeID = $_POST['employeeID'];
@@ -384,7 +426,7 @@ if (isset($_POST['updateEmployeeStatus'])) {
     <?php  }
     ?>
 
-<?php
+    <?php
 
 }
 
@@ -404,6 +446,105 @@ if (isset($_POST['upEmployeeStatus'])) {
     }
     $conn->close();
     $result->close();
+}
+
+// update employee station from jquery to modal
+
+if (isset($_POST['updateEmployee'])) {
+    $employeeID = $_POST['employeeID'];
+
+    $conn = getConnection();
+    $result = $conn->query("SELECT e.*, s.Name AS StationName FROM employees e INNER JOIN stations s ON e.StationID = s.StationID WHERE e.EmployeeID = $employeeID;");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+
+    foreach ($rows as $row) {
+    ?>
+
+        <form action="includes/dbManager.php" method="post">
+            <input type="hidden" value="<?php echo $row['EmployeeID']; ?>" name="employeeID" id="StationID" class="form-control">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Updaet Employee </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row d-flex justify-content-center ">
+                    <div class="col d-flex flex-column d-block">
+
+                        <label for="fuel type" class="form-select-sm  font-weight-bold">First Name</label>
+                        <input type="text" value="<?php echo $row['fisrtName']; ?>" name="fisrtName" class="form-control" placeholder="Ayub">
+
+                        <label for="fuel type" class="form-select-sm  font-weight-bold">Last Name</label>
+                        <input type="text" value="<?php echo $row['lastName']; ?>" name="lastName" class="form-control" placeholder="Said">
+
+                        <label for="fuel type" class="form-select-sm  font-weight-bold">Email</label>
+                        <input type="Email" value="<?php echo $row['Email']; ?>" name="email" class="form-control" placeholder="ayub@gmail.com">
+
+                        <label for="" class="font-weight-bold">User Name</label>
+                        <input type="text" value="<?php echo $row['UserName']; ?>" name="username" class="form-control" placeholder="ayub123">
+
+                        <label for="" class="font-weight-bold">Contact Number</label>
+                        <input type="text" value="<?php echo $row['ContactNumber']; ?>" name="contactNumber" class="form-control" placeholder="+252 63 1234567">
+
+                    </div>
+                    <div class="col d-flex flex-column d-block">
+                        <label for="fuel type" class="font-weight-bold">Sex:</label>
+                        <select name="sex" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+
+                            <option selected value="<?php echo $row['Sex']; ?>"><?php echo $row['Sex']; ?></option>
+                            <option >-- Choose -- </option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <!-- <label for="" class="font-weight-bold">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="*********"> -->
+
+                        <label for="fuel type" class="font-weight-bold">Staions:</label>
+
+                        <select name="staion" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+
+                            <option selected  value="<?php echo $row['StationID']; ?>"><?php echo $row['StationName']; ?></option>
+                            <option >-- Choose --</option>
+                            <?php
+                            $stations = getStations();
+                            foreach ($stations as $station) {
+                            ?>
+                                <option value="<?php echo $station['StationID']; ?>"><?php echo $station['Name']; ?></option>
+                            <?php } ?>
+
+                        </select>
+                        <label for="" class="font-weight-bold">Roles:</label>
+                        <select name="role" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected value="<?php echo $row['Role']; ?>"> <?php echo $row['Role']; ?> </option>
+                            <option >-- Choose --</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Pump Operator">Pump Operator</option>
+                            <option value="Accountant">Accountant</option>
+                            <option value="Station Manager">Station Manager</option>
+                            <option value="Mechanic">Technician</option>
+                            <option value="Security Guard">Security Guard </option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" name="updateEmployeeBtn" class="btn btn-primary">Update</button>
+            </div>
+        </form>
+
+
+
+
+    <?php }
+    ?>
+
+<?php
+
 }
 
 

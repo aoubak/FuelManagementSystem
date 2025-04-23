@@ -51,7 +51,7 @@ include("includes/dbManager.php");
 
                                                 <label for="fuel type" class="form-select-sm  font-weight-bold">First Name</label>
                                                 <input type="text" name="fisrtName" class="form-control" placeholder="Ayub">
-                                                
+
                                                 <label for="fuel type" class="form-select-sm  font-weight-bold">Name</label>
                                                 <input type="text" name="lastName" class="form-control" placeholder="Said">
 
@@ -90,6 +90,7 @@ include("includes/dbManager.php");
                                                 <label for="" class="font-weight-bold">Roles:</label>
                                                 <select name="role" class="custom-select form-select-sm" aria-label=".form-select-sm example">
                                                     <option selected>Choose...</option>
+                                                    <option value="Admin">Admin</option>
                                                     <option value="Pump Operator">Pump Operator</option>
                                                     <option value="Accountant/Cashier">Accountant/Cashier</option>
                                                     <option value="Station Manager">Station Manager</option>
@@ -109,36 +110,91 @@ include("includes/dbManager.php");
                             </div>
                         </div>
                     </div>
+
+                    <!-- Modal -->
+                    <!-- <div class="modal fade updateModelView bd-addUser-modal-lg" id="updateModelView" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-lg " role="document">
+                            <div class="modal-content ">
+
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Enter Employee Details</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body ViewEmployee">
+                                        // employee info will load  here 
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" id="addEmployee" name="addEmployee" class="btn btn-primary">Submit</button>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div> -->
+                    <div class="modal fade updateModelView" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content ViewEmployee" id="">
+
+                            </div>
+                        </div>
+                    </div>
                     <!-- modal -->
-                       <!-- Modal -->
-                <div class="modal fade bd-updateStatus-modal-lg" id="EmployeeStatusModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-lg " role="document">
-                        <form action="includes/dbManager.php" method="post">
-                            <div class="modal-content">
-                                <div class="modal-header bg-primary text-white">
-                                    <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Update Employee status </h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body ">
+                    <!-- Modal -->
+                    <div class="modal fade bd-updateStatus-modal-lg" id="EmployeeStatusModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-lg " role="document">
+                            <form action="includes/dbManager.php" method="post">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-primary text-white">
+                                        <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Update Employee status </h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body ">
 
-                                    <div class="row d-flex justify-content-center ">
-                                        <div class="col d-flex flex-column d-block ViewEmployeeStatus">
+                                        <div class="row d-flex justify-content-center ">
+                                            <div class="col d-flex flex-column d-block ViewEmployeeStatus">
+                                            </div>
+
                                         </div>
-
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" name="upEmployeeStatus" class="btn btn-primary">Update</button>
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" name="upEmployeeStatus" class="btn btn-primary">Update</button>
-                                </div>
-                            </div>
 
 
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                    <!-- alert delete -->
+                    <div class="modal  alertDelete fade" tabindex="-1">
+                        <div class="modal-dialog ">
+                            <div class="modal-content">
+                                <form action="includes/dbManager.php" method="post">
+                                    <input type="hidden" value="" name="employeeID" id="employeeID" class="form-control">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title font-weight-bold ">Delete Station</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+
+
+                                    <div class="modal-body">
+                                        <p> Do you want to <span class="text-danger">delete</span> this data! please confirm.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="submit" name="deleteEmployee" class="btn btn-danger">Yes ! Delete</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                     <!-- Page Heading -->
                     <div
                         class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -196,6 +252,19 @@ include("includes/dbManager.php");
                                 unset($_SESSION['status']);
                             }
                             ?>
+
+                            <?php
+                            if (isset($_SESSION['delete'])) {
+
+                            ?>
+                                <div class="alert alert-danger" role="alert">
+                                    <strong> <?php echo $_SESSION['delete']; ?></strong>
+                                </div>
+                            <?php
+
+                                unset($_SESSION['delete']);
+                            }
+                            ?>
                             <div class="table-responsive">
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead class="bg-primary text-white">
@@ -237,14 +306,15 @@ include("includes/dbManager.php");
 
                                         ?>
                                             <tr>
-                                                <td class="employeeID" ><?php echo $Employee['EmployeeID']; ?></td>
+                                                <td class="employeeID"><?php echo $Employee['EmployeeID']; ?></td>
 
                                                 <td><?php if (!empty($Employee['image'])): ?>
-                                                    <img src="public/images/users/<?php echo trim($Employee['image']); ?>" class="img-fluid rounded rounded-circle" width="50px" height="50px">
-                                                <?php else: ?>
-                                                    <img src="public/images/users/default-profile.jpg" alt="" class="img-fluid" width="50px" height="50px">
-                                                <?php endif; ?></td>
-                                                
+                                                        <img src="public/images/users/<?php echo trim($Employee['image']); ?>" class="img-fluid rounded rounded-circle" width="50px" height="50px">
+                                                    <?php else: ?>
+                                                        <img src="public/images/users/default-profile.jpg" alt="" class="img-fluid" width="50px" height="50px">
+                                                    <?php endif; ?>
+                                                </td>
+
                                                 <td><?php echo $Employee['UserName']; ?></td>
                                                 <td><span class="text-primary font-weight-bold p-1 rounded"><?php echo $Employee['Role']; ?></span></td>
                                                 <!-- <td><?php echo $Employee['Sex']; ?></td> -->
@@ -257,11 +327,11 @@ include("includes/dbManager.php");
                                                         if ($Employee['Status'] == 1) {
                                                             echo '<span  class="bg-success text-white p-1 border-0 rounded">Active</span>';
                                                         }
-                                                        ?> <button class="btn btn-info btn-sm m-1 updateEmployeeStatus"  >
+                                                        ?> <button class="btn btn-info btn-sm m-1 updateEmployeeStatus">
                                                         <i class="fa-solid fa-pen-to-square fa-sm"></i></button> </td>
-                                                <td><button class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bd-update-modal-lg">
+                                                <td><button class="btn btn-primary btn-sm updateEmployee">
                                                         <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
-                                                    <button class="delete_data btn btn-danger btn-sm">
+                                                    <button class="delete_data btn btn-danger btn-sm deleteEmployee">
                                                         <i class="fa-solid fa-trash-can fa-sm"></i></button>
                                                 </td>
                                             </tr>
@@ -345,30 +415,70 @@ include("includes/dbManager.php");
 
 
     <script>
-          $(document).ready(function() {
-        $('.updateEmployeeStatus').click(function(e) {
-            e.preventDefault();
+        $(document).ready(function() {
+            $('.updateEmployeeStatus').click(function(e) {
+                e.preventDefault();
 
-            var employeeID = $(this).closest('tr').find('.employeeID').text();
+                var employeeID = $(this).closest('tr').find('.employeeID').text();
 
-            // console.log(StationID);
-            $.ajax({
-                method: "POST",
-                url: "includes/dbManager.php",
-                data: {
-                    'updateEmployeeStatus': true,
-                    'employeeID': employeeID,
-                },
-                success: function(response) {
-                    console.log(response);
-                    $('.ViewEmployeeStatus').html(response);
-                    $('#EmployeeStatusModel').modal('show');
+                // console.log(StationID);
+                $.ajax({
+                    method: "POST",
+                    url: "includes/dbManager.php",
+                    data: {
+                        'updateEmployeeStatus': true,
+                        'employeeID': employeeID,
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('.ViewEmployeeStatus').html(response);
+                        $('#EmployeeStatusModel').modal('show');
 
-                }
+                    }
+                });
+
             });
-
         });
-    });
+
+        // update employee details 
+        $(document).ready(function() {
+            $('.updateEmployee').click(function(e) {
+                e.preventDefault();
+
+                var employeeID = $(this).closest('tr').find('.employeeID').text();
+
+                // console.log(StationID);
+                $.ajax({
+                    method: "POST",
+                    url: "includes/dbManager.php",
+                    data: {
+                        'updateEmployee': true,
+                        'employeeID': employeeID,
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        $('.ViewEmployee').html(response);
+                        $('.updateModelView').modal('show');
+
+                    }
+                });
+
+            });
+        });
+
+        $(document).ready(function() {
+            $('.deleteEmployee').click(function(e) {
+                e.preventDefault();
+
+                var employeeID = $(this).closest('tr').find('.employeeID').text();
+
+                // console.log(StationID);
+                $('#employeeID').val(employeeID);
+                $('.alertDelete').modal('show');
+
+
+            });
+        });
     </script>
 
 </body>
