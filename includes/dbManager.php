@@ -130,6 +130,7 @@ if (isset($_POST['upStationStatus'])) {
     $conn->close();
     $result->close();
 }
+
 // update status Sesion view fucntion with JQuery
 if (isset($_POST['updateStationStatus'])) {
     $stationID = $_POST['StationID'];
@@ -313,7 +314,7 @@ if (isset($_POST['addEmployee'])) {
         $_SESSION['checkMail'] = 'Sorry... Email is already registred! Please try again!';
         header("location:../Employees.php");
     } else {
-        $result = $conn->query("INSERT INTO employees (fisrtName,lastName,Email,UserName,ContactNumber,Password,StationID,Role,sex) VALUES('$name','$email','$username',$contactNumber,$hashedPassword,'$stationID','$role','$sex')");
+        $result = $conn->query("INSERT INTO employees (fisrtName,lastName,Email,UserName,ContactNumber,Password,StationID,Role,sex) VALUES('$fisrtName','$lastName','$email','$username',$contactNumber,'$hashedPassword','$stationID','$role','$sex')");
         if ($result) {
             $_SESSION['status'] = "Employee inserted successfully";
             header("location:../Employees.php");
@@ -322,6 +323,89 @@ if (isset($_POST['addEmployee'])) {
         $result->close();
     }
 }
+
+// update employees status 
+if (isset($_POST['updateEmployeeStatus'])) {
+    $employeeID = $_POST['employeeID'];
+
+    $conn = getConnection();
+    $result = $conn->query("SELECT EmployeeID, Status FROM Employees WHERE EmployeeID = $employeeID");
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+?>
+
+    <?php
+    foreach ($rows as $row) {
+    ?>
+        <input type="hidden" name="employeeID" class="form-control" id="" value=" <?php echo $row['EmployeeID']; ?> ">
+
+        <?php
+        if ($row['Status'] == 0) {
+            echo '
+            <div class="row d-flex justify-content-center ">
+            <div class="col d-flex flex-column d-block ViewStationStatus">
+            
+            <label for="fuel type" class="font-weight-bold">Current Status: </label>
+                    <button class="btn btn-danger "> In Active </button>
+                </div>
+
+                 <div class="col d-flex flex-column d-block ViewStationStatus">
+                     <label for="fuel type" class="font-weight-bold">Update Status</label>
+                        <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Choose...</option>
+                            <option value="1">Active</option>
+                            <option value="0">In Active</option>
+                        </select>
+                </div>
+                </div> ';
+        }
+        if ($row['Status'] == 1) {
+            echo '
+            <div class="row d-flex justify-content-center ">
+            <div class="col d-flex flex-column d-block ViewStationStatus">
+            <label for="fuel type" class="font-weight-bold">Current Status: </label>
+                    <button class="btn btn-success ">Active </button>
+                </div>
+
+                 <div class="col d-flex flex-column d-block ViewStationStatus">
+                     <label for="fuel type" class="font-weight-bold">Update Status</label>
+                        <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Choose...</option>
+                            <option value="1">Active</option>
+                            <option value="0">In Active</option>
+                        </select>
+                </div>
+                </div> ';
+        }
+
+
+        ?>
+
+    <?php  }
+    ?>
+
+<?php
+
+}
+
+
+// update employee status
+
+if (isset($_POST['upEmployeeStatus'])) {
+    $employeeID = $_POST['employeeID'];
+    $status = $_POST['status'];
+
+    $conn = getConnection();
+    $result = $conn->query("UPDATE employees SET status = '$status' WHERE employeeID = $employeeID");
+
+    if ($result) {
+        $_SESSION['status'] = "Status updated successfully";
+        header("location:../employees.php");
+    }
+    $conn->close();
+    $result->close();
+}
+
 
 // add new fuel 
 
@@ -1096,8 +1180,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if (isset($_POST['update_password'])) {
-        
-        $employeeID = $_POST['employeeID']; 
+
+        $employeeID = $_POST['employeeID'];
         $oldPass = $_POST['oldPass'];
         $newPass = $_POST['newPass'];
 

@@ -337,6 +337,7 @@ if (isLogin()==false){
 </body>
 
 <script>
+    
     $(document).ready(function() {
         $('.updateStationStatus').click(function(e) {
             e.preventDefault();

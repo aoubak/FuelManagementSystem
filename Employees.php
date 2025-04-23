@@ -109,6 +109,36 @@ include("includes/dbManager.php");
                             </div>
                         </div>
                     </div>
+                    <!-- modal -->
+                       <!-- Modal -->
+                <div class="modal fade bd-updateStatus-modal-lg" id="EmployeeStatusModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-lg " role="document">
+                        <form action="includes/dbManager.php" method="post">
+                            <div class="modal-content">
+                                <div class="modal-header bg-primary text-white">
+                                    <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Update Employee status </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body ">
+
+                                    <div class="row d-flex justify-content-center ">
+                                        <div class="col d-flex flex-column d-block ViewEmployeeStatus">
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="submit" name="upEmployeeStatus" class="btn btn-primary">Update</button>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
                     <!-- Page Heading -->
                     <div
                         class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -170,11 +200,11 @@ include("includes/dbManager.php");
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead class="bg-primary text-white">
                                         <tr>
-                                            <th>EmployeeID</th>
+                                            <th>#</th>
                                             <th>Image</th>
                                             <th>Username</th>
                                             <th>Role</th>
-                                            <th>Sex</th>
+                                            <!-- <th>Sex</th> -->
                                             <th>Contact</th>
                                             <th>StationID</th>
                                             <th>Status</th>
@@ -186,11 +216,11 @@ include("includes/dbManager.php");
                                     </thead>
                                     <tfoot class="bg-gray-800 text-white">
                                         <tr>
-                                            <th>EmployeeID</th>
+                                            <th>#</th>
                                             <th>Image</th>
                                             <th>Username</th>
                                             <th>Role</th>
-                                            <th>Sex</th>
+                                            <!-- <th>Sex</th> -->
                                             <th>Contact</th>
                                             <th>StationID</th>
                                             <th>Status</th>
@@ -207,7 +237,7 @@ include("includes/dbManager.php");
 
                                         ?>
                                             <tr>
-                                                <td><?php echo $Employee['EmployeeID']; ?></td>
+                                                <td class="employeeID" ><?php echo $Employee['EmployeeID']; ?></td>
 
                                                 <td><?php if (!empty($Employee['image'])): ?>
                                                     <img src="public/images/users/<?php echo trim($Employee['image']); ?>" class="img-fluid rounded rounded-circle" width="50px" height="50px">
@@ -217,7 +247,7 @@ include("includes/dbManager.php");
                                                 
                                                 <td><?php echo $Employee['UserName']; ?></td>
                                                 <td><span class="text-primary font-weight-bold p-1 rounded"><?php echo $Employee['Role']; ?></span></td>
-                                                <td><?php echo $Employee['Sex']; ?></td>
+                                                <!-- <td><?php echo $Employee['Sex']; ?></td> -->
                                                 <td><?php echo $Employee['ContactNumber']; ?> </td>
                                                 <td><?php echo $Employee['StationID']; ?> </td>
                                                 <td> <?php
@@ -227,7 +257,7 @@ include("includes/dbManager.php");
                                                         if ($Employee['Status'] == 1) {
                                                             echo '<span  class="bg-success text-white p-1 border-0 rounded">Active</span>';
                                                         }
-                                                        ?> <button class="btn btn-info btn-sm m-1" data-toggle="modal" data-target=".bd-update-modal-lg">
+                                                        ?> <button class="btn btn-info btn-sm m-1 updateEmployeeStatus"  >
                                                         <i class="fa-solid fa-pen-to-square fa-sm"></i></button> </td>
                                                 <td><button class="btn btn-primary btn-sm" data-toggle="modal" data-target=".bd-update-modal-lg">
                                                         <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
@@ -312,6 +342,34 @@ include("includes/dbManager.php");
 
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
+
+
+    <script>
+          $(document).ready(function() {
+        $('.updateEmployeeStatus').click(function(e) {
+            e.preventDefault();
+
+            var employeeID = $(this).closest('tr').find('.employeeID').text();
+
+            // console.log(StationID);
+            $.ajax({
+                method: "POST",
+                url: "includes/dbManager.php",
+                data: {
+                    'updateEmployeeStatus': true,
+                    'employeeID': employeeID,
+                },
+                success: function(response) {
+                    console.log(response);
+                    $('.ViewEmployeeStatus').html(response);
+                    $('#EmployeeStatusModel').modal('show');
+
+                }
+            });
+
+        });
+    });
+    </script>
 
 </body>
 
