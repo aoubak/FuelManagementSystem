@@ -1,30 +1,165 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+date_default_timezone_set('Asia/Kolkata');
 
-<head>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 
-    <title>SB Admin 2 - Forgot Password</title>
 
-    <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
+include("view/partials/head.php");
+include("includes/dbManager.php");
 
-    <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+// reset password
+// Send email (using PHPMailer example)
+require 'vendor/PHPMailer/PHPMailer/src/PHPMailer.php';
+require 'vendor/PHPMailer/PHPMailer/src/SMTP.php';
+require 'vendor/PHPMailer/PHPMailer/src/Exception.php';
 
-</head>
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\SMTP;
+// Load Composer's autoloader
+
+require 'vendor/autoload.php';
+
+$emailCheck = '';
+$emailError = '';
+$emailSent = '';
+
+
+
+
+if (isset($_POST['resetPassword'])) {
+
+    // Create connection
+    $conn = getConnection();
+
+    // Check email exists
+    // $email = $conn->real_escape_string($_POST['email']);
+
+    $email = $_POST['email'];
+    // Check if email is empty
+    if (empty($email)) {
+        $emailError = 'Email is required';
+    }
+    // Check if email is valid
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $emailError = 'Invalid email format';
+    }
+    // Check if email exists in the database
+    $result = $conn->query("SELECT * FROM employees WHERE Email = '$email'");
+
+    // Email exists, proceed with password reset
+    if ($result->num_rows > 0) {
+
+        // Generate token
+        $token = bin2hex(random_bytes(50));
+        $expires = date("Y-m-d H:i:s", strtotime("+1 hour"));
+
+        // Store token in database
+        $conn->query("INSERT INTO password_resets (email, token, expires_at) 
+                 VALUES ('$email', '$token', '$expires')");
+
+
+
+        // Create instance
+        $mail = new PHPMailer(true);
+        //Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'aoubak01@gmail.com';
+        $mail->Password = 'xwbv eosm ilkz jpsk';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+
+        $mail->setFrom('noreply@somoil.com', 'Somoil');
+        $mail->addAddress($email);
+        $mail->Subject = 'Password Reset Link';
+        // Send HTML formatted email
+        $mail->isHTML(true);
+
+        // $mail->Body = "Click here to reset your password:http://http://localhost/fms/reset-password.php?token=$token";
+        $mail->Body = "
+                    <html>
+                    <head>
+                    <style>
+                        .container {
+                        max-width: 600px;
+                        margin: 30px auto;
+                        padding: 20px;
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        border: 1px solid #ddd;
+                        border-radius: 10px;
+                        background-color: #f9f9f9;
+                        }
+                        .btn {
+                        display: inline-block;
+                        padding: 12px 25px;
+                        font-size: 16px;
+                        background-color: #007bff;
+                        color: white;
+                        text-decoration: none;
+                        border-radius: 5px;
+                        margin-top: 20px;
+                        cursor: pointer;
+                        
+                        }
+                        .btn:hover {
+                        color: white;
+                        background-color: #0056b3;
+                        }
+                        .note {
+                        font-size: 14px;
+                        color: #dc3545;
+                        margin-top: 15px;
+                        }
+                        .footer {
+                        margin-top: 30px;
+                        font-size: 12px;
+                        color: #888;
+                        }
+                    </style>
+                    </head>
+                    <body>
+                    <div class='container'>
+                        <h2>Password Reset Request</h2>
+                        <p>Hello,</p>
+                        <p>We received a request to reset your password for your Somoil FMS account.</p>
+                        <p>Please click the button below to reset your password:</p>
+                        <a href='http://localhost/fms/reset-password.php?token=$token' class='btn '>Reset Password</a>
+                        <p class='note'>⚠️ This link will expire in 1 hour for your security.</p>
+                        <p>If you did not request this, you can safely ignore this email.</p>
+                        <div class='footer'>
+                        &copy; " . date('Y') . " Somoil FMS. All rights reserved.
+                        </div>
+                    </div>
+                    </body>
+                    </html>";
+
+        if (!$mail->send()) {
+            $emailError = 'Message could not be sent.';
+        } else {
+            $emailSent = 'Reset link has been sent to your email';
+        }
+    } else {
+        $emailCheck = 'Email not found in our system';
+    }
+}
+
+
+
+
+?>
+
+
+
 
 <body class="bg-gradient-primary">
 
     <div class="container">
+
+
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
@@ -43,15 +178,45 @@
                                         <p class="mb-4">We get it, stuff happens. Just enter your email address below
                                             and we'll send you a link to reset your password!</p>
                                     </div>
-                                    <form class="use">
+                                    <?php
+                                    if (empty($emailError)) {
+                                    } else {
+                                    ?>
+                                        <div class="alert alert-danger">
+                                            
+                                            <?php echo $emailError; ?> </div>
+
+                                    <?php }
+                                    ?>
+
+                                    <?php
+                                    if (empty($emailSent)) {
+                                    } else {
+                                    ?>
+                                        <div class="alert alert-success">
+                                            <?php echo $emailSent; ?> </div>
+
+                                    <?php }
+                                    ?>
+                                    <?php
+                                    if (empty($emailCheck)) {
+                                    } else {
+                                    ?>
+                                        <div class="alert alert-danger">
+                                            <?php echo $emailCheck; ?> </div>
+
+                                    <?php }
+                                    ?>
+                                    <form class="use" action="forgot-password.php" method="POST">
                                         <div class="form-group">
-                                            <input type="email" class="form-control form-control-user"
+                                            <input type="email" name="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" aria-describedby="emailHelp"
                                                 placeholder="Enter Email Address...">
                                         </div>
-                                        <a href="login.html" class="btn btn-primary btn-user btn-block">
+                                        <button type="submit" name="resetPassword" class="btn btn-primary btn-user btn-block">Reset Password</button>
+                                        <!-- <a href="" class="btn btn-primary btn-user btn-block">
                                             Reset Password
-                                        </a>
+                                        </a> -->
                                     </form>
                                     <hr>
                                     <div class="text-center">

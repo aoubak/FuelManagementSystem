@@ -342,16 +342,16 @@ if (isset($_POST['updateEmployeeBtn'])) {
     //     $_SESSION['checkMail'] = 'Sorry... Email is already registered! Please try again!';
     //     header("location:../Employees.php");
     // } else {
-        $result = $conn->query("UPDATE employees SET fisrtName='$fisrtName', lastName='$lastName', Email='$email', UserName='$username', ContactNumber='$contactNumber', StationID='$stationID', Role='$role', sex='$sex' WHERE EmployeeID='$employeeID'");
-        if ($result) {
-            $_SESSION['status'] = "Employee updated successfully";
-            header("location:../Employees.php");
-        } else {
-            $_SESSION['status'] = "Failed to update employee";
-            header("location:../Employees.php");
-        }
-        $conn->close();
+    $result = $conn->query("UPDATE employees SET fisrtName='$fisrtName', lastName='$lastName', Email='$email', UserName='$username', ContactNumber='$contactNumber', StationID='$stationID', Role='$role', sex='$sex' WHERE EmployeeID='$employeeID'");
+    if ($result) {
+        $_SESSION['status'] = "Employee updated successfully";
+        header("location:../Employees.php");
+    } else {
+        $_SESSION['status'] = "Failed to update employee";
+        header("location:../Employees.php");
     }
+    $conn->close();
+}
 // delete employee
 if (isset($_POST['deleteEmployee'])) {
     $employeeID = $_POST['employeeID'];
@@ -494,7 +494,7 @@ if (isset($_POST['updateEmployee'])) {
                         <select name="sex" class="custom-select form-select-sm" aria-label=".form-select-sm example">
 
                             <option selected value="<?php echo $row['Sex']; ?>"><?php echo $row['Sex']; ?></option>
-                            <option >-- Choose -- </option>
+                            <option>-- Choose -- </option>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
                         </select>
@@ -505,8 +505,8 @@ if (isset($_POST['updateEmployee'])) {
 
                         <select name="staion" class="custom-select form-select-sm" aria-label=".form-select-sm example">
 
-                            <option selected  value="<?php echo $row['StationID']; ?>"><?php echo $row['StationName']; ?></option>
-                            <option >-- Choose --</option>
+                            <option selected value="<?php echo $row['StationID']; ?>"><?php echo $row['StationName']; ?></option>
+                            <option>-- Choose --</option>
                             <?php
                             $stations = getStations();
                             foreach ($stations as $station) {
@@ -518,7 +518,7 @@ if (isset($_POST['updateEmployee'])) {
                         <label for="" class="font-weight-bold">Roles:</label>
                         <select name="role" class="custom-select form-select-sm" aria-label=".form-select-sm example">
                             <option selected value="<?php echo $row['Role']; ?>"> <?php echo $row['Role']; ?> </option>
-                            <option >-- Choose --</option>
+                            <option>-- Choose --</option>
                             <option value="Admin">Admin</option>
                             <option value="Pump Operator">Pump Operator</option>
                             <option value="Accountant">Accountant</option>
@@ -634,7 +634,8 @@ if (isset($_POST['updateFuelPro'])) {
         <div class="row d-flex ">
             <div class="col d-flex flex-column">
                 <label for="" class="font-weight-bold">Available Liters</label>
-                <input type="text" value="<?php echo $row['AvailableLiters']; ?>" name="availableLiters" class="form-control" aria-label=".cost">
+                <input type="text" disabled value="<?php echo $row['AvailableLiters']; ?>" name="availableLiters" class="form-control" aria-label=".cost">
+                <span class="small text-muted">You cannot update Available Liters directly. Please request a new fuel order.</span>
             </div>
 
         </div>
@@ -1815,3 +1816,7 @@ if (isset($_POST['updateSupplierView'])) {
 <?php
 
 }
+
+
+
+

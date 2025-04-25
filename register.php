@@ -32,6 +32,54 @@ $ErrorEmailPass = "";
 $matchPassword = "";
 
 
+// if (isset($_POST['submit'])) {
+//     $fname = $_POST['fname'];
+//     $lname = $_POST['lname'];
+//     $email = $_POST['email'];
+//     $username = $_POST['userName'];
+//     $password = $_POST['password'];
+//     $repeatPassword = $_POST['repeatPassword'];
+
+
+//     if (empty($fname)) {
+//         $fnameError = "Fisrt Name is required";
+//     }
+
+//     if (empty($lname)) {
+//         $lnameError = "Last Name is required";
+//     }
+
+//     if (empty($email)) {
+//         $emailError = "Email is required";
+//     }
+//     if (empty($password)) {
+//         $passwordError = "Password is required";
+//     }
+//     if (empty($repeatPassword)) {
+//         $repeatPasswordError = "Password is required";
+//     }
+//     if (empty($username)) {
+//         $userNameError = "Username is required";
+//     }
+
+//     if (empty($password) == false && empty($repeatPassword) == false && ($password != $repeatPassword)) {
+//         $matchPassword = "Password did not match.";
+//     } elseif (empty($email) == false && empty($password) == false && empty($fname) == false && empty($lname) == false) {
+
+//         $conn = getConnection();
+//         $result = $conn->query("INSERT INTO employees (`fisrtname`, `lastname`, `email`,`UserName`, `password`) VALUE('$fname', '$lname', '$email','$username', '$password')");
+
+
+//         if ($result == true) {
+//             $success = "Registration is successfully";
+
+        
+//         }
+
+      
+//     }
+// }
+
 if (isset($_POST['submit'])) {
     $fname = $_POST['fname'];
     $lname = $_POST['lname'];
@@ -40,58 +88,54 @@ if (isset($_POST['submit'])) {
     $password = $_POST['password'];
     $repeatPassword = $_POST['repeatPassword'];
 
-
+    // Validation
     if (empty($fname)) {
-        $fnameError = "Fisrt Name is required";
+        $fnameError = "First Name is required";
     }
-
     if (empty($lname)) {
         $lnameError = "Last Name is required";
     }
-
     if (empty($email)) {
         $emailError = "Email is required";
+    }
+    if (empty($username)) {
+        $userNameError = "Username is required";
     }
     if (empty($password)) {
         $passwordError = "Password is required";
     }
     if (empty($repeatPassword)) {
-        $repeatPasswordError = "Password is required";
-    }
-    if (empty($username)) {
-        $userNameError = "Username is required";
+        $repeatPasswordError = "Repeat Password is required";
     }
 
-    if (empty($password) == false && empty($repeatPassword) == false && ($password != $repeatPassword)) {
-        $matchPassword = "Password did not match.";
-    } elseif (empty($email) == false && empty($password) == false && empty($fname) == false && empty($lname) == false) {
+    // Check if passwords match only if both are filled
+    if (!empty($password) && !empty($repeatPassword) && $password !== $repeatPassword) {
+        $matchPassword = "Passwords do not match.";
+    }
 
+    // If there are no errors, insert into database
+    if (
+        empty($fnameError) &&
+        empty($lnameError) &&
+        empty($emailError) &&
+        empty($userNameError) &&
+        empty($passwordError) &&
+        empty($repeatPasswordError) &&
+        empty($matchPassword)
+    ) {
         $conn = getConnection();
-        $result = $conn->query("INSERT INTO employees (`fisrtname`, `lastname`, `email`,`UserName`, `password`) VALUE('$fname', '$lname', '$email','$username', '$password')");
-
-
-        if ($result == true) {
-            $success = "Registration is successfully";
-
-            // $_SESSION['status'] = "Registration is successfully";
-            // header("location:register.php");
-            // exit();
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT); // Secure password
+        $stmt = $conn->prepare("INSERT INTO employees (fisrtname, lastname, email, UserName, password) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssss", $fname, $lname, $email, $username, $passwordHash);
+        
+        if ($stmt->execute()) {
+            $success = "Registration successful";
+        } else {
+            $success = "Something went wrong. Please try again.";
         }
-
-
-
-
-        //     if ($result) {
-
-        //         header("location:index.php");
-        //         exit();
-        //     } else {
-
-        //         $ErrorEmailPass = "It's look like you're not yet member! click on the buttom link to signup.";
-        //     }
-        // }
     }
 }
+
 ?>
 
 

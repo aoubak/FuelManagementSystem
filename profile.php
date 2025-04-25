@@ -220,9 +220,7 @@ if (isLogin() == false) {
                                         <input type="hidden" name="employeeID" value="<?php echo $row['EmployeeID']; ?>">
 
                                         <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
-                                            <h5 class="font-weight-bold"><?php
-                                                                            echo $row['UserName'];
-                                                                            ?> / General</h5>
+                                            <h5 class="font-weight-bold"><?php echo $row['UserName']; ?> / General</h5>
                                             <span> Update your username and manage your account</span>
                                         </div>
                                         <?php
@@ -263,7 +261,7 @@ if (isLogin() == false) {
 
 
                                     <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
-                                        <h5 class="font-weight-bold">AOUBAK / Edit Profile</h5>
+                                        <h5 class="font-weight-bold"><?php echo $row['UserName']; ?> / Edit Profile</h5>
                                         <span> Set up your and enhance your profile</span>
                                     </div>
 
@@ -349,7 +347,7 @@ if (isLogin() == false) {
                                                     $Employees = $rows;
                                                     foreach ($Employees as $row) {
                                                 ?>
-                                                        <option value="<?php echo $Station['StationID']; ?>">-- <?php echo $row['Name']; ?> --</option>
+                                                        <option value="<?php echo $row['StationID']; ?>" > <?php echo $row['Name']; ?> </option>
                                                 <?php  }
                                                 } ?>
 
@@ -380,13 +378,13 @@ if (isLogin() == false) {
                                                     $EmployeeID = $_SESSION['EmployeeID'];
 
                                                     $conn = getConnection();
-                                                    $result = $conn->query("SELECT s.StationID, s.Name, e.Role FROM `employees` e INNER JOIN `stations` s on e.StationID = s.StationID WHERE EmployeeID ='$EmployeeID' ");
+                                                    $result = $conn->query("SELECT s.StationID, e.UserName, s.Name, e.Role FROM `employees` e INNER JOIN `stations` s on e.StationID = s.StationID WHERE EmployeeID ='$EmployeeID' ");
                                                     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
                                                     $Employees = $rows;
                                                     foreach ($Employees as $row) {
                                                 ?>
-                                                        <option value="<?php echo $Station['StationID']; ?>">-- <?php echo $row['Role']; ?> --</option>
+                                                        <option value="<?php echo $row['Role']; ?>"><?php echo $row['Role']; ?></option>
                                                 <?php  }
                                                 } ?>
 
@@ -405,6 +403,8 @@ if (isLogin() == false) {
                                     </form>
                                 </div>
 
+                                <!-- USER Password -->
+
                                 <div class="col content acontent p-2 border border-1 rounded-right rounded-2">
                                     <form action="includes/dbManager.php" method="post">
                                         
@@ -412,7 +412,7 @@ if (isLogin() == false) {
                                     <input type="hidden" name="employeeID" value="<?php echo $_SESSION['EmployeeID']; ?>" >
 
                                         <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
-                                            <h5 class="font-weight-bold">AOUBAK / Password</h5>
+                                            <h5 class="font-weight-bold"><?php echo $row['UserName']; ?>/ Password</h5>
                                             <span> Manage your password</span>
                                         </div>
                                         <div class="user-data pl-3 pr-3  mt-2">

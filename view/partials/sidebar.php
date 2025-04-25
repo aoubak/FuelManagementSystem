@@ -12,7 +12,7 @@
               </div> -->
 
           </div>
-          <div class="sidebar-brand-text mx-3">Gas M.S<sup></sup></div>
+          <div class="sidebar-brand-text mx-3">SOM OIL<sup></sup></div>
       </a>
 
       <!-- Divider -->

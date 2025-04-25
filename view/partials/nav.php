@@ -58,7 +58,7 @@
                   <?php
                     $conn = getConnection();
 
-                    $query = "SELECT COUNT(*) AS total FROM fuels WHERE AvailableLiters <= 258";
+                    $query = "SELECT COUNT(*) AS total FROM fuels WHERE AvailableLiters <= 500";
                     $result = $conn->query($query);
                     $row = $result->fetch_assoc();
 

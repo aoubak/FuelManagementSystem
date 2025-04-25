@@ -37,7 +37,7 @@ if (isLogin() == false) {
                     <!-- Page Heading -->
                     <div
                         class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Alerts Center</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Alert Center</h1>
                         <!-- <a href="#"
                             class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i>
@@ -51,7 +51,7 @@ if (isLogin() == false) {
                     <div class="card shadow mb-4">
 
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-primary">Alerts Summery</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Alert Summery</h6>
 
                         </div>
                         <div class="card-body">
