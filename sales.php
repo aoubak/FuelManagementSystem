@@ -70,7 +70,7 @@ if (isLogin() == false) {
                                             <div class="col d-flex flex-column d-block">
                                                 <label for="" class="font-weight-bold">Fuel Type</label>
                                                 <!-- <input type="text" name="" id="fuelType1"> -->
-                                                <select class="custom-select" id="fuelType" name="fuelType" onchange="fetchPrice()">
+                                                <select class="custom-select" id="fuelType" name="fuelType" onchange="fetchPrice()" disabled>
 
                                                     <option selected>-Choose-</option>
                                                     <?php

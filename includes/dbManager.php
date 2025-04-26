@@ -882,7 +882,7 @@ if (isset($_POST['addPump'])) {
 
     $conn = getConnection();
 
-    $result = $conn->query("INSERT INTO pumps (`pumpName`,`pumpDesc`,`fuelID`,`stationID`) VALUES('$pumpName','$pumpDesc','$stationID','$fuelID')");
+    $result = $conn->query("INSERT INTO pumps (`pumpName`,`pumpDesc`,`fuelID`,`stationID`) VALUES('$pumpName','$pumpDesc','$fuelID','$stationID')");
     if ($result) {
         $_SESSION['status'] = "Pump inserted successfully";
         header("location:../Pumps.php");
@@ -1566,7 +1566,7 @@ if (isset($_POST['upPumpsStatus'])) {
     $status = $_POST['status'];
 
     $conn = getConnection();
-    $result = $conn->query("UPDATE pumps SET status = '$status' WHERE StationID = $pumpID");
+    $result = $conn->query("UPDATE pumps SET status = '$status' WHERE pumpID = $pumpID");
 
     if ($result) {
         $_SESSION['status'] = "Status updated successfully";

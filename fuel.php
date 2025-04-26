@@ -124,14 +124,15 @@ if (isLogin() == false) {
                                     <div class="modal-body">
                                         <div class="row d-flex justify-content-center">
                                             <div class="col d-flex flex-column d-block">
-                                                <label for="fuel type" class="font-weight-bold">Select Fuel Type</label>
-                                                <select name="fuelType" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                                <label for="fuel type" class="font-weight-bold">Enter Fuel Type</label>
+                                                <input type="text" name="fuelType" class="form-control" aria-label=".cost">
+                                                <!-- <select name="fuelType" class="custom-select form-select-sm" aria-label=".form-select-sm example">
                                                     <option selected>Choose...</option>
                                                     <option value="Petrol">Petrol</option>
                                                     <option value="Desiel">Desiel</option>
                                                     <option value="Gas">Gas</option>
                                                     <option value="Kerosene">Kerosene</option>
-                                                </select>
+                                                </select> -->
 
 
                                             </div>
