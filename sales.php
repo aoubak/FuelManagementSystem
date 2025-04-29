@@ -70,7 +70,7 @@ if (isLogin() == false) {
                                             <div class="col d-flex flex-column d-block">
                                                 <label for="" class="font-weight-bold">Fuel Type</label>
                                                 <!-- <input type="text" name="" id="fuelType1"> -->
-                                                <select class="custom-select" id="fuelType" name="fuelType" onchange="fetchPrice()" disabled>
+                                                <select class="custom-select" id="fuelType" name="fuelType" onchange="fetchPrice()">
 
                                                     <option selected>-Choose-</option>
                                                     <?php
@@ -213,6 +213,7 @@ if (isLogin() == false) {
                                     <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
                                         <a href="#" class="dropdown-item" data-toggle="modal" data-target="#staticBackdrop"><i class="fa-solid fa-plus bg-primary text-white p-1 rounded "></i> Add New Sales</a>
                                         <a href="sales_history.php" class="dropdown-item"> <i class="fa-solid fa-clock-rotate-left  bg-primary text-white p-1 rounded"></i> Veiw Sales History</a>
+                                        <a href="customer_statement.php" class="dropdown-item"> <i class="fa-solid fa-clock-rotate-left  bg-primary text-white p-1 rounded"></i> Customer Statement</a>
 
                                     </div>
                                 </div>
@@ -352,6 +353,61 @@ if (isLogin() == false) {
 
 
         <script>
+            // fething pumps fueltype
+            // function fetchPumpFuel() {
+            //     var pumpName = document.getElementById("pumpName").value;
+
+
+            //     if (pumpName !== "") {
+            //         $.ajax({
+            //             url: "includes/dbManager.php",
+            //             type: "POST",
+            //             data: {
+            //                 pumpName: pumpName
+            //             },
+            //             success: function(response) {
+            //                 document.getElementById("fuelType").value = response;
+
+            //                 // Call fetchPrice() to get the price for the selected fuel type
+
+            //                 fetchPrice();
+            //             }
+            //         });
+            //     } else {
+            //         document.getElementById("fuelType").value = "";
+            //     }
+            // }
+
+            function fetchPumpFuel() {
+                var pumpName = document.getElementById("pumpName").value;
+
+                if (pumpName !== "") {
+                    $.ajax({
+                        url: "includes/dbManager.php",
+                        type: "POST",
+                        data: {
+                            pumpName: pumpName
+                        },
+                        success: function(response) {
+                            var fuelTypeSelect = document.getElementById("fuelType");
+
+                            for (var i = 0; i < fuelTypeSelect.options.length; i++) {
+                                if (fuelTypeSelect.options[i].value === response) {
+                                    fuelTypeSelect.selectedIndex = i;
+                                    break;
+                                }
+                            }
+
+                            fetchPrice();
+                        }
+                    });
+                } else {
+                    document.getElementById("fuelType").selectedIndex = 0; // Reset to "choose"
+                }
+            }
+
+
+            // after gatting pumps fueltype will fetch fuels Price
             function fetchPrice() {
                 var fuelType = document.getElementById("fuelType").value;
 
@@ -370,59 +426,12 @@ if (isLogin() == false) {
                 } else {
                     document.getElementById("unitPrice").value = "";
                 }
-                //  calculateAmount();
-            }
-
-            function fetchPumpFuel() {
-                var pumpName = document.getElementById("pumpName").value;
-
-
-                if (pumpName !== "") {
-                    $.ajax({
-                        url: "includes/dbManager.php",
-                        type: "POST",
-                        data: {
-                            pumpName: pumpName
-                        },
-                        success: function(response) {
-                            document.getElementById("fuelType").value = response;
-
-                            // Call fetchPrice() to get the price for the selected fuel type
-
-                            fetchPrice();
-                        }
-                    });
-                } else {
-                    document.getElementById("fuelType").value = "Deisel";
-                }
             }
 
 
-            //  → Auto Calculation:
-            // Liters Sold = Current Reading - Pre Reading
 
-            // function calculateLiters() {
-            //     var preRead = parseFloat(document.getElementById('pre_read').value) || 0;
-            //     var currentRead = parseFloat(document.getElementById('current_read').value) || 0;
-            //     var fuelPrice = document.getElementById("unitPrice").value;
 
-            //     var litersSold = currentRead - preRead;
-            //     var amount = litersSold * fuelPrice;
-
-            //     if (litersSold >= 0) {
-            //         document.getElementById('liters_sold').value = litersSold;
-            //     } else {
-            //         document.getElementById('liters_sold').value = 0; // or show error if you want
-            //     }
-
-            //     if (amount >= 0) {
-            //         document.getElementById('amount').value = amount;
-            //     } else {
-            //         document.getElementById('amount').value = 0; // or show error if you want
-            //     }
-
-            // }
-
+            // calculating  liter sold
             function calculateLitersAndAmount() {
                 var preRead = parseFloat(document.getElementById('pre_read').value) || 0;
                 var currentRead = parseFloat(document.getElementById('current_read').value) || 0;
@@ -438,6 +447,7 @@ if (isLogin() == false) {
                 calculateAmount(); // auto update amount when reading changes
             }
 
+            // after getting liter sold will calculate amount by unitPrice
             function calculateAmount() {
                 var litersSold = parseFloat(document.getElementById('liters_sold').value) || 0;
                 var fuelPrice = parseFloat(document.getElementById('unitPrice').value) || 0;

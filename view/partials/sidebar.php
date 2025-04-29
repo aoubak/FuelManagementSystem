@@ -1,3 +1,15 @@
+<?php
+// onlyAdminPage();
+// $userRole = CheckUserRole();
+// // Check if user is Admin
+// if ($userRole !== 'Admin') {
+//     // If not admin, redirect to dashboard or access denied page
+//     header("Location:../index.php");
+//     exit();
+// }
+
+?>
+  
   <!-- Sidebar -->
   <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
@@ -43,14 +55,27 @@
           <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
               <div class="bg-white py-2 collapse-inner rounded">
                   <h6 class="collapse-header">Tables</h6>
-                  <a class="collapse-item" href="Stations.php">Stations</a>
+                  <?php $userRole = CheckUserRole(); ?>
+
+                  <!-- Only for Admin -->
+                  <?php if ($userRole == 'Admin') : ?>
+                      <a class="collapse-item" href="Stations.php">Stations</a>
+                      <a class="collapse-item" href="fuel.php">Fuel</a>
+                      <a class="collapse-item" href="pumps.php">Pumps</a>
+                      <a class="collapse-item" href="sales.php">Sales</a>
+                      <a class="collapse-item" href="Employees.php">Employees</a>
+                      <a class="collapse-item" href="Suppliers.php">Suppliers</a>
+                      <a class="collapse-item" href="index.php">Payroll</a>
+                      <!-- <a class="collapse-item" href="Creditors.php">Creditors</a> -->
+                      <?php endif; ?>
+                 
+
+                  <!-- Visible for all users -->
+                  <?php if ($userRole !== 'Admin') : ?>
                   <a class="collapse-item" href="fuel.php">Fuel</a>
-                  <a class="collapse-item" href="pumps.php">Pumps</a>
                   <a class="collapse-item" href="sales.php">Sales</a>
-                  <a class="collapse-item" href="Employees.php">Employees</a>
                   <a class="collapse-item" href="Suppliers.php">Suppliers</a>
-                  <a class="collapse-item" href="payroll.html">Payroll</a>
-                  <a class="collapse-item" href="Creditors.html">Creditors</a>
+                  <?php endif; ?>
               </div>
           </div>
       </li>

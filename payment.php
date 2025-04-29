@@ -213,9 +213,9 @@ if (!isset($_GET['transaction_no'])) {
 
                     <!-- Content Row -->
                     <div class="card shadow mb-4">
-                        <div class="card-header py-3  d-flex justify-content-between align-items-center">
-                            <h6 class="m-0 font-weight-bold text-primary">Payment and Invoice</h6>
-                            <div class="actions">
+                        <div class="card-header py-3 bg-primary   d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-white">Payment and Invoice</h6>
+                            <!-- <div class="actions">
                                 <div class="dropdown  bg-white ">
                                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Actions
@@ -227,7 +227,7 @@ if (!isset($_GET['transaction_no'])) {
                                     </div>
                                 </div>
 
-                            </div>
+                            </div> -->
                         </div>
 
 

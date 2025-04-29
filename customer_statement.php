@@ -110,10 +110,36 @@ if (isLogin() == false) {
                         </div>
                     </div>
 
+                     <!-- alert delete -->
+                <div class="modal  alertDelete fade" tabindex="-1">
+                    <div class="modal-dialog ">
+                        <div class="modal-content">
+                        <form action="includes/dbManager.php" method="post">
+                        <input type="hidden" value="" name="id" id="id" class="form-control">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title font-weight-bold ">Delete Fuel Order</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            
+                            
+                            <div class="modal-body">
+                                <p> Do you want to <span class="text-danger" >delete</span> this data! please confirm.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" name="deleteFuelOrder" class="btn btn-danger">Yes ! Delete</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
                     <!-- Page Heading -->
                     <div
                         class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Sales History</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Fuel Order History</h1>
                         <!-- <a href="#"
                             class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i>
@@ -134,7 +160,7 @@ if (isLogin() == false) {
                                         Actions
                                     </button>
                                     <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
-                                        <a href="sales.php" class="dropdown-item"> <i class='fa-solid fa-dollar-sign bg-primary text-white p-1 rounded'></i> Sales</a>
+                                        <a href="fuel.php" class="dropdown-item"> <i class='fa-solid fa-dollar-sign bg-primary text-white p-1 rounded'></i> Fuels</a>
 
                                     </div>
                                 </div>
@@ -142,6 +168,21 @@ if (isLogin() == false) {
                             </div>
                         </div>
                         <div class="card-body">
+
+
+                        <?php
+                            if (isset($_SESSION['delete'])) {
+
+                            ?>
+                                <div class="alert alert-danger d-flex justify-content-between align-items-center" role="alert">
+                                    <strong> <?php echo $_SESSION['delete']; ?></strong>
+                                </div>
+                            <?php
+
+                                unset($_SESSION['delete']);
+                            }
+                            ?>
+                            
                             <?php
                             $total_liters = 0;
                             $total_amount = 0;
@@ -150,22 +191,19 @@ if (isLogin() == false) {
                                 $to_date   = $_POST['to_date'];
 
                                 $conn = getConnection();
-                                $sql = "SELECT * FROM sales WHERE created_at BETWEEN '$from_date' AND '$to_date' ORDER BY id DESC";
+                                $sql = "SELECT * FROM fuel_order_history WHERE date_received BETWEEN '$from_date' AND '$to_date' ORDER BY id DESC";
                                 $result = $conn->query($sql);
                             }
 
-
-
-
                             ?>
 
-                            <h4 class="font-weight-bol text-dark">Search Sales Report by Date:</h4>
+                            <h4 class="font-weight-bol text-dark">Search Order Report by Date:</h4>
 
 
                             <form method="post">
                                 
 
-                                    <div class="col d-flex flex-column mb-3 flex-md-row bg-light border border-1 rounded">
+                                    <div class="col d-flex flex-column flex-md-row bg-light border border-1 rounded">
 
                                         <div class="col-6 p-2 d-flex  align-items-center">
                                             <span class="font-weight-bold text-dark">From</span>
@@ -187,66 +225,66 @@ if (isLogin() == false) {
                             </form>
                             <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                                    <thead class="bg-primary text-white">
+                            <thead class="bg-primary text-white">
                                 <tr>
-                                        <th>Tran_No</th>
-                                        <th>Fuel Type</th>
-                                        <th>Liters</th>
-                                        <th>Price</th>
-                                        <th>Sales_Ref</th>
-                                        <th>Total Amount</th>
-                                        <th>Date Sold</th>
+                                        <th>#</th>
+                                        <th>Fuel_Type</th>
+                                        <th>QTY Liters</th>
+                                        <th>Unit Price</th>
+                                        <th>Total Cost</th>
+                                        <th>Supplier</th>
+                                        <th>Date</th>
                                         <th>Action</th>
+                                       
                                     </tr>
-                                    </thead>
-                                    <tbody>
-                                
+                                </thead>
+                                <tbody> 
                                 <?php
 
                                 if (isset($result)) {
-                                    echo '';
+                                    echo '
+                                ';
+
+
                                     while ($row = $result->fetch_assoc()) {
-                                        $total_liters += $row['ltrSold'];
-                                        $total_amount += $row['amount'];
+                                        $total_liters += $row['quantity_liters'];
+                                        $total_amount += $row['total_cost'];
 
 
-                                        echo"
+                                        echo "
+                                        
                                         <tr>
-                                            <td>" . $row['transaction_no'] . "</td>
-                                            <td>" . $row['fuelType'] . "</td>
-                                            <td>" . $row['ltrSold'] . " <span class='text-primary font-weight-bold p-1 rounded'>Ltrs</span></td>
-                                            <td>" . $row['unitPrice'] . "</td>
-                                            <td>" . $row['sales_ref'] . "</td>
-                                            <td><span class='text-primary font-weight-bold p-1 rounded'>$</span>" . $row['amount'] . "</td>
-                                            <td>" . $row['created_at'] . "</td>
-                                            <td> 
-                                                <button class='btn btn-info btn-sm' onclick=\"confirmCreateReceipt('" . $row['transaction_no'] . "')\">Receipt</button>
-                                            </td>
+                                            <td class='id'>" . $row['id'] . "</td>
+                                            <td class='fuelType'>" . $row['fuel_type'] . "</td>
+                                            <td>" . $row['quantity_liters'] . "<span class='text-primary font-weight-bold p-1 rounded'>Ltrs</span></td>
+                                            <td><span class='text-primary font-weight-bold p-1 rounded'>$</span>" . $row['unit_price'] . " </td>
+                                            <td><span class='text-primary font-weight-bold p-1 rounded'>$</span>" . $row['total_cost'] . "</td>
+                                            <td>" . $row['supplier_name'] . "</td>
+                                            <td>" . $row['date_received'] . "</td>
+                                            <td> <button class='btn btn-danger btn-sm deleteFuelOrder'>Delete</button> </td>
+                                            
                                         </tr>
-                                       
                                         ";
                                     }
-                                ?></tbody>
+                                ?>
+                                </tbody>
                                 <tfoot>
-                                <tr align="center" class="bg-dark text-white font-weight-bold">
-                                        <td colspan="2">TOTAL</td>
-
+                                    <tr align="center" class="bg-dark text-white font-weight-bold">
+                                        <td colspan="0">TOTAL</td>
                                         <td colspan="0"><?= $total_liters ?> ltr</td>
                                         <td></td>
                                         <td>$ <?= $total_amount ?></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
+                                        <td></td>
                                     </tr>
-                                </tfoot>
+                                    </tfoot>
                                     
-                                    
-
-                                   
                                 <?php }
                                 ?>
 
-                            </table>
+                                </table>
 
                             </div>
                         </div>
@@ -296,6 +334,69 @@ if (isLogin() == false) {
         </div>
     </div>
 
+    <script>
+      
+
+      // 1. Confirm Alert -> 2. Loading -> 3. No Redirect -> 4. Auto Run generateReceipt() -> 5. Auto Show Modal
+
+        // 1. Confirm Alert
+        
+        // function confirmCreateReceipt(invoice_no) {
+        //     Swal.fire({
+        //         title: 'Are you sure?',
+        //         text: "Do you want to create a new receipt?",
+        //         icon: 'question',
+        //         showCancelButton: true,
+        //         confirmButtonColor: '#3085d6',
+        //         cancelButtonColor: '#d33',
+        //         confirmButtonText: 'Yes, Create it!'
+        //     }).then((result) => {
+        //         if (result.isConfirmed) {
+        //             // 2. Loading
+        //             // 3. No Redirect
+        //             Swal.fire({
+        //                 title: 'Creating...',
+        //                 text: 'Please wait...',
+        //                 timer: 1000,
+        //                 didOpen: () => {
+        //                     Swal.showLoading()
+        //                 }
+        //             }).then(() => {
+        //                 // Directly run generateReceipt()
+        //                 generateReceipt(invoice_no);
+        //             })
+        //         }
+        //     })
+        // }
+
+        // delete fuel order
+        $(document).ready(function() {
+        $('.deleteFuelOrder').click(function(e) {
+            e.preventDefault();
+
+            var id = $(this).closest('tr').find('.id').text();
+
+            // console.log(fuelType);
+
+            $('#id').val(id);
+            $('.alertDelete').modal('show');
+            
+            
+        });
+    });
+
+        // print function of receipt
+        
+        function printDiv(divName) {
+            var printContents = document.getElementById(divName).innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            location.reload();
+        }
+    </script>
+
     <!-- Bootstrap core JavaScript-->
     <script src="vendor/jquery/jquery.min.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -313,65 +414,8 @@ if (isLogin() == false) {
     <!-- Page level custom scripts -->
     <script src="js/demo/datatables-demo.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-      
 
-      // 1. Confirm Alert -> 2. Loading -> 3. No Redirect -> 4. Auto Run generateReceipt() -> 5. Auto Show Modal
-
-    //   function confirmCreateReceipt(invoice_no) {}
-        function confirmCreateReceipt(transaction_no) {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "Do you want to create a new receipt?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, Create it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire({
-                        title: 'Creating...',
-                        text: 'Please wait...',
-                        timer: 1000,
-                        didOpen: () => {
-                            Swal.showLoading()
-                        }
-                    }).then(() => {
-                        // Directly run generateReceipt()
-                        generateReceipt(transaction_no);
-                    })
-                }
-            })
-        }
-
-
-        function generateReceipt(transaction_no) {
-            $.ajax({
-                url: 'includes/dbManager.php', // Inside this handle receipt creation
-                type: 'POST',
-                data: {
-                    transaction_no: transaction_no,
-                    create_receipt: true // Optional check in PHP
-                },
-                success: function(response) {
-                    $('#receiptContent').html(response);
-                    $('#receiptModal').modal('show');
-                }
-            });
-        }
-
-        // print function of receipt
-        
-        function printDiv(divName) {
-            var printContents = document.getElementById(divName).innerHTML;
-            var originalContents = document.body.innerHTML;
-            document.body.innerHTML = printContents;
-            window.print();
-            document.body.innerHTML = originalContents;
-            location.reload();
-        }
-    </script>
+   
 
 
 </body>

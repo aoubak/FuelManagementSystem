@@ -109,6 +109,31 @@ if (isset($_POST['submit'])) {
     }
 
     // Check if passwords match only if both are filled
+    if (!empty($email)) {
+        $conn = getConnection();
+        // $result = $conn->query("SELECT Email FROM Employees WHERE Email = '$email'");
+        // $row = $result->fetch_assoc();
+
+        $stmt = $conn->prepare("SELECT Email FROM Employees WHERE Email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc(); 
+
+            if($row['Email'] !== $email ){
+                // nothing happen
+            }else{
+                $emailError = "Email is already registered.";
+            } 
+        }
+        
+        
+        
+    }
+
     if (!empty($password) && !empty($repeatPassword) && $password !== $repeatPassword) {
         $matchPassword = "Passwords do not match.";
     }

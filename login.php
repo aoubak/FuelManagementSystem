@@ -91,6 +91,71 @@ $ErrorEmailPass = "";
 // }
 
 
+// old login code
+// if (isset($_POST['submit'])) {
+//     $email = trim($_POST['email']);
+//     $password = $_POST['password'];
+
+//     if (empty($email)) {
+//         $emailError = "Email is required";
+//     }
+
+//     if (empty($password)) {
+//         $passwordError = "Password is required";
+//     }
+
+//     if (!empty($email) && !empty($password)) {
+//         $conn = getConnection();
+
+//         // Prepare statement to prevent SQL Injection
+//         $stmt = $conn->prepare("SELECT EmployeeID, Role, Password FROM employees WHERE Email = ?");
+//         $stmt->bind_param("s", $email);
+//         $stmt->execute();
+
+//         $result = $stmt->get_result();
+
+//         if ($result->num_rows > 0) {
+//             $row = $result->fetch_assoc();
+            
+
+//             // Verify hashed password
+//             if (password_verify($password, $row['Password'])) {
+//                 session_start();
+//                 $_SESSION['EmployeeID'] = $row['EmployeeID'];
+//                 $_SESSION['Role'] = $row['Role'];
+
+//                 // Remember me with secure way
+
+//                 if (isset($_POST['remember_me'])) {
+//                     $token = bin2hex(random_bytes(32)); // 64-character secure token
+//                     $hashedToken = hash('sha256', $token);
+                
+//                     // Store hashed token in DB
+//                     $updateToken = $conn->prepare("UPDATE employees SET remember_token = ? WHERE EmployeeID = ?");
+//                     $updateToken->bind_param("si", $hashedToken, $row['EmployeeID']);
+//                     $updateToken->execute();
+                
+//                     // Set cookie with original token (not hashed)
+//                     setcookie('remember_token', $token, time() + (60 * 60 * 24 * 7), "/", "", true, true); // 7 days, Secure + HTTPOnly
+//                 }
+                
+
+//                 header("Location: index.php");
+//                 exit();
+//             } else {
+//                 $ErrorEmailPass = "Incorrect email or password.";
+//             }
+//         } else {
+//             $ErrorEmailPass = "No account found with that email.";
+//         }
+
+//         $stmt->close();
+//         $conn->close();
+//     }
+// }
+
+// enw login code 
+
 
 if (isset($_POST['submit'])) {
     $email = trim($_POST['email']);
@@ -108,7 +173,7 @@ if (isset($_POST['submit'])) {
         $conn = getConnection();
 
         // Prepare statement to prevent SQL Injection
-        $stmt = $conn->prepare("SELECT EmployeeID, Role, Password FROM employees WHERE Email = ?");
+        $stmt = $conn->prepare("SELECT EmployeeID, Role, Password, Status FROM employees WHERE Email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
 
@@ -117,14 +182,17 @@ if (isset($_POST['submit'])) {
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
 
-            // Verify hashed password
-            if (password_verify($password, $row['Password'])) {
+            // Check if Status = 1 (Active)
+            if ($row['Status'] != 1) {
+                $ErrorEmailPass = "Your account is <span class='font-weight-bold' >inactive</span> . Please contact the administrator.";
+            } 
+            // Now verify password
+            else if (password_verify($password, $row['Password'])) {
                 session_start();
                 $_SESSION['EmployeeID'] = $row['EmployeeID'];
                 $_SESSION['Role'] = $row['Role'];
 
-                // Remember me with secure way
-
+                // Remember me functionality
                 if (isset($_POST['remember_me'])) {
                     $token = bin2hex(random_bytes(32)); // 64-character secure token
                     $hashedToken = hash('sha256', $token);
@@ -138,20 +206,20 @@ if (isset($_POST['submit'])) {
                     setcookie('remember_token', $token, time() + (60 * 60 * 24 * 7), "/", "", true, true); // 7 days, Secure + HTTPOnly
                 }
                 
-
                 header("Location: index.php");
                 exit();
             } else {
                 $ErrorEmailPass = "Incorrect email or password.";
             }
         } else {
-            $ErrorEmailPass = "No account found with that email.";
+            $ErrorEmailPass = "It's look like you're not yet member! click on the buttom link to signup.";
         }
 
         $stmt->close();
         $conn->close();
     }
 }
+
 
 
 
@@ -224,7 +292,7 @@ if (isset($_POST['submit'])) {
                                                 <input type="email" name="email" class="form-control form-control-user"
                                                     id="Email" value="" aria-describedby="emailHelp"
                                                     placeholder="Email">
-                                                <span></span>
+                                                <!-- <span class="errordisplay small text-muted"></span> -->
                                                 <div class="errordisplay"><?php echo $emailError ?></div>
                                             </div>
                                         </div>

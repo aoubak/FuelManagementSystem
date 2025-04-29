@@ -165,7 +165,14 @@ if (isLogin() == false) {
                                     </div>
                                     <img src="public/images/tt-01.jpg" alt="banner">
                                     <div class="col-2 profileImage  border border-1 p-0 rounded rounded-1">
-                                        <div class="active bg-success text-white rounded rounded-2 p-1 bx-flashing">Active</div>
+                                        
+                                             <?php 
+                                             if(!empty($row['Status']) && $row['Status'] == '1' ) : ?>
+                                                <div class="active bg-success border border-white text-white rounded rounded-2 p-1 bx-flashing">Active</div>
+                                            <?php else : ?>
+                                                <div class="active bg-danger border border-white text-white rounded rounded-2 p-1 bx-flashing">In active</div>
+                                             <?php endif; ?>
+                                            
 
                                         <?php if (!empty($row['image'])): ?>
                                             <img src="public/images/users/<?php echo htmlspecialchars(trim($row['image'])); ?>" alt="userImage">
@@ -262,7 +269,7 @@ if (isLogin() == false) {
 
                                     <div class="info-header bg-primary p-3 rounded rounded-2 text-white">
                                         <h5 class="font-weight-bold"><?php echo $row['UserName']; ?> / Edit Profile</h5>
-                                        <span> Set up your and enhance your profile</span>
+                                        <span> Set up and enhance your profile</span>
                                     </div>
 
                                     <div class=" col user-data d-flex pl-3 pr-3 pt-3 pb-3 mt-2 rounded rounded-2 border border-1 border-danger d-flex  align-items-center ">
@@ -384,11 +391,12 @@ if (isLogin() == false) {
                                                     $Employees = $rows;
                                                     foreach ($Employees as $row) {
                                                 ?>
-                                                        <option value="<?php echo $row['Role']; ?>"><?php echo $row['Role']; ?></option>
+                                                        <option selected value="<?php echo $row['Role']; ?>"><?php echo $row['Role']; ?></option>
                                                 <?php  }
                                                 } ?>
 
-                                                <option value="Pump Operator">-choose the below options-</option>
+                                                <option >-choose the below options-</option>
+                                                <option value="Admin">Admin</option>
                                                 <option value="Pump Operator">Pump Operator</option>
                                                 <option value="Accountant/Cashier">Accountant/Cashier</option>
                                                 <option value="Station Manager">Station Manager</option>

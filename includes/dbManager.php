@@ -19,10 +19,11 @@ function getConnection(
 // login aouthentication ---------------------------
 function checkLogin()
 {
-    if (isset($_SESSION['EmployeeID']) == False) {
+    if (isset($_SESSION['EmployeeID']) == False ) {
         header("location:login.php");
         exit();
     }
+
 }
 
 
@@ -30,6 +31,30 @@ function isLogin()
 {
     return isset($_SESSION['EmployeeID']);
 }
+
+// user perimistion
+function CheckUserRole()
+{
+    $emplID = $_SESSION['EmployeeID'];
+    $conn = getConnection();
+    $result = $conn->query("SELECT Role FROM Employees WHERE EmployeeID = $emplID");
+    $row = $result->fetch_assoc(); // fetch one row, not all
+    return $row['Role'];
+}
+
+
+
+
+
+
+// function onlyAdminPage()
+// {
+//     $role = CheckUserRole();
+//     if ($role !== 'Admin') {
+//         header("Location:./index.php");
+//         // exit();
+//     }
+// }
 
 // update user image
 
@@ -1028,6 +1053,7 @@ if (isset($_POST['addSales'])) {
     $employeeID = $_POST['employeeID'];
     $stationID = $_POST['stationID'];
     $fuelType = $_POST['fuelType'];
+    // $fuelType = 'Diesel';
     $pumpNo = $_POST['pumpName'];
     $unitPrice = $_POST['unitPrice'];
     $preRead = $_POST['preRead'];
@@ -1036,43 +1062,82 @@ if (isset($_POST['addSales'])) {
     $amount = $_POST['amount'];
 
 
-    // Check if the fuel status is active
-    $checkFuelStatus = mysqli_query($conn, "SELECT Status FROM fuels WHERE FuelType='$fuelType'");
+
+    // // Check if the fuel status is active
+    // $checkFuelStatus = mysqli_query($conn, "SELECT Status FROM fuels WHERE FuelType='$fuelType'");
+    // $row = mysqli_fetch_assoc($checkFuelStatus);
+
+    // if ($row['Status'] == 1) { // 1 means active
+
+    //     // if fuel status is active then check available fuel liters.
+
+    //     // Check Available Fuel liters.
+    //     $checkFuel = mysqli_query($conn, "SELECT AvailableLiters FROM fuels WHERE FuelType='$fuelType'");
+    //     $row = mysqli_fetch_assoc($checkFuel);
+
+    //     if ($row['AvailableLiters'] >= $soldLtr) {
+
+    //         // if checking fuel success & then make sales record. 
+
+    //         $result = $conn->query("INSERT INTO sales (`atendentID`,`transaction_no`,`fuelType`,`pumpNo`,`unitPrice`,`preRead`,`curRead`,`ltrSold`,`amount`,`stationID`) VALUE($employeeID,'$transaction_no','$fuelType','$pumpNo','$unitPrice','$preRead','$curRead','$soldLtr','$amount','$stationID' )");
+    //         mysqli_query($conn, "UPDATE fuels SET AvailableLiters=AvailableLiters-'$soldLtr' WHERE FuelType='$fuelType'");
+
+    //         if ($result) {
+    //             $_SESSION['refresh_payment'] = true;
+    //             $_SESSION['warning'] = "Sales record created successfully! Please complete the sales entry.";
+    //             header("location:../payment.php?transaction_no=$transaction_no");
+    //         }
+    //         $conn->close();
+    //         $result->close();
+    //     } else {
+    //         $_SESSION['warning'] = "Not Enough Fuel Stock! Please request a new order of fuel -> $fuelType.";
+    //         header("location:../sales.php");
+    //         exit();
+    //     }
+    // } else {
+    //     $_SESSION['warning'] = "Fuel is not active! Please contact the admin.";
+    //     header("location:../sales.php");
+    //     exit();
+    // }
+
+    // end
+
+    $checkFuelStatus = mysqli_query($conn, "SELECT Status, AvailableLiters FROM fuels WHERE FuelType='$fuelType'");
+
+if ($checkFuelStatus && mysqli_num_rows($checkFuelStatus) > 0) {
     $row = mysqli_fetch_assoc($checkFuelStatus);
 
-    if ($row['Status'] == 1) { // 1 means active
-
-        // if fuel status is active then check available fuel liters.
-
-        // Check Available Fuel liters.
-        $checkFuel = mysqli_query($conn, "SELECT AvailableLiters FROM fuels WHERE FuelType='$fuelType'");
-        $row = mysqli_fetch_assoc($checkFuel);
-
+    if ($row['Status'] == 1) {
         if ($row['AvailableLiters'] >= $soldLtr) {
-
-            // if checking fuel success & then make sales record. 
-
-            $result = $conn->query("INSERT INTO sales (`atendentID`,`transaction_no`,`fuelType`,`pumpNo`,`unitPrice`,`preRead`,`curRead`,`ltrSold`,`amount`,`stationID`) VALUE($employeeID,'$transaction_no','$fuelType','$pumpNo','$unitPrice','$preRead','$curRead','$soldLtr','$amount','$stationID' )");
-            mysqli_query($conn, "UPDATE fuels SET AvailableLiters=AvailableLiters-'$soldLtr' WHERE FuelType='$fuelType'");
+            // Insert sale
+            $result = $conn->query("INSERT INTO sales (`atendentID`,`transaction_no`,`fuelType`,`pumpNo`,`unitPrice`,`preRead`,`curRead`,`ltrSold`,`amount`,`stationID`) VALUES ($employeeID,'$transaction_no','$fuelType','$pumpNo','$unitPrice','$preRead','$curRead','$soldLtr','$amount','$stationID')");
 
             if ($result) {
+                mysqli_query($conn, "UPDATE fuels SET AvailableLiters=AvailableLiters-'$soldLtr' WHERE FuelType='$fuelType'");
                 $_SESSION['refresh_payment'] = true;
                 $_SESSION['warning'] = "Sales record created successfully! Please complete the sales entry.";
                 header("location:../payment.php?transaction_no=$transaction_no");
+                exit();
             }
-            $conn->close();
-            $result->close();
         } else {
             $_SESSION['warning'] = "Not Enough Fuel Stock! Please request a new order of fuel -> $fuelType.";
             header("location:../sales.php");
             exit();
         }
     } else {
-        $_SESSION['warning'] = "Fuel is not active! Please contact the admin.";
+        $_SESSION['warning'] = "Fuel is not active! -> $fuelType Please contact the admin.";
         header("location:../sales.php");
         exit();
     }
+} else {
+    $_SESSION['warning'] = "Fuel not found! -> $fuelType Please check fuel type.";
+    header("location:../sales.php");
+    exit();
 }
+
+    
+// isset if close
+} 
 
 
 
@@ -1156,7 +1221,7 @@ if (isset($_POST["transaction_no"])) {
     ?>
         <div class="row">
             <div class="col ">
-                <div class="col mb-5 d-flex justify-content-between">
+                <div class="col bg-primary text-white rounded p-2 mb-5 d-flex justify-content-between">
                     <div class="">
                         <p class="m-0 font-weight-bold">Fuel Management System</p>
                         <p class="m-0">86 Main St.</p>
@@ -1164,7 +1229,7 @@ if (isset($_POST["transaction_no"])) {
                         <p class="m-0">+252907796534</p>
                     </div>
                     <div class=" img-fluid ">
-                        <img class=" float-right rounded border-5" style="width: 100px;" src="puplic/images/profile.jpg" alt="">
+                        <img class=" float-right rounded border-5" style="width: 100px;" src="public/images/somoil_logo.png" alt="">
 
                     </div>
                 </div>
@@ -1249,24 +1314,26 @@ if (isset($_POST["transaction_no"])) {
                     </div>
 
                 </div>
+                <div style="border-top: 2px dashed rgba(128, 128, 128, 0.5); margin: 5px 0;"></div>
+
                 <div class="col mt-5">
-                    <div class="time d-flex align-items-cente align-baseline  justify-content-between">
+                    <div class="time d-flex align-items-center  justify-content-between">
                         <div>
-                            <p class=" m-0 text-dark ">Thank you</p>
-                            <p class=" m-0 text-dark ">Have a nice day</p>
+                            <p class=" m-0 text-dark font-weight-bold ">Thank you</p>
+                            <p class=" m-0 text-dark font-weight-bold">Have a nice day</p>
 
                         </div>
 
-                        <div class=" img-fluid ">
-                            <img class=" float-right rounded border-5" style="width: 100px;" src="puplic/images/profile.jpg" alt="">
+                        <div class=" img-fluid  ">
+                            <img class=" float-right rounded border-5" style="width: 100px;" src="public/images/somoil_logo.png" alt="">
                             <!-- <i class='bx bxs-gas-pump float-right '></i> -->
                         </div>
                     </div>
 
                 </div>
 
-                <div class="col d-flex flex-column align-items-center">
-                    <h4>Barcode</h4>
+                <div class="col bg-dark p-3 mt-3 text-white rounded d-flex flex-column align-items-center">
+                    <h4 class="m-0">||||||||||||||||||</hh4cl
                 </div>
 
             </div>

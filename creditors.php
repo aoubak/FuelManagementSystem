@@ -1,3 +1,22 @@
+<?php
+include("view/partials/head.php");
+include("includes/dbManager.php");
+checkLogin();
+if (isLogin()==false){
+    header("location:login.php");
+}
+
+// user permision
+$role = CheckUserRole();
+if($role == 'Admin'){
+    
+} else{
+    header("location:index.php");
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 

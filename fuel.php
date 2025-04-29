@@ -5,6 +5,13 @@ checkLogin();
 if (isLogin() == false) {
     header("location:login.php");
 }
+
+
+// echo $role;
+
+
+
+
 ?>
 
 
@@ -280,6 +287,7 @@ if (isLogin() == false) {
                             </div>
                         </div>
                         <div class="card-body">
+                   
                             <?php
                             if (isset($_SESSION['checkfuel'])) {
 

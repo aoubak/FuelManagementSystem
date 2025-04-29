@@ -8,6 +8,13 @@ if (isLogin()==false){
     header("location:login.php");
 }
 
+// user permision
+$role = CheckUserRole();
+if($role == 'Admin'){
+    
+} else{
+    header("location:index.php");
+}
 
 
 

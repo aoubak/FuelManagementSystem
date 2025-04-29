@@ -5,6 +5,14 @@ checkLogin();
 if (isLogin() == false) {
     header("location:login.php");
 }
+
+$role = CheckUserRole();
+if($role == 'Admin'){
+    
+} else{
+    header("location:index.php");
+}
+
 ?>
 
 

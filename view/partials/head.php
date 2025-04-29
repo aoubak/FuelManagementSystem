@@ -11,7 +11,7 @@
 
     <title>FMS Admin</title>
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="puplic/images/YW.png">
+    <link rel="icon" type="image/x-icon" href="public/images/somoil_logo.png">
     <!-- Custom fonts for this template-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -47,9 +47,8 @@
 // include("includes/aouth.php");
 // require_once 'includes/aouth.php';
 // checkLogin();
-// if (isLogin()==false){
-//     header("location:login.php");
-// }
+
+
 
 
 
