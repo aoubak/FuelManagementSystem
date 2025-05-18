@@ -19,11 +19,10 @@ function getConnection(
 // login aouthentication ---------------------------
 function checkLogin()
 {
-    if (isset($_SESSION['EmployeeID']) == False ) {
+    if (isset($_SESSION['EmployeeID']) == False) {
         header("location:login.php");
         exit();
     }
-
 }
 
 
@@ -1104,40 +1103,40 @@ if (isset($_POST['addSales'])) {
 
     $checkFuelStatus = mysqli_query($conn, "SELECT Status, AvailableLiters FROM fuels WHERE FuelType='$fuelType'");
 
-if ($checkFuelStatus && mysqli_num_rows($checkFuelStatus) > 0) {
-    $row = mysqli_fetch_assoc($checkFuelStatus);
+    if ($checkFuelStatus && mysqli_num_rows($checkFuelStatus) > 0) {
+        $row = mysqli_fetch_assoc($checkFuelStatus);
 
-    if ($row['Status'] == 1) {
-        if ($row['AvailableLiters'] >= $soldLtr) {
-            // Insert sale
-            $result = $conn->query("INSERT INTO sales (`atendentID`,`transaction_no`,`fuelType`,`pumpNo`,`unitPrice`,`preRead`,`curRead`,`ltrSold`,`amount`,`stationID`) VALUES ($employeeID,'$transaction_no','$fuelType','$pumpNo','$unitPrice','$preRead','$curRead','$soldLtr','$amount','$stationID')");
+        if ($row['Status'] == 1) {
+            if ($row['AvailableLiters'] >= $soldLtr) {
+                // Insert sale
+                $result = $conn->query("INSERT INTO sales (`atendentID`,`transaction_no`,`fuelType`,`pumpNo`,`unitPrice`,`preRead`,`curRead`,`ltrSold`,`amount`,`stationID`) VALUES ($employeeID,'$transaction_no','$fuelType','$pumpNo','$unitPrice','$preRead','$curRead','$soldLtr','$amount','$stationID')");
 
-            if ($result) {
-                mysqli_query($conn, "UPDATE fuels SET AvailableLiters=AvailableLiters-'$soldLtr' WHERE FuelType='$fuelType'");
-                $_SESSION['refresh_payment'] = true;
-                $_SESSION['warning'] = "Sales record created successfully! Please complete the sales entry.";
-                header("location:../payment.php?transaction_no=$transaction_no");
+                if ($result) {
+                    mysqli_query($conn, "UPDATE fuels SET AvailableLiters=AvailableLiters-'$soldLtr' WHERE FuelType='$fuelType'");
+                    $_SESSION['refresh_payment'] = true;
+                    $_SESSION['warning'] = "Sales record created successfully! Please complete the sales entry.";
+                    header("location:../payment.php?transaction_no=$transaction_no");
+                    exit();
+                }
+            } else {
+                $_SESSION['warning'] = "Not Enough Fuel Stock! Please request a new order of fuel -> $fuelType.";
+                header("location:../sales.php");
                 exit();
             }
         } else {
-            $_SESSION['warning'] = "Not Enough Fuel Stock! Please request a new order of fuel -> $fuelType.";
+            $_SESSION['warning'] = "Fuel is not active! -> $fuelType Please contact the admin.";
             header("location:../sales.php");
             exit();
         }
     } else {
-        $_SESSION['warning'] = "Fuel is not active! -> $fuelType Please contact the admin.";
+        $_SESSION['warning'] = "Fuel not found! -> $fuelType Please check fuel type.";
         header("location:../sales.php");
         exit();
     }
-} else {
-    $_SESSION['warning'] = "Fuel not found! -> $fuelType Please check fuel type.";
-    header("location:../sales.php");
-    exit();
-}
 
-    
-// isset if close
-} 
+
+    // isset if close
+}
 
 
 
@@ -1334,14 +1333,14 @@ if (isset($_POST["transaction_no"])) {
 
                 <div class="col bg-dark p-3 mt-3 text-white rounded d-flex flex-column align-items-center">
                     <h4 class="m-0">||||||||||||||||||</hh4cl
+                            </div>
+
                 </div>
 
             </div>
 
-        </div>
 
-
-    <?php
+        <?php
     }
 }
 
@@ -1381,12 +1380,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    if (isset($_POST['updatePassword'])) {
-        $old_pass = $_POST['old_pass'];
-        $new_pass = $_POST['new_pass'];
-        $confirm_pass = $_POST['confirm_pass'];
-        // SQL Update Password
-    }
 
     if (isset($_POST['update_password'])) {
 
@@ -1465,16 +1458,16 @@ if (isset($_POST['updatePumpStatus'])) {
     $result = $conn->query("SELECT pumpID, status FROM pumps WHERE pumpID = '$pumpID'");
     $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-    ?>
-
-    <?php
-    foreach ($rows as $row) {
-    ?>
-        <input type="hidden" name="pumpID" class="form-control" name="stationStatus" id="" value=" <?php echo $row['pumpID']; ?> ">
+        ?>
 
         <?php
-        if ($row['status'] == 0) {
-            echo '
+        foreach ($rows as $row) {
+        ?>
+            <input type="hidden" name="pumpID" class="form-control" name="stationStatus" id="" value=" <?php echo $row['pumpID']; ?> ">
+
+            <?php
+            if ($row['status'] == 0) {
+                echo '
             <div class="row d-flex justify-content-center ">
             <div class="col d-flex flex-column d-block ViewStationStatus">
             
@@ -1491,9 +1484,9 @@ if (isset($_POST['updatePumpStatus'])) {
                         </select>
                 </div>
                 </div> ';
-        }
-        if ($row['status'] == 1) {
-            echo '
+            }
+            if ($row['status'] == 1) {
+                echo '
             <div class="row d-flex justify-content-center ">
             <div class="col d-flex flex-column d-block ViewStationStatus">
             <label for="fuel type" class="font-weight-bold">Current Status: </label>
@@ -1509,228 +1502,228 @@ if (isset($_POST['updatePumpStatus'])) {
                         </select>
                 </div>
                 </div> ';
-        }
+            }
 
 
+            ?>
+
+        <?php  }
         ?>
 
-    <?php  }
-    ?>
+        <?php
 
-    <?php
+    }
 
-}
+    // update pumps with jqeury
+    if (isset($_POST['updatePumpView'])) {
+        $pumpID = $_POST['pumpID'];
 
-// update pumps with jqeury
-if (isset($_POST['updatePumpView'])) {
-    $pumpID = $_POST['pumpID'];
-
-    $conn = getConnection();
-    $result = $conn->query("SELECT * FROM pumps where pumpid = $pumpID");
-    $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $conn = getConnection();
+        $result = $conn->query("SELECT * FROM pumps where pumpid = $pumpID");
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
 
 
-    foreach ($rows as $row) {
-    ?>
-        <form action="includes/dbManager.php" method="post">
-            <input type="hidden" value="<?php echo $row['pumpID']; ?>" name="pumpID" id="pumpID" class="form-control">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title font-weight-bold ">Update Pump</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
+        foreach ($rows as $row) {
+        ?>
+            <form action="includes/dbManager.php" method="post">
+                <input type="hidden" value="<?php echo $row['pumpID']; ?>" name="pumpID" id="pumpID" class="form-control">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title font-weight-bold ">Update Pump</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
 
-            <div class="modal-body">
-                <div class="row d-flex justify-content-center">
-                    <div class="col d-flex flex-column d-block">
-                        <label for="fuel type" class="font-weight-bold"> Name</label>
-                        <input type="text" name="pumpName" value="<?php echo $row['pumpName']; ?>" class="form-control">
-                        <label for="fuel type" class="font-weight-bold">pumpDesc</label>
-                        <input type="text" name="pumpDesc" value="<?php echo $row['pumpDesc']; ?>" class="form-control">
-                    </div>
-                    <div class="col d-flex flex-column d-block">
-                        <label for="" class="font-weight-bold">Station</label>
-                        <select name="stationID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                            <?php
+                <div class="modal-body">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col d-flex flex-column d-block">
+                            <label for="fuel type" class="font-weight-bold"> Name</label>
+                            <input type="text" name="pumpName" value="<?php echo $row['pumpName']; ?>" class="form-control">
+                            <label for="fuel type" class="font-weight-bold">pumpDesc</label>
+                            <input type="text" name="pumpDesc" value="<?php echo $row['pumpDesc']; ?>" class="form-control">
+                        </div>
+                        <div class="col d-flex flex-column d-block">
+                            <label for="" class="font-weight-bold">Station</label>
+                            <select name="stationID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                <?php
 
-                            $conn = getConnection();
-                            $result = $conn->query("SELECT s.StationID, s.Name FROM `pumps` p INNER JOIN `stations` s on p.StationID = s.StationID WHERE pumpID ='$pumpID'");
-                            $rows = $result->fetch_all(MYSQLI_ASSOC);
+                                $conn = getConnection();
+                                $result = $conn->query("SELECT s.StationID, s.Name FROM `pumps` p INNER JOIN `stations` s on p.StationID = s.StationID WHERE pumpID ='$pumpID'");
+                                $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-                            $pumps = $rows;
-                            foreach ($pumps as $pump) {
-                            ?>
-                                <option value="<?php echo $pump['StationID']; ?>">-- <?php echo $pump['Name']; ?> --</option>
-                            <?php  }
-                            ?>
-
-
-                            <option value="">- choose the below options -</option>
-                            <?php
-                            $stations = getStations();
-                            foreach ($stations as $station) {
-
-                            ?>
-                                <option value="<?php echo $station['StationID']; ?>"><?php echo $station['Name']; ?></option>
-                            <?php } ?>
-                        </select>
-                        <label for="" class="font-weight-bold">Fuel</label>
-                        <select name="fuelID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
-                            <?php
-
-                            $conn = getConnection();
-                            $result = $conn->query("SELECT f.FuelID, f.FuelType FROM `pumps` p INNER JOIN `fuels` f on p.fuelID = f.FuelID WHERE pumpID ='$pumpID'");
-                            $rows = $result->fetch_all(MYSQLI_ASSOC);
-
-                            $pumps = $rows;
-                            foreach ($pumps as $pump) {
-                            ?>
-                                <option value="<?php echo $pump['FuelID']; ?>">-- <?php echo $pump['FuelType']; ?> --</option>
-                            <?php  }
-                            ?>
+                                $pumps = $rows;
+                                foreach ($pumps as $pump) {
+                                ?>
+                                    <option value="<?php echo $pump['StationID']; ?>">-- <?php echo $pump['Name']; ?> --</option>
+                                <?php  }
+                                ?>
 
 
-                            <option value="">-- choose the below options --</option>
-                            <?php
-                            $fuels = getFuels();
-                            foreach ($fuels as $fuel) {
+                                <option value="">- choose the below options -</option>
+                                <?php
+                                $stations = getStations();
+                                foreach ($stations as $station) {
 
-                            ?>
-                                <option value="<?php echo $fuel['FuelID']; ?>"><?php echo $fuel['FuelType']; ?></option>
-                            <?php } ?>
-                        </select>
+                                ?>
+                                    <option value="<?php echo $station['StationID']; ?>"><?php echo $station['Name']; ?></option>
+                                <?php } ?>
+                            </select>
+                            <label for="" class="font-weight-bold">Fuel</label>
+                            <select name="fuelID" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                                <?php
+
+                                $conn = getConnection();
+                                $result = $conn->query("SELECT f.FuelID, f.FuelType FROM `pumps` p INNER JOIN `fuels` f on p.fuelID = f.FuelID WHERE pumpID ='$pumpID'");
+                                $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+                                $pumps = $rows;
+                                foreach ($pumps as $pump) {
+                                ?>
+                                    <option value="<?php echo $pump['FuelID']; ?>">-- <?php echo $pump['FuelType']; ?> --</option>
+                                <?php  }
+                                ?>
+
+
+                                <option value="">-- choose the below options --</option>
+                                <?php
+                                $fuels = getFuels();
+                                foreach ($fuels as $fuel) {
+
+                                ?>
+                                    <option value="<?php echo $fuel['FuelID']; ?>"><?php echo $fuel['FuelType']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" name="updatePumpBtn" class="btn btn-primary">Update</button>
-            </div>
-        </form>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" name="updatePumpBtn" class="btn btn-primary">Update</button>
+                </div>
+            </form>
 
 
 
 
 
-    <?php }
-    ?>
-
-<?php
-
-}
-
-
-
-
-
-
-// after model show will run this code to update the pump's status.
-
-if (isset($_POST['upPumpsStatus'])) {
-    $pumpID = $_POST['pumpID'];
-    $status = $_POST['status'];
-
-    $conn = getConnection();
-    $result = $conn->query("UPDATE pumps SET status = '$status' WHERE pumpID = $pumpID");
-
-    if ($result) {
-        $_SESSION['status'] = "Status updated successfully";
-        header("location:../pumps.php");
-    }
-    $conn->close();
-    $result->close();
-}
-
-if (isset($_POST['updatePumpBtn'])) {
-    $pumpID = $_POST['pumpID'];
-
-    $pumpName = $_POST['pumpName'];
-    $pumpDesc = $_POST['pumpDesc'];
-    $fuelID = $_POST['fuelID'];
-    $stationID = $_POST['stationID'];
-
-    $conn = getConnection();
-    $result = $conn->query("UPDATE `pumps` SET `pumpName` = '$pumpName', `pumpDesc` = '$pumpDesc' , `fuelID` = '$fuelID',`StationID`= '$stationID' WHERE `pumps`.`pumpID` = $pumpID");
-
-    if ($result) {
-        $_SESSION['status'] = "Pump updated successfully";
-        header("location:../pumps.php");
-    } else {
-
-        echo "Pump not upadted";
-    }
-    $conn->close();
-    $result->close();
-}
-
-// delete Pumps
-if (isset($_POST['deletePump'])) {
-    $pumpID = $_POST['pumpID'];
-
-    $conn = getConnection();
-    $result = $conn->query("DELETE FROM pumps WHERE pumpID = $pumpID");
-    if ($result) {
-        $_SESSION['delete'] = "Pump deleted successfully";
-        header("location:../pumps.php");
-    }
-    $conn->close();
-    $result->close();
-}
-
-
-
-// get all suppliers.
-function getSuppliers()
-{
-    $conn = getConnection();
-    $result = $conn->query("SELECT * FROM suppliers");
-    $rows = $result->fetch_all(MYSQLI_ASSOC);
-    if ($rows) {
-    }
-    $conn->close();
-    $result->close();
-    return $rows;
-}
-// get all suppliers end.
-
-
-// add suppliers
-if (isset($_POST['addSupplier'])) {
-    $supplierName = $_POST['supplierName'];
-    $contactNumber = $_POST['contactNumber'];
-    $email = $_POST['email'];
-    $location = $_POST['location'];
-
-    $conn = getConnection();
-    $result = $conn->query("INSERT INTO suppliers (`Name`,`ContactNumber`,`Email`,`Location`) VALUES('$supplierName','$contactNumber','$email','$location')");
-    if ($result) {
-        $_SESSION['status'] = "Supplier inserted successfully";
-        header("location:../suppliers.php");
-    }
-    $conn->close();
-    $result->close();
-}
-
-
-if (isset($_POST['updateSupplierStatus'])) {
-    $supplierID = $_POST['supplierID'];
-
-    $conn = getConnection();
-    $result = $conn->query("SELECT id, status FROM suppliers WHERE id = '$supplierID'");
-    $rows = $result->fetch_all(MYSQLI_ASSOC);
-
-?>
+        <?php }
+        ?>
 
     <?php
-    foreach ($rows as $row) {
+
+    }
+
+
+
+
+
+
+    // after model show will run this code to update the pump's status.
+
+    if (isset($_POST['upPumpsStatus'])) {
+        $pumpID = $_POST['pumpID'];
+        $status = $_POST['status'];
+
+        $conn = getConnection();
+        $result = $conn->query("UPDATE pumps SET status = '$status' WHERE pumpID = $pumpID");
+
+        if ($result) {
+            $_SESSION['status'] = "Status updated successfully";
+            header("location:../pumps.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+    if (isset($_POST['updatePumpBtn'])) {
+        $pumpID = $_POST['pumpID'];
+
+        $pumpName = $_POST['pumpName'];
+        $pumpDesc = $_POST['pumpDesc'];
+        $fuelID = $_POST['fuelID'];
+        $stationID = $_POST['stationID'];
+
+        $conn = getConnection();
+        $result = $conn->query("UPDATE `pumps` SET `pumpName` = '$pumpName', `pumpDesc` = '$pumpDesc' , `fuelID` = '$fuelID',`StationID`= '$stationID' WHERE `pumps`.`pumpID` = $pumpID");
+
+        if ($result) {
+            $_SESSION['status'] = "Pump updated successfully";
+            header("location:../pumps.php");
+        } else {
+
+            echo "Pump not upadted";
+        }
+        $conn->close();
+        $result->close();
+    }
+
+    // delete Pumps
+    if (isset($_POST['deletePump'])) {
+        $pumpID = $_POST['pumpID'];
+
+        $conn = getConnection();
+        $result = $conn->query("DELETE FROM pumps WHERE pumpID = $pumpID");
+        if ($result) {
+            $_SESSION['delete'] = "Pump deleted successfully";
+            header("location:../pumps.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+
+
+    // get all suppliers.
+    function getSuppliers()
+    {
+        $conn = getConnection();
+        $result = $conn->query("SELECT * FROM suppliers");
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        if ($rows) {
+        }
+        $conn->close();
+        $result->close();
+        return $rows;
+    }
+    // get all suppliers end.
+
+
+    // add suppliers
+    if (isset($_POST['addSupplier'])) {
+        $supplierName = $_POST['supplierName'];
+        $contactNumber = $_POST['contactNumber'];
+        $email = $_POST['email'];
+        $location = $_POST['location'];
+
+        $conn = getConnection();
+        $result = $conn->query("INSERT INTO suppliers (`Name`,`ContactNumber`,`Email`,`Location`) VALUES('$supplierName','$contactNumber','$email','$location')");
+        if ($result) {
+            $_SESSION['status'] = "Supplier inserted successfully";
+            header("location:../suppliers.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+
+    if (isset($_POST['updateSupplierStatus'])) {
+        $supplierID = $_POST['supplierID'];
+
+        $conn = getConnection();
+        $result = $conn->query("SELECT id, status FROM suppliers WHERE id = '$supplierID'");
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+
     ?>
-        <input type="hidden" name="supplierID" class="form-control" name="stationStatus" id="" value=" <?php echo $row['id']; ?> ">
 
         <?php
-        if ($row['status'] == 0) {
-            echo '
+        foreach ($rows as $row) {
+        ?>
+            <input type="hidden" name="supplierID" class="form-control" name="stationStatus" id="" value=" <?php echo $row['id']; ?> ">
+
+            <?php
+            if ($row['status'] == 0) {
+                echo '
             <div class="row d-flex justify-content-center ">
             <div class="col d-flex flex-column d-block ViewStationStatus">
             
@@ -1747,9 +1740,9 @@ if (isset($_POST['updateSupplierStatus'])) {
                         </select>
                 </div>
                 </div> ';
-        }
-        if ($row['status'] == 1) {
-            echo '
+            }
+            if ($row['status'] == 1) {
+                echo '
             <div class="row d-flex justify-content-center ">
             <div class="col d-flex flex-column d-block ViewStationStatus">
             <label for="fuel type" class="font-weight-bold">Current Status: </label>
@@ -1765,125 +1758,216 @@ if (isset($_POST['updateSupplierStatus'])) {
                         </select>
                 </div>
                 </div> ';
-        }
+            }
 
 
+            ?>
+
+        <?php  }
         ?>
 
-    <?php  }
-    ?>
+        <?php
+
+    }
+
+    if (isset($_POST['upSuppleirStatus'])) {
+        $supplierID = $_POST['supplierID'];
+        $status = $_POST['status'];
+
+        $conn = getConnection();
+        $result = $conn->query("UPDATE suppliers SET status = '$status' WHERE id = $supplierID");
+
+        if ($result) {
+            $_SESSION['status'] = "Status updated successfully";
+            header("location:../suppliers.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+    // update suppliers
+    if (isset($_POST['updateSupplirBtn'])) {
+        $supplierID = $_POST['supplierID'];
+        $supplierName = $_POST['name'];
+        $contactNumber = $_POST['contactNumber'];
+        $email = $_POST['email'];
+        $location = $_POST['location'];
+
+        $conn = getConnection();
+        $result = $conn->query("UPDATE suppliers SET `Name` = '$supplierName', `ContactNumber` = '$contactNumber', `Email` = '$email', `Location` = '$location' WHERE id = $supplierID");
+
+        if ($result) {
+            $_SESSION['status'] = "Supplier updated successfully";
+            header("location:../suppliers.php");
+        } else {
+            $_SESSION['status'] = "Supplier not upadted";
+            header("location:../suppliers.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+    // delete suppliers
+    if (isset($_POST['deleteSupplier'])) {
+        $supplierID = $_POST['supplierID'];
+
+        $conn = getConnection();
+        $result = $conn->query("DELETE FROM suppliers WHERE id = $supplierID");
+        if ($result) {
+            $_SESSION['delete'] = "Supplier deleted successfully";
+            header("location:../suppliers.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+    if (isset($_POST['updateSupplierView'])) {
+        $supplierID = $_POST['supplierID'];
+
+        $conn = getConnection();
+        $result = $conn->query("SELECT * FROM suppliers where id = $supplierID");
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+
+        foreach ($rows as $row) {
+        ?>
+
+
+            <form action="includes/dbManager.php" method="post">
+                <input type="hidden" value="<?php echo $row['id']; ?>" name="supplierID" id="supplierID" class="form-control">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title font-weight-bold ">Update Supplier</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col d-flex flex-column d-block">
+                            <label for="fuel type" class="font-weight-bold">Supplier Name</label>
+                            <input type="text" name="name" value="<?php echo $row['name']; ?>" class="form-control">
+                            <label for="fuel type" class="font-weight-bold">Location</label>
+                            <input type="text" name="location" value="<?php echo $row['location']; ?>" class="form-control">
+                        </div>
+                        <div class="col d-flex flex-column d-block">
+                            <label for="" class="font-weight-bold">Email</label>
+                            <input type="text" name="email" value="<?php echo $row['email']; ?>" class="form-control" aria-label=".cost">
+                            <label for="" class="font-weight-bold">Contact numer</label>
+                            <input type="text" name="contactNumber" value="<?php echo $row['contactNumber']; ?>" class="form-control" aria-label=".cost">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" name="updateSupplirBtn" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+
+
+
+
+
+        <?php }
+        ?>
 
     <?php
 
-}
-
-if (isset($_POST['upSuppleirStatus'])) {
-    $supplierID = $_POST['supplierID'];
-    $status = $_POST['status'];
-
-    $conn = getConnection();
-    $result = $conn->query("UPDATE suppliers SET status = '$status' WHERE id = $supplierID");
-
-    if ($result) {
-        $_SESSION['status'] = "Status updated successfully";
-        header("location:../suppliers.php");
     }
-    $conn->close();
-    $result->close();
-}
 
-// update suppliers
-if (isset($_POST['updateSupplirBtn'])) {
-    $supplierID = $_POST['supplierID'];
-    $supplierName = $_POST['name'];
-    $contactNumber = $_POST['contactNumber'];
-    $email = $_POST['email'];
-    $location = $_POST['location'];
 
-    $conn = getConnection();
-    $result = $conn->query("UPDATE suppliers SET `Name` = '$supplierName', `ContactNumber` = '$contactNumber', `Email` = '$email', `Location` = '$location' WHERE id = $supplierID");
+    // get all customers
 
-    if ($result) {
-        $_SESSION['status'] = "Supplier updated successfully";
-        header("location:../suppliers.php");
-    } else {
-        $_SESSION['status'] = "Supplier not upadted";
-        header("location:../suppliers.php");
+    function getCustomers()
+    {
+
+        $conn =  getConnection();
+        $result = $conn->query("SELECT * FROM customers");
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        if ($rows > 0) {
+            return $rows;
+        } else {
+            echo "Somthing wrong, no data available";
+        }
     }
-    $conn->close();
-    $result->close();
-}
+// status updating
+    if (isset($_POST['upStationStatus'])) {
+        $stationID = $_POST['stationID'];
+        $status = $_POST['status'];
 
-// delete suppliers
-if (isset($_POST['deleteSupplier'])) {
-    $supplierID = $_POST['supplierID'];
+        $conn = getConnection();
+        $result = $conn->query("UPDATE stations SET status = '$status' WHERE StationID = $stationID");
 
-    $conn = getConnection();
-    $result = $conn->query("DELETE FROM suppliers WHERE id = $supplierID");
-    if ($result) {
-        $_SESSION['delete'] = "Supplier deleted successfully";
-        header("location:../suppliers.php");
+        if ($result) {
+            $_SESSION['status'] = "Status updated successfully";
+            header("location:../stations.php");
+        }
+        $conn->close();
+        $result->close();
     }
-    $conn->close();
-    $result->close();
-}
 
-if (isset($_POST['updateSupplierView'])) {
-    $supplierID = $_POST['supplierID'];
+    // update status popbup
+    if (isset($_POST['updateCustomerStatus'])) {
+        $customer_id = $_POST['customer_id'];
 
-    $conn = getConnection();
-    $result = $conn->query("SELECT * FROM suppliers where id = $supplierID");
-    $rows = $result->fetch_all(MYSQLI_ASSOC);
+        $conn = getConnection();
+        $result = $conn->query("SELECT customer_id, status FROM customers WHERE customer_id = $customer_id");
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
 
-
-    foreach ($rows as $row) {
     ?>
 
+        <?php
+        foreach ($rows as $row) {
+        ?>
+            <input type="hidden" name="customer_id" class="form-control"  value=" <?php echo $row['customer_id']; ?> ">
 
-        <form action="includes/dbManager.php" method="post">
-            <input type="hidden" value="<?php echo $row['id']; ?>" name="supplierID" id="supplierID" class="form-control">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title font-weight-bold ">Update Supplier</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-
-
-            <div class="modal-body">
-                <div class="row d-flex justify-content-center">
-                    <div class="col d-flex flex-column d-block">
-                        <label for="fuel type" class="font-weight-bold">Supplier Name</label>
-                        <input type="text" name="name" value="<?php echo $row['name']; ?>" class="form-control">
-                        <label for="fuel type" class="font-weight-bold">Location</label>
-                        <input type="text" name="location" value="<?php echo $row['location']; ?>" class="form-control">
-                    </div>
-                    <div class="col d-flex flex-column d-block">
-                        <label for="" class="font-weight-bold">Email</label>
-                        <input type="text" name="email" value="<?php echo $row['email']; ?>" class="form-control" aria-label=".cost">
-                        <label for="" class="font-weight-bold">Contact numer</label>
-                        <input type="text" name="contactNumber" value="<?php echo $row['contactNumber']; ?>" class="form-control" aria-label=".cost">
-
-                    </div>
+            <?php
+            if ($row['status'] == 0) {
+                echo '
+            <div class="row d-flex justify-content-center ">
+            <div class="col d-flex flex-column d-block ViewStationStatus">
+            
+            <label for="fuel type" class="font-weight-bold">Current Status: </label>
+                    <button class="btn btn-danger "> In Active </button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="submit" name="updateSupplirBtn" class="btn btn-primary">Update</button>
-            </div>
-        </form>
+
+                 <div class="col d-flex flex-column d-block ViewStationStatus">
+                     <label for="fuel type" class="font-weight-bold">Update Status</label>
+                        <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Choose...</option>
+                            <option value="1">Active</option>
+                            <option value="0">In Active</option>
+                        </select>
+                </div>
+                </div> ';
+            }
+            if ($row['status'] == 1) {
+                echo '
+            <div class="row d-flex justify-content-center ">
+            <div class="col d-flex flex-column d-block ViewStationStatus">
+            <label for="fuel type" class="font-weight-bold">Current Status: </label>
+                    <button class="btn btn-success ">Active </button>
+                </div>
+
+                 <div class="col d-flex flex-column d-block ViewStationStatus">
+                     <label for="fuel type" class="font-weight-bold">Update Status</label>
+                        <select name="status" class="custom-select form-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Choose...</option>
+                            <option value="1">Active</option>
+                            <option value="0">In Active</option>
+                        </select>
+                </div>
+                </div> ';
+            }
 
 
+            ?>
 
+        <?php  }
+        ?>
 
+    <?php
 
-    <?php }
-    ?>
-
-<?php
-
-}
-
-
-
-
+    }

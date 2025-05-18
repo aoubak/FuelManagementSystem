@@ -20,7 +20,7 @@
               <i class='bx bxs-gas-pump'></i>
               <!-- <div class="image">
                 
-                  <img src="puplic/images/profile.jpg" class="img-fluid rounded rounded-2" alt="">
+                  <img src="public/images/profile.jpg" class="img-fluid rounded rounded-2" alt="">
               </div> -->
 
           </div>
@@ -64,6 +64,7 @@
                       <a class="collapse-item" href="pumps.php">Pumps</a>
                       <a class="collapse-item" href="sales.php">Sales</a>
                       <a class="collapse-item" href="Employees.php">Employees</a>
+                      <a class="collapse-item" href="customers.php">Customers</a>
                       <a class="collapse-item" href="Suppliers.php">Suppliers</a>
                       <a class="collapse-item" href="index.php">Payroll</a>
                       <!-- <a class="collapse-item" href="Creditors.php">Creditors</a> -->

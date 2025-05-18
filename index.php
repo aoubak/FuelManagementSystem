@@ -84,10 +84,10 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target=".bd-example-modal-lg"><i
-                                class="fa fa-gas-pump fa-sm text-white-50"></i> Price Control</a>
+                    <div class=" d-flex d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0  text-gray-800">Dashboard</h1>
+                        <!-- <a href="#" class=" btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target=".bd-example-modal-lg"><i
+                                class="fa fa-gas-pump fa-sm text-white-50"></i> Price Control</a> -->
                     </div>
 
                     <!-- Button trigger modal -->
@@ -167,8 +167,10 @@ while ($row = mysqli_fetch_assoc($result)) {
                     }
                     ?>
                     <div class="row">
-                        <div class="col-xl-3  col-md-6">
+                        <div class="col-12 d-flex justify-content-between mb-4">
                             <h5>Today <span class="font-weight-bold text-dark">price</span></h6>
+                            <a href="#" class=" btn btn-sm btn-primary shadow-sm" data-toggle="modal" data-target=".bd-example-modal-lg"><i
+                                class="fa fa-gas-pump fa-sm text-white-50"></i> Price Control</a>
                         </div>
                     </div>
                     <div class="row">
@@ -376,7 +378,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     </div>
                     <!-- Content Row -->
                     <div class="row mb-3">
-                        <div class="col-xl-6  col-md-6 ">
+                        <div class="col-xl-6 mb-3  col-md-6 ">
                             <div class="card p-2 ">
                                 <h5 class="m-0 text-dark">Today Fuel Sales per <span class="font-weight-bold text-primary">Amount</span></h6>
 

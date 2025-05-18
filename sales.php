@@ -105,6 +105,9 @@ if (isLogin() == false) {
                                                 <label for="fuel type" class="font-weight-bold">Amount</label>
                                                 <input type="text" id="amount" name="amount" readonly class="form-control">
 
+                                                <label for="fuel type" class="font-weight-bold">Customer Name</label>
+                                                <input type="text" id="customer" name="customer"  class="form-control">
+
                                             </div>
 
                                             <div class="col d-flex flex-column">
