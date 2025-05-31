@@ -1603,10 +1603,6 @@ if (isset($_POST['updatePumpStatus'])) {
                 </div>
             </form>
 
-
-
-
-
         <?php }
         ?>
 
@@ -1880,6 +1876,27 @@ if (isset($_POST['updatePumpStatus'])) {
 
     // get all customers
 
+
+    // add a new customer
+    if (isset($_POST['addCustomer'])) {
+        $fname = $_POST['fname'];
+        $lname = $_POST['lname'];
+        $phone = $_POST['phone'];
+        $email = $_POST['email'];
+        $address = $_POST['address'];
+        $opening_balance = $_POST['opening_balance'];
+
+        $conn = getConnection();
+        $result = $conn->query("INSERT INTO customers (`First_name`,`last_name`,`phone`,`Email`,`address`,`opening_balance`) VALUES('$fname','$lname','$phone','$email','$address','$opening_balance')");
+        if ($result) {
+            $_SESSION['status'] = "Customer inserted successfully";
+            header("location:../customers.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+
     function getCustomers()
     {
 
@@ -1892,7 +1909,7 @@ if (isset($_POST['updatePumpStatus'])) {
             echo "Somthing wrong, no data available";
         }
     }
-// status updating
+    // status updating
     if (isset($_POST['upStationStatus'])) {
         $stationID = $_POST['stationID'];
         $status = $_POST['status'];
@@ -1921,7 +1938,7 @@ if (isset($_POST['updatePumpStatus'])) {
         <?php
         foreach ($rows as $row) {
         ?>
-            <input type="hidden" name="customer_id" class="form-control"  value=" <?php echo $row['customer_id']; ?> ">
+            <input type="hidden" name="customer_id" class="form-control" value=" <?php echo $row['customer_id']; ?> ">
 
             <?php
             if ($row['status'] == 0) {
@@ -1968,6 +1985,113 @@ if (isset($_POST['updatePumpStatus'])) {
         <?php  }
         ?>
 
+        <?php
+
+    }
+
+    // update customer status
+    if (isset($_POST['upCustomerStatus'])) {
+        $customer_id = $_POST['customer_id'];
+        $status = $_POST['status'];
+
+        $conn = getConnection();
+        $result = $conn->query("UPDATE customers SET status = '$status' WHERE customer_id = $customer_id");
+
+        if ($result) {
+            $_SESSION['status'] = "Status updated successfully";
+            header("location:../customers.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+    // delete customer
+    if (isset($_POST['deleteCustomer'])) {
+        $customer_id = $_POST['customer_id'];
+
+        $conn = getConnection();
+        $result = $conn->query("DELETE FROM customers WHERE customer_id = $customer_id");
+        if ($result) {
+            $_SESSION['delete'] = "Customer deleted successfully";
+            header("location:../customers.php");
+        }
+        $conn->close();
+        $result->close();
+    }
+
+    // update customer modal view
+    if (isset($_POST['updateCustomer'])) {
+        $customer_id = $_POST['customer_id'];
+
+        $conn = getConnection();
+        $result = $conn->query("SELECT * FROM customers where customer_id = $customer_id");
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+
+
+        foreach ($rows as $row) {
+        ?>
+            <form action="includes/dbManager.php" method="post">
+                <input type="hidden" value="<?php echo $row['customer_id']; ?>" name="customer_id" id="customer_id" class="form-control">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title font-weight-bold ">Update Customer</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+
+                <div class="modal-body">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col d-flex flex-column d-block">
+                            <label for="fuel type" class="font-weight-bold">First Name</label>
+                            <input type="text" name="first_name" value="<?php echo $row['first_name']; ?>" class="form-control">
+                            <label for="fuel type" class="font-weight-bold">Last Name</label>
+                            <input type="text" name="last_name" value="<?php echo $row['last_name']; ?>" class="form-control">
+                             <label for="" class="font-weight-bold">Email</label>
+                            <input type="text" name="email" value="<?php echo $row['email']; ?>" class="form-control">
+                        </div>
+                        <div class="col d-flex flex-column d-block">
+                           
+                            <label for="" class="font-weight-bold">Phone</label>
+                            <input type="text" name="phone" value="<?php echo $row['phone']; ?>" class="form-control">
+                             <label for="" class="font-weight-bold">Address</label>
+                            <input type="text" name="address" value="<?php echo $row['address']; ?>" class="form-control">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" name="updateCustomerBtn" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+
+        <?php }
+        ?>
+
     <?php
 
+    }
+
+    // update customer
+    if (isset($_POST['updateCustomerBtn'])) {
+        $customer_id = $_POST['customer_id'];
+        $first_name = $_POST['first_name'];
+        $last_name = $_POST['last_name'];
+        $email = $_POST['email'];
+        $phone = $_POST['phone'];
+        $address = $_POST['address'];
+
+        $conn = getConnection();
+        $result = $conn->query("UPDATE customers SET `first_name` = '$first_name', `last_name` = '$last_name', `email` = '$email', `phone` = '$phone', `address` = '$address' WHERE customer_id = $customer_id");
+
+        if ($result) {
+            $_SESSION['status'] = "Customer updated successfully";
+            header("location:../customers.php");
+        } else {
+            $_SESSION['status'] = "Customer not upadted";
+            header("location:../customers.php");
+        }
+        $conn->close();
+        $result->close();
     }

@@ -8,6 +8,7 @@ if (isLogin() == false) {
 }
 ?>
 
+
 <body id="page-top">
 
 
@@ -39,12 +40,12 @@ if (isLogin() == false) {
                 <div class="container-fluid">
 
                     <!-- Modal new sales-->
-                    <div class="modal fade bd-example-modal-lg" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal fade bd-example-modal-lg" id="salesEntryModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                         <form action="includes/dbManager.php" method="post">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
                                     <div class="modal-header text-white bg-primary ">
-                                        <h5 class="modal-title font-weight-bold" id="staticBackdropLabel">Pump Record & Sales Calculatoin</h5>
+                                        <h5 class="modal-title font-weight-bold" id="salesEntryModal">Pump Record & Sales Calculatoin</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -105,8 +106,6 @@ if (isLogin() == false) {
                                                 <label for="fuel type" class="font-weight-bold">Amount</label>
                                                 <input type="text" id="amount" name="amount" readonly class="form-control">
 
-                                                <label for="fuel type" class="font-weight-bold">Customer Name</label>
-                                                <input type="text" id="customer" name="customer"  class="form-control">
 
                                             </div>
 
@@ -133,6 +132,19 @@ if (isLogin() == false) {
                                                     <option selected>-Choose-</option>
                                                     <option value="<?php echo $row['EmployeeID']; ?>"><?php echo $row['UserName']; ?></option>
                                                 </select>
+
+                                                <label for="customerSelect" class="font-weight-bold">Customers</label>
+                                                <div class="input-group">
+                                                    <select id="customerSelect" name="customer_id" class="custom-select" required>
+                                                        <option value="">-- Select Customer --</option>
+                                                    </select>
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-primary" id="addNewCustomerBtn">
+                                                            <i class="fas fa-user-plus"></i> New
+                                                        </button>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                         <div class="row d-flex">
@@ -169,6 +181,41 @@ if (isLogin() == false) {
                             </div>
                         </form>
                     </div>
+
+                    <!-- Add Customer Modal -->
+                    <div class="modal fade" id="newCustomerModal" tabindex="-1" role="dialog" aria-labelledby="newCustomerModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title" id="newCustomerModalLabel">Add New Customer</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="newCustomerForm">
+                                        <div class="form-group">
+                                            <label for="newCustomerName">Customer Name:</label>
+                                            <input type="text" class="form-control" id="newCustomerName" name="customerName" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="newCustomerEmail">Email (Optional):</label>
+                                            <input type="email" class="form-control" id="newCustomerEmail" name="customerEmail">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="newCustomerPhone">Phone (Optional):</label>
+                                            <input type="text" class="form-control" id="newCustomerPhone" name="customerPhone">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-primary" id="saveNewCustomerBtn">Save Customer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                     <!--  -->
 
@@ -214,7 +261,7 @@ if (isLogin() == false) {
                                         Actions
                                     </button>
                                     <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
-                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#staticBackdrop"><i class="fa-solid fa-plus bg-primary text-white p-1 rounded "></i> Add New Sales</a>
+                                        <a href="#" class="dropdown-item" data-toggle="modal" data-target="#salesEntryModal"><i class="fa-solid fa-plus bg-primary text-white p-1 rounded "></i> Add New Sales</a>
                                         <a href="sales_history.php" class="dropdown-item"> <i class="fa-solid fa-clock-rotate-left  bg-primary text-white p-1 rounded"></i> Veiw Sales History</a>
                                         <a href="customer_statement.php" class="dropdown-item"> <i class="fa-solid fa-clock-rotate-left  bg-primary text-white p-1 rounded"></i> Customer Statement</a>
 
@@ -459,6 +506,129 @@ if (isLogin() == false) {
 
                 document.getElementById('amount').value = amount.toFixed(2);
             }
+        </script>
+
+
+
+        <script>
+            $(document).ready(function() {
+
+                //  Reopen sales modal and load customers if flag is set
+                if (localStorage.getItem('showSalesModal') === 'true') {
+                    localStorage.removeItem('showSalesModal'); // Clear the flag
+
+                    // Manually load customers first
+                    loadCustomers('customerSelect');
+
+                    // Then show the modal
+                    $('#salesEntryModal').modal('show');
+                }
+
+                // Make sure this is inside your $(document).ready(function() { ... }); block
+                console.log("Document ready - JavaScript loaded.");
+
+                function loadCustomers(selectElementId, selectedCustomerId = null) {
+                    const $select = $(`#${selectElementId}`);
+                    $select.empty().append('<option value="">-- Select Customer --</option>'); // Clear previous options
+
+                    $.ajax({
+                        url: 'includes/api.php?action=getCustomers', // Call the API to get all customers
+                        method: 'GET',
+                        dataType: 'json', // Expect JSON back
+                        success: function(customers) {
+                            if (customers && customers.length > 0) {
+                                customers.forEach(customer => {
+                                    $select.append(`<option value="${customer.id}">${customer.name}</option>`);
+                                });
+                                // If a customer ID was passed (e.g., a newly added one), select it
+                                if (selectedCustomerId) {
+                                    $select.val(selectedCustomerId);
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error fetching customers:", status, error);
+                            alert("Failed to load customers. Please check your network and try again.");
+                        }
+                    });
+                }
+
+
+                $('#salesEntryModal').on('show.bs.modal', function(e) {
+                    // This runs when the main sales modal is about to be shown
+                    loadCustomers('customerSelect'); // Load customers into the dropdown
+                });
+
+
+                $('#addNewCustomerBtn').on('click', function() {
+                    // 1. Hide the sales entry modal first
+                    $('#salesEntryModal').modal('hide');
+
+                    // 2. Clear any old data from the new customer form
+                    $('#newCustomerForm')[0].reset();
+
+                    // 3. Show the new customer modal
+                    $('#newCustomerModal').modal('show');
+                });
+
+                // Make sure this is inside your $(document).ready(function() { ... }); block
+
+                $('#saveNewCustomerBtn').on('click', function() {
+                    const customerName = $('#newCustomerName').val().trim();
+                    const customerEmail = $('#newCustomerEmail').val().trim();
+                    const customerPhone = $('#newCustomerPhone').val().trim();
+
+                    if (customerName === '') {
+                        alert('Customer Name is required!');
+                        return;
+                    }
+
+                    // AJAX call to save the new customer using your api.php
+                    $.ajax({
+                        url: 'includes/api.php', // Your API endpoint
+                        method: 'POST',
+                        data: {
+                            action: 'addNewCustomer', // Tell PHP what action to perform
+                            customerName: customerName,
+                            customerEmail: customerEmail,
+                            customerPhone: customerPhone
+                        },
+                        dataType: 'json', // Expect JSON response from PHP
+                        success: function(response) {
+                            if (response.success) {
+
+                                alert(response.message);
+
+                                // Set a flag before reload
+                                localStorage.setItem('showSalesModal', 'true');
+                                location.reload(); // Now reload
+
+                                // 1. Close the new customer modal
+                                $('#newCustomerModal').modal('hide');
+
+                                // 2. Re-load customers in the sales dropdown, and pre-select the one just added
+                                loadCustomers('customerSelect', response.customerId);
+
+                                // 3. Show the sales entry modal again
+                                $('#salesEntryModal').modal('show');
+                            } else {
+                                alert('Error adding customer: ' + response.message);
+                                // If there's an error, still show the sales modal so they can continue or retry
+                                $('#salesEntryModal').modal('show');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error("Error adding customer:", status, error);
+                            alert('A network error occurred while adding the customer. Please try again.');
+                            // Always show the sales modal on any error
+                            $('#newCustomerModal').modal('hide');
+                            $('#salesEntryModal').modal('show');
+                        }
+                    });
+                });
+
+
+            });
         </script>
 
         <?php

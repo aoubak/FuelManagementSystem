@@ -50,11 +50,11 @@ if ($role == 'Admin') {
 
                     <!-- Modal insert-->
                     <div class="modal fade bd-example-modal-lg" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-lg " role="document">
+                        <div class="modal-dialog modal-lg" role="document">
                             <form action="includes/dbManager.php" method="post">
                                 <div class="modal-content">
                                     <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Enter Station Details</h5>
+                                        <h5 class="modal-title font-weight-bold " id="exampleModalLongTitle">Enter Customer Details</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -62,23 +62,51 @@ if ($role == 'Admin') {
                                     <div class="modal-body ">
                                         <div class="row d-flex justify-content-center">
                                             <div class="col d-flex flex-column d-block">
-                                                <label for="fuel type" class="font-weight-bold">Station name</label>
-                                                <input type="text" name="name" class="form-control">
-                                                <label for="fuel type" class="font-weight-bold">Location</label>
-                                                <input type="text" name="location" class="form-control">
+                                                <label for="fuel type" class="font-weight-bold">First Name</label>
+                                                <input type="text" name="fname" class="form-control">
+                                            </div>
+                                            <div class="col d-flex flex-column d-block">
+                                                 <label for="fuel type" class="font-weight-bold">Last Name</label>
+                                                <input type="text" name="lname" class="form-control">
+                                                
+                                            </div>
+                                        </div>
+
+                                        <div class="row d-flex justify-content-center">
+                                            <div class="col d-flex flex-column d-block">
+                                                <label for="fuel type" class="font-weight-bold">Phone</label>
+                                                <input type="text" name="phone" class="form-control">
+                                              
                                             </div>
                                             <div class="col d-flex flex-column d-block">
 
-                                                <label for="" class="font-weight-bold">Contact numer</label>
-                                                <input type="text" name="contactNumber" class="form-control" aria-label=".cost">
+                                                <label for="" class="font-weight-bold">Email</label>
+                                                <input type="text" name="email" class="form-control" aria-label=".cost">
+                                               
+                                            </div>
+
+                                            <div class="col d-flex flex-column d-block">
+                                                 <label for="" class="font-weight-bold">Address</label>
+                                                <input type="text" name="address" class="form-control" aria-label=".cost">
+                                            </div>
+
+                                        </div>
+                                       
+                                        <div class="row row d-flex justify-content-center">
+                                                              <div class="col d-flex flex-column d-block">
+
+                                                <label for="" class="font-weight-bold">Opening Balance</label>
+                                                <input type="text" name="opening_balance" value="0.00" class="form-control" aria-label=".cost">
+                                                
                                             </div>
                                         </div>
+                                        
 
 
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" name="addStation" class="btn btn-primary">Submit</button>
+                                        <button type="submit" name="addCustomer" class="btn btn-primary">Submit</button>
                                     </div>
                             </form>
                         </div>
@@ -119,11 +147,11 @@ if ($role == 'Admin') {
                 </div>
 
                 <!-- alert delete -->
-                <div class="modal  alertDelete fade" tabindex="-1">
+                <div class="modal alertDelete fade" tabindex="-1">
                     <div class="modal-dialog ">
                         <div class="modal-content">
                             <form action="includes/dbManager.php" method="post">
-                                <input type="hidden" value="" name="StationID" id="StationID" class="form-control">
+                                <input type="hidden" value="" name="customer_id" id="customer_id" class="form-control">
                                 <div class="modal-header bg-danger text-white">
                                     <h5 class="modal-title font-weight-bold ">Delete customer</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -137,7 +165,7 @@ if ($role == 'Admin') {
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                    <button type="submit" name="deleteStation" class="btn btn-danger">Yes ! Delete</button>
+                                    <button type="submit" name="deleteCustomer" class="btn btn-danger">Yes ! Delete</button>
                                 </div>
                             </form>
                         </div>
@@ -148,7 +176,7 @@ if ($role == 'Admin') {
                 <!-- alert Update -->
                 <div class="modal fade updateModelView" tabindex="-1">
                     <div class="modal-dialog">
-                        <div class="modal-content ViewStation" id="">
+                        <div class="modal-content ViewCustomer" id="">
 
                         </div>
                     </div>
@@ -176,7 +204,8 @@ if ($role == 'Admin') {
                                     Actions
                                 </button>
                                 <div class="dropdown-menu shadow-sm shadow-lg mr-4" aria-labelledby="dropdownMenu2">
-                                    <a href="#" class="dropdown-item" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="fa-solid fa-plus bg-primary text-white p-1 rounded"></i> Add new station</a>
+                                    <a href="#" class="dropdown-item" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="fa-solid fa-plus bg-primary text-white p-1 rounded"></i> Add new Customer</a>
+                                    <a href="#" class="dropdown-item" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="fa-solid fa-plus bg-primary text-white p-1 rounded"></i> Customer Statement</a>
                                     <!-- <a href="fuel_history.php" class="dropdown-item"> Veiw order history</a> -->
 
                                 </div>
@@ -249,7 +278,7 @@ if ($role == 'Admin') {
                                     ?>
                                         <tr>
                                             <td class="customer_id"><?php echo $customer['customer_id']; ?></td>
-                                            <td><?php echo $customer['customer_name']; ?></td>
+                                            <td><?php echo $customer['first_name']; ?></td>
                                             <td><?php echo $customer['phone']; ?></td>
                                             <td><?php echo $customer['email']; ?></td>
                                             <td><?php echo $customer['opening_balance']; ?></td>
@@ -266,9 +295,9 @@ if ($role == 'Admin') {
                                                 <button class="btn btn-info btn-sm updateCustomerStatus " data-toggle="modal" data-target=".bd-updateStationStatus-modal-lg">
                                                     <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
                                             </td>
-                                            <td><button class="btn btn-primary btn-sm updateStation">
+                                            <td><button class="btn btn-primary btn-sm updateCustomer">
                                                     <i class="fa-solid fa-pen-to-square fa-sm"></i></button>
-                                                <button class="btn btn-danger btn-sm deleteStation">
+                                                <button class="btn btn-danger btn-sm deleteCustomer">
                                                     <i class="fa-solid fa-trash-can fa-sm"></i></button>
                                             </td>
                                         </tr>
@@ -373,13 +402,13 @@ if ($role == 'Admin') {
     });
 
     $(document).ready(function() {
-        $('.deleteStation').click(function(e) {
+        $('.deleteCustomer').click(function(e) {
             e.preventDefault();
 
-            var StationID = $(this).closest('tr').find('.StationID').text();
+            var customer_id = $(this).closest('tr').find('.customer_id').text();
 
             // console.log(StationID);
-            $('#StationID').val(StationID);
+            $('#customer_id').val(customer_id);
             $('.alertDelete').modal('show');
 
 
@@ -388,22 +417,22 @@ if ($role == 'Admin') {
 
     // update station
     $(document).ready(function() {
-        $('.updateStation').click(function(e) {
+        $('.updateCustomer').click(function(e) {
             e.preventDefault();
 
-            var StationID = $(this).closest('tr').find('.StationID').text();
+            var customer_id = $(this).closest('tr').find('.customer_id').text();
 
             // console.log(StationID);
             $.ajax({
                 method: "POST",
                 url: "includes/dbManager.php",
                 data: {
-                    'updateStation': true,
-                    'StationID': StationID,
+                    'updateCustomer': true,
+                    'customer_id': customer_id,
                 },
                 success: function(response) {
                     console.log(response);
-                    $('.ViewStation').html(response);
+                    $('.ViewCustomer').html(response);
                     $('.updateModelView').modal('show');
 
                 }

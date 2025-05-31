@@ -1,1 +1,18 @@
-node_modules
+# Node modules
+node_modules/
+
+# Composer vendor directory
+/vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# Log files
+*.log
+
+# Environment files
+.env
