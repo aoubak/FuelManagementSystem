@@ -132,7 +132,7 @@ if (isset($_POST['UpdatePassword'])) {
 
 
                                     <form class="use" action="reset-password.php" method="post">
-                                        <input type="text" name="token" value="<?= isset($_GET['token']) ? htmlspecialchars($_GET['token']) : '' ?>">
+                                        <input type="hidden" name="token" value="<?= isset($_GET['token']) ? htmlspecialchars($_GET['token']) : '' ?>">
 
                                         <div class="form-group">
                                             <input type="password" name="new_password" class="form-control form-control-user" placeholder="New password">
