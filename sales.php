@@ -85,7 +85,7 @@ if (isLogin() == false) {
                                                     ?>
                                                 </select>
 
-                                                <label for="fuel type" class="font-weight-bold">Current Reading</label>
+                                                <label for="fuel type" class="font-weight-bold">Current Reading <span class="text-danger font-weight-light">after sale</span> </label>
                                                 <input type="text" id="current_read" oninput="calculateLitersAndAmount()" name="curRead" class="form-control">
                                             </div>
 
@@ -110,7 +110,7 @@ if (isLogin() == false) {
                                             </div>
 
                                             <div class="col d-flex flex-column">
-                                                <label for="fuel type" class="font-weight- text-danger"> Assign this pump to Atendent (Shaqaalaha)</label>
+                                                <label for="fuel type" class=" text-danger"> Assign this pump to Atendent (Shaqaalaha)</label>
                                                 <select class="custom-select" name="employeeID" id="">
                                                     <?php
                                                     if (isLogin() == true) {
@@ -133,19 +133,10 @@ if (isLogin() == false) {
                                                     <option value="<?php echo $row['EmployeeID']; ?>"><?php echo $row['UserName']; ?></option>
                                                 </select>
 
-                                                <label for="customerSelect" class="font-weight-bold">Customers</label>
-                                                <div class="input-group">
-                                                    <select id="customerSelect" name="customer_id" class="custom-select" required>
-                                                        <option value="">-- Select Customer --</option>
-                                                    </select>
-                                                    <div class="input-group-append">
-                                                        <button type="button" class="btn btn-primary" id="addNewCustomerBtn">
-                                                            <i class="fas fa-user-plus"></i> New
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                                
 
                                             </div>
+                                            
                                         </div>
                                         <div class="row d-flex">
                                             <div class="col d-flex flex-column d-block">
@@ -162,6 +153,22 @@ if (isLogin() == false) {
                                                     <?php } ?>
                                                 </select>
 
+                                                
+
+                                            </div>
+
+                                            <div class="col">
+                                                 <label for="customerSelect" class="font-weight-bold">Customers</label>
+                                                <div class="input-group">
+                                                    <select id="customerSelect" name="customer_id" class="custom-select">
+                                                        <option value="">-- Select Customer --</option>
+                                                    </select>
+                                                    <div class="input-group-append">
+                                                        <button type="button" class="btn btn-primary" id="addNewCustomerBtn">
+                                                            <i class="fas fa-user-plus"></i> New
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
 
 

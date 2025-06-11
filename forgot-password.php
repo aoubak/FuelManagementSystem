@@ -93,11 +93,24 @@ if (isset($_POST['resetPassword'])) {
                         border-radius: 10px;
                         background-color: #f9f9f9;
                         }
+                        .header {
+                        text-align: center;
+                        margin-bottom: 20px;
+                        background-color: #027dff;
+                        padding: 10px;
+                        border-radius: 5px;
+                        color: white;
+                        }
+                        a {
+                        color: white;
+                        text-decoration: none;
+                        }
+                       
                         .btn {
                         display: inline-block;
                         padding: 12px 25px;
                         font-size: 16px;
-                        background-color: #007bff;
+                        background-color: #d9d9d9;
                         color: white;
                         text-decoration: none;
                         border-radius: 5px;
@@ -123,11 +136,13 @@ if (isset($_POST['resetPassword'])) {
                     </head>
                     <body>
                     <div class='container'>
+                        <div class='header'>
                         <h2>Password Reset Request</h2>
-                        <p>Hello,</p>
+                        </div>
+                        <h2>Hello,</h2>
                         <p>We received a request to reset your password for your Somoil FMS account.</p>
                         <p>Please click the button below to reset your password:</p>
-                        <a href='http://localhost/fms/reset-password.php?token=$token' class='btn '>Reset Password</a>
+                        <a href='http://localhost/fms/reset-password.php?token=$token' class='btn'>Reset Password</a>
                         <p class='note'>⚠️ This link will expire in 1 hour for your security.</p>
                         <p>If you did not request this, you can safely ignore this email.</p>
                         <div class='footer'>

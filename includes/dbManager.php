@@ -140,6 +140,49 @@ function getStations()
     return $rows;
 }
 
+// count station
+function CountStations(){ 
+    $conn = getConnection();
+    $result = $conn->query("SELECT COUNT(StationID) AS total FROM Stations");
+
+    if($result){
+        $row = $result->fetch_assoc();
+        echo $row['total'];
+    } else {
+        echo "0";
+    }
+
+    $conn->close();
+}
+
+function CountEmployees(){ 
+    $conn = getConnection();
+    $result = $conn->query("SELECT COUNT(EmployeeID) AS total FROM employees");
+
+    if($result){
+        $row = $result->fetch_assoc();
+        echo $row['total'];
+    } else {
+        echo "0";
+    }
+
+    $conn->close();
+}
+
+function CountCustomers(){ 
+    $conn = getConnection();
+    $result = $conn->query("SELECT COUNT(customer_id) AS total FROM customers");
+
+    if($result){
+        $row = $result->fetch_assoc();
+        echo $row['total'];
+    } else {
+        echo "0";
+    }
+
+    $conn->close();
+}
+
 if (isset($_POST['upStationStatus'])) {
     $stationID = $_POST['stationID'];
     $status = $_POST['status'];
