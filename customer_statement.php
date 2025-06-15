@@ -358,8 +358,8 @@ if (isLogin() == false) {
                                                 <td colspan="0">TOTAL</td>
                                                 <td></td>
                                                 <td></td>
-                                                <td><?= $total_liters ?> ltr</td>
                                                 <td></td>
+                                                <td><?= $total_liters ?> ltr</td>
                                                 <td></td>
                                                 <td>$ <?= $total_amount ?></td>
                                                 <td></td>
